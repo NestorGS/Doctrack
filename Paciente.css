@@ -7,15 +7,19 @@ body{
     padding: 0px;
     width: 100%;
     height: 100%;
+    background-color: #f2e6cf;
 }
 header{
-    width: 100%;
-    height: 100px;
+    width: 98%;
+    height: 120px;
     justify-content: space-between;
     text-align: center;
     background-color: #114c5f;
     display: flex;
     border-radius: 15px;
+    margin-left: 1%;
+    margin-top: .5%;
+    
 }
 .textos{
     width: 80%;
@@ -24,13 +28,13 @@ header{
     align-items: right;
     display: flex;
 }
-a{
+header a{
     width: auto;
     height: auto;
     text-decoration: none;
     color: white;
     font-size: 30px;
-    padding: 30px;
+    padding: 40px;
 }
 .bs{
     display: flex;
