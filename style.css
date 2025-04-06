@@ -1,30 +1,63 @@
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Figtree:ital,wght@0,300..900;1,300..900&family=Marmelad&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sora:wght@100..800&family=Varela+Round&display=swap');
-*{
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@100..900&display=swap');
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-body{
+
+body {
     width: 100%;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: "Exo 2", sans-serif;
-
+    background-color: #114c5f;
+    position: relative;
+    overflow: hidden;
 }
-.container{
+body::before,
+body::after {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: #f2e6cf; /* Color hueso */
+    border-radius: 50%;
+    opacity: 0.2;
+}
+
+
+body::before {
+    top: 10%;
+    left: 5%;
+}
+
+
+body::after {
+    bottom: 10%;
+    right: 5%;
+}
+.container {
+    box-shadow: 5px 5px 15px rgba(0, 0.5, 0.5, 0.8);
     width: 1000px;
     height: 600px;
     display: flex;
     background-color: #f2e6cf;
     position: relative;
 }
-.container-form{
+img{
+    width: 90%;
+}
+
+/* Formulario */
+.container-form {
     width: 100%;
     overflow: hidden;
 }
-.container-form form{
+
+.container-form form {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -32,20 +65,18 @@ body{
     align-items: center;
     transition: transform 0.5s ease-in;
 }
-.container-form h2{
+
+.container-form h2 {
     font-size: 30px;
     margin-bottom: 20px;
 }
-.container-form span{
+
+.container-form span {
     font-size: 12px;
     margin-bottom: 15px;
 }
-.doc{
-    background-color: #114c5f;
-    width: 200px;
-    height: 120px;
-}
-.container-input{
+
+.container-input {
     width: 300px;
     height: 40px;
     margin-bottom: 10px;
@@ -56,43 +87,71 @@ body{
     padding: 0 15px;
     background-color: #eeeeee;
 }
-.container-input input{
+
+.container-input input {
     border: none;
     outline: none;
     width: 100%;
     height: 100%;
     background-color: inherit;
 }
-.container-form a{
-    color:  black;
-    font-size: 14px;
+
+.container-form a {
+    text-decoration: none;
     margin-bottom: 20px;
     margin-top: 5px;
 }
-.button{
-     width: 170px;
-     height: 45px;
-     font-size: 15px;
-     border: none;
-     border-radius: 5px;
-     cursor: pointer;
-     margin-top: 10px;
-     background-color: #114c5f;
-     color: white;
+.doc{
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+    text-decoration: none;
+    width: 270px; 
+    height: 150px; 
+    background-color: #114c5f; 
+    color: white; 
+    font-size: 20px;
+    border-radius: 20px;
 }
-/*animacion de los formularios*/
+.pac{
+    display: flex; /* Hace que el enlace sea un contenedor flexible */
+    justify-content: center; /* Centra el texto horizontalmente */
+    align-items: center; /* Centra el texto verticalmente */
+    text-decoration: none; /* Elimina el subrayado */
+    width: 270px; /* Ajusta el ancho */
+    height: 150px; /* Ajusta la altura */
+    background-color: #9cd2d3; /* Color de fondo */
+    color: white; /* Color del texto */
+    font-size: 20px;
+    border-radius: 20px;
+}
+.button {
+    width: 170px;
+    height: 45px;
+    font-size: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    background-color: #114c5f;
+    color: white;
+}
 
-.sign-up{
+/* Animación de los formularios */
+.sign-up {
     transform: translateX(-100%);
 }
-.container.toggle .sign-in{
+
+.container.toggle .sign-in {
     transform: translateX(100%);
 }
-.container.toggle .sign-up{
+
+.container.toggle .sign-up {
     transform: translateX(0);
 }
-/*Welcome*/
-.container-welcome{
+
+/* Sección de bienvenida */
+.container-welcome {
     position: absolute;
     width: 50%;
     height: 100%;
@@ -104,13 +163,13 @@ body{
     overflow: hidden;
     border-radius: 50% 0 0 50%;
 }
-.container.toggle .container-welcome{
+
+.container.toggle .container-welcome {
     transform: translateX(0);
     border-radius: 0 50% 50% 0;
-    background-color: #114c5f;
-
 }
-.container-welcome .welcome{
+
+.container-welcome .welcome {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -120,22 +179,68 @@ body{
     color: white;
     transition: transform 0.5s ease-in-out;
 }
-.welcome-sign-in{
-    transform:  translateX(100%);
+
+.welcome-sign-in {
+    transform: translateX(100%);
 }
-.container-welcome h3{
-    font-size: 40px;
+
+.container-welcome h3 {
+    font-size: 30px;
 }
-.container-welcome p{
+
+.container-welcome p {
     font-size: 40px;
     text-align: center;
 }
-.container-welcome .button{
+
+.container-welcome .button {
     border: 2px solid white;
 }
-.container.toggle .welcome-sign-in{
+
+.container.toggle .welcome-sign-in {
     transform: translateX(0);
 }
-.container.toggle .welcome-sign-up{
+
+.container.toggle .welcome-sign-up {
     transform: translateX(-100%);
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+    .container {
+        width: 90%;
+        height: auto;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .container-welcome {
+        width: 100%;
+        height: 50%;
+        border-radius: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 100%;
+        height: 100%;
+        box-shadow: none;
+    }
+
+    .container-welcome {
+        display: none;
+    }
+
+    .container-form h2 {
+        font-size: 25px;
+    }
+
+    .container-input {
+        width: 90%;
+    }
+
+    .button {
+        width: 90%;
+    }
 }
