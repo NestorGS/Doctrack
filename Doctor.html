@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagina Principal Doctor</title>
+    <link rel="stylesheet" href="PaginaD.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Figtree:ital,wght@0,300..900;1,300..900&family=Marmelad&family=McLaren&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sora:wght@100..800&family=Varela+Round&display=swap" rel="stylesheet">
+    <style>
+    
+    /* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #F2E6CF;
+    font-family: "Sora", sans-serif;
+}
+
+header {
+    background-color: #114c5f;
+    margin: 10px;
+    border-radius: 20px;
+}
+
+.head {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+.head img {
+    width: 80px;
+    height: auto;
+    margin-left: 40px;
+}
+.head h1{
+  color: white;
+    font-size: 25px;
+    margin: 0 40px;
+    transition: color 0.3s ease;
+
+}
+.head h2 {
+    color: white;
+    font-size: 20px;
+    margin: 0 40px;
+    transition: color 0.3s ease;
+
+}
+.head h2:hover{
+    color: #91CBD6;
+}
+.tex {
+    display: flex;
+}
+a {
+    text-decoration: none;
+}
+.bbs{
+  display: flex;
+}
+.bs{
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+.botones{
+  display: flex;
+  justify-content: space-evenly;
+}
+.botones a{
+  text-decoration: none;
+  color: #115c5f;
+  font-size: 20px;
+}
+.section2{
+  width: 150px;
+  text-align: center;
+  height: 130px;
+  background-color: #9cd2d3;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fondo{
+  background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
+  width: 180px;
+  height: 150px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border-radius: 20px;  
+}
+.tabla {
+  background-color: #f5ecd9; /* Color de fondo beige claro */
+  padding: 20px;
+  border-radius: 10px;
+  width: fit-content;
+  margin: 20px auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 800px;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #a3cdd1; /* Azul verdoso suave */
+  color: #1b2b33;
+}
+
+thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+}
+
+tbody td {
+  padding: 12px 16px;
+  border-top: 1px solid #ddd;
+  color: #333;
+}
+.ss{
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.nota{
+  width: 70%;
+  height: 150px;
+  display: flex;
+  justify-content:center ;
+  align-items: center;
+  background-color: #9cd2d3;
+  margin-top: 50px;
+  border-radius: 50px;
+}
+.nota a{
+   color: #114c5f;
+   font-size: 20px;
+}
+.salir{
+  width: 40%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20%;
+  background-color: #114c5f;
+  border-radius: 20px;
+}
+.salir a{
+  color: white;
+}
+.salir:hover{
+  background-color: #9cd2d3;
+}
+@media (max-width: 1024px) {
+  .head {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .head img {
+    margin: 0 auto;
+  }
+
+  .tex {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .botones {
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .fondo {
+    width: 140px;
+    height: 130px;
+  }
+
+  .section2 {
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+  }
+
+  .bbs {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bs, .ss {
+    width: 100%;
+    align-items: center;
+  }
+
+  .nota {
+    width: 80%;
+    font-size: 16px;
+  }
+
+  .salir {
+    width: 50%;
+  }
+
+  table {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section2 {
+    font-size: 14px;
+  }
+
+  .botones a {
+    font-size: 16px;
+  }
+
+  thead th,
+  tbody td {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .nota a {
+    font-size: 16px;
+  }
+
+  .salir {
+    width: 70%;
+  }
+}
+
+@media (min-width: 1440px) {
+  .tabla {
+    max-width: 1200px;
+    margin: 20px auto;
+  }
+
+  .head {
+    max-width: 1400px;
+    margin: 10px auto;
+  }
+
+  .bbs {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="head">
+            <div class="Ima">
+                <img src="Imagenes/Solo-Logo.png" alt="">
+            </div>
+            <div class="tex">
+              <h1>Bienvenido Doctor</h1>
+                <h2 class="un">Pagina-Principal-Doctor</h2>
+                <a href="Tratamiento.html"><h2 class="hov">Tratamiento-Paciente</h2></a>
+                <a href="Historial.html"><h2>Historial</h2></a>
+            </div>
+        </div>
+    </header>
+    <div class="bbs">
+  <div class="bs">
+    <div class="botones">
+                  <div class="fondo">
+                    <div class="section2">
+                    <a href="anadir.html">
+                    <p>Añadir</p>
+                    </a>
+                   </div>
+                  </div>
+                  <div class="fondo">
+                   <div class="section2">
+                    <a href="eliminarD.html">
+                    <p>Eliminar</p>    
+                    </a>
+                </div>
+              </div>
+              <div class="fondo">
+            <div class="section2">
+                <a href="modificarD.html">
+                  <p>Modificar</p>
+                </a>
+            </div>
+          </div>
+          </div>
+        <div class="tabla">
+          <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre del paciente</th>
+                        <th>Fecha de la Cita</th>
+                        <th>Medico Asignado</th>
+                        <th>Motivo</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-citas">
+                    <!-- Las citas se llenarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+        </div>
+  </div>
+  <div class="ss">
+    <div class="nota">
+      <a href="Nota">Nota Subsecuente</a>
+    </div>
+    <div class="salir">
+      <a href="index.html">Salir</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
