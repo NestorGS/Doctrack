@@ -62,7 +62,8 @@ header {
 h1{
     color: #114c5f;
     margin-left: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
+    margin-top: 40px;
 }
 a {
     text-decoration: none;
@@ -74,8 +75,8 @@ a {
 }
 .bs a{
   text-decoration: none;
-  color: #115c5f;
-  font-size: 40px;
+  color: #114c5f;
+  font-size: 30px;
 }
 .section2{
   width: 250px;
@@ -114,6 +115,103 @@ a {
 .salir:hover{
   background-color: #9cd2d3;
 }
+@media (max-width: 1024px) {
+  .head {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .head img {
+    margin: 0 auto;
+  }
+
+  .tex {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .botones {
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .fondo {
+    width: 140px;
+    height: 130px;
+  }
+
+  .section2 {
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+  }
+
+  .bbs {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bs, .ss {
+    width: 100%;
+    align-items: center;
+  }
+
+  .nota {
+    width: 80%;
+    font-size: 16px;
+  }
+
+  .salir {
+    width: 50%;
+  }
+
+  table {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section2 {
+    font-size: 14px;
+  }
+
+  .botones a {
+    font-size: 16px;
+  }
+
+  thead th,
+  tbody td {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .nota a {
+    font-size: 16px;
+  }
+
+  .salir {
+    width: 70%;
+  }
+}
+
+@media (min-width: 1440px) {
+  .tabla {
+    max-width: 1200px;
+    margin: 20px auto;
+  }
+
+  .head {
+    max-width: 1400px;
+    margin: 10px auto;
+  }
+
+  .bbs {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
     </style>
 </head>
 <body>
@@ -125,7 +223,7 @@ a {
             <div class="tex">
               <h1>Bienvenido Doctor</h1>
               <a href="Doctor.html"><h2 class="hov">Pagina Principal</h2></a>  
-              <a href="Historial"><h2>Tratamiento del Paciente</h2></a>
+              <a href="Tratamiento.html"><h2>Tratamiento del Paciente</h2></a>
               <h2 class="un">Historial</h2>
             </div>
         </div>
@@ -133,25 +231,19 @@ a {
     <h1>¿Qué quieres hacer hoy?</h1>
     <div class="bs">
                   <div class="fondo">
-                    <div class="section2">
-                    <a href="anadir.html">
-                    <p>Añadir</p>
+                    <a href="anadir.html" class="section2">
+                    <p>Añadir Historial</p>
                     </a>
                    </div>
-                  </div>
                   <div class="fondo">
-                   <div class="section2">
-                    <a href="eliminarD.html">
-                    <p>Eliminar</p>    
+                   <a href="eliminarD.html"class="section2">
+                    <p>Modificar Historial</p>    
                     </a>
-                </div>
               </div>
               <div class="fondo">
-            <div class="section2">
-                <a href="modificarD.html">
-                  <p>Modificar</p>
+                <a href="modificarD.html"class="section2">
+                  <p>Consultar Historial</p>
                 </a>
-            </div>
           </div>
         </div>
         <div class="salir"><a href="index.html">Salir</a></div>

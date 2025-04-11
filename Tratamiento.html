@@ -69,6 +69,7 @@ a {
   width: 70%;
   display: flex;
   flex-direction: column;
+  margin-top: 40px;
 }
 .botones{
   display: flex;
@@ -76,7 +77,7 @@ a {
 }
 .botones a{
   text-decoration: none;
-  color: #115c5f;
+  color: #114c5f;
   font-size: 20px;
 }
 .section2{
@@ -154,9 +155,20 @@ tbody td {
   margin-top: 50px;
   border-radius: 50px;
 }
-.nota a{
+.nota {
    color: #114c5f;
    font-size: 20px;
+}
+.sele{
+  margin-top: 40px;
+}
+select{
+  border: none;
+  background-color: #114c5f;
+  width: 200px;
+  height: 50px;
+  border-radius: 20px;
+  color: white;
 }
 .salir{
   width: 40%;
@@ -291,27 +303,21 @@ tbody td {
     <div class="bbs">
   <div class="bs">
     <div class="botones">
-                  <div class="fondo">
-                    <div class="section2">
-                    <a href="anadir.html">
-                    <p>Añadir</p>
-                    </a>
-                   </div>
-                  </div>
-                  <div class="fondo">
-                   <div class="section2">
-                    <a href="eliminarD.html">
-                    <p>Eliminar</p>    
-                    </a>
-                </div>
-              </div>
-              <div class="fondo">
-            <div class="section2">
-                <a href="modificarD.html">
-                  <p>Modificar</p>
-                </a>
-            </div>
-          </div>
+      <div class="fondo">
+        <a href="ATrat.html" class="section2">
+        <p>Añadir</p>
+        </a>
+      </div>
+      <div class="fondo">
+        <a href="ETrar.html"class="section2">
+        <p>Eliminar</p>    
+        </a>
+  </div>
+  <div class="fondo">
+    <a href="MTrat.html" class="section2">
+      <p>Modificar</p>
+    </a>
+</div>
           </div>
         <div class="tabla">
           <div class="table-container">
@@ -334,10 +340,14 @@ tbody td {
         </div>
   </div>
   <div class="ss">
-    <div class="nota">
-      <a href="Nota">Nota Subsecuente</a>
-    </div>
+      <a href="Nota.html" class="nota">Notas</a>
+      <div class="sele">
+        <select name="" id="">
+          <option value="">Pacientes</option>
+        </select>
+      </div>
     <div class="salir">
+      
       <a href="index.html">Salir</a>
     </div>
   </div>
