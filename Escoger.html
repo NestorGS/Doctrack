@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+            font-family: 'Sora', sans-serif;
+            background-color: #F2E6CF;
+        }
+        header{
+            display: flex;
+        }
+        .s1{
+            border-top-right-radius: 50px;
+            border-bottom-right-radius: 50px;
+            width: 50%;
+            background-color: #114c5f;
+            display: flex;
+            margin-top: 10px;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .s1 h1{
+            color: white;
+            font-size: 40px;
+        }
+        .s2{
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           color: #114c5f;
+           font-size: 25px;
+           margin: 20px; 
+        }
+        .bs{
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: fit-content;
+            margin-top: 40px;
+        }
+        .bs a{
+            width: 450px;
+            height: 400px;
+            text-align: center;
+            font-size: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            border-radius: 20px;
+        }
+        .Pac{
+            background-color: #9cd2d3;
+            color: #114c5f;
+        }
+        .Pac:hover{
+            background-color: #114c5f;
+            color: white;
+        }
+        .Doc{
+            background-color: #114c5f;
+            color: white;
+        }
+        .Doc:hover{
+            background-color: #9cd2d3;
+            color: #114c5f;
+        }
+        @media(max-width:1300px){
+            header{
+                flex-direction: column;
+            }
+            .bs{
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="s1">
+        <img src="Imagenes/Solo-Logo.png" alt="">
+        <h1>Bienvenido</h1>
+    </div>
+    <div class="s2">
+        <h2>¿Qué quieres hacer hoy?</h2>
+    </div>
+    </header>
+    <div class="bs">
+        <a href="AdminP.html" class="Doc">Paciente</a>
+        <a href="AdminP" class="Pac">Doctor</a>
+    </div>
+</body>
+</html>
