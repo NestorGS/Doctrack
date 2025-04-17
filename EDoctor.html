@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Añade una cita</title>
+    <title>Elimina un doctor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Figtree:ital,wght@0,300..900;1,300..900&family=Marmelad&family=McLaren&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sora:wght@100..800&family=Varela+Round&display=swap" rel="stylesheet">
@@ -57,19 +57,17 @@ h2{
     justify-content: center;
     align-items: center;
 }
-.s1{
+.nom{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 50px;
     flex-direction: column;
-}
-.nom, .med, .ot{
-    margin: 20px;
+    margin-top: 50px;
 }
 h3{
 color: #114c5f;
 font-size: 23px;
+margin-bottom: 20px;
 }
 .s1 input::placeholder {
   color: #bbb; /* texto gris claro */
@@ -99,6 +97,7 @@ select{
 select:invalid {
   color: #bbb; /* gris claro para el placeholder */
 }
+
 
 button{
     margin-left: 40%;
@@ -148,6 +147,11 @@ button:hover{
     width: 90%;
   }
 
+  .s3 textarea {
+    width: 90%;
+    height: 180px;
+  }
+
   button {
     width: 60%;
     margin: 20px auto 0 auto;
@@ -159,23 +163,21 @@ button:hover{
 <body>
     <header>
         <img src="Imagenes/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="">
-        <h1>Agrega Notas</h1>
+        <h1>Elimina un Doctor</h1>
     </header>
     <div class="fondo">
         <div class="form-container">
             <form action="">
                 <h2>Datos Generales de la cita</h2>
-                <div class="s1">
                     <div class="nom">
-                        <h3>Agregar Nota</h3>
-                         <input type="text" placeholder="Agregar una nota para el paciente"> 
-                    </div>                   
-                </div>
-                <button type="submit">Enviar</button>
+                        <h3>1.Nombre del doctor</h3>
+                        <input type="text" placeholder="Escribe el nombre del doctor">
+                    </div>
+                <button type="submit">Eliminar</button>
             </form>
         </div>
     </div>
     
-    <a href="Tratamiento.html">Mientras se programa</a>
+    <a href="AdminD.html">Mientras se programa</a>
 </body>
 </html>

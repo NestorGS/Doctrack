@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Antecedentes Personales No Patológicos</title>
+  <title>Antecedentes Heredofamiliares</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
   <style>
     * {
@@ -96,28 +96,6 @@
       font-family: "Sora", sans-serif;
     }
 
-    .date-group {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .date-group label {
-      font-size: 18px;
-      color: #114c5f;
-      margin-bottom: 10px;
-    }
-
-    input[type="date"] {
-      border: none;
-      border-bottom: 2px solid #114c5f;
-      background: transparent;
-      padding: 5px;
-      font-size: 16px;
-      color: #333;
-      width: 50%;
-    }
-
     .tabs {
       display: flex;
       justify-content: space-around;
@@ -159,52 +137,54 @@
 
   <div class="fondo">
     <div class="form-container">
-      <h2>Antecedentes Personales No Patológicos</h2>
+      <h2>Antecedentes Heredofamiliares</h2>
 
       <div class="checkbox-group">
-        <label>Baño Diario</label>
+        <label>Diabetes</label>
         <div class="radio-options">
-          <label><input type="radio" name="baño" /> Sí</label>
-          <label><input type="radio" name="baño" /> No</label>
+          <label><input type="radio" name="diabetes" /> Sí</label>
+          <label><input type="radio" name="diabetes" /> No</label>
         </div>
       </div>
 
       <div class="checkbox-group">
-        <label>Aseo Bucal</label>
+        <label>Hipertensión</label>
         <div class="radio-options">
-          <label><input type="radio" name="aseo" /> Sí</label>
-          <label><input type="radio" name="aseo" /> No</label>
+          <label><input type="radio" name="hipertension" /> Sí</label>
+          <label><input type="radio" name="hipertension" /> No</label>
         </div>
       </div>
 
       <div class="checkbox-group">
-        <label>Tabaquismo</label>
+        <label>Cardiopatías</label>
         <div class="radio-options">
-          <label><input type="radio" name="tabaco" /> Sí</label>
-          <label><input type="radio" name="tabaco" /> No</label>
+          <label><input type="radio" name="cardiopatias" /> Sí</label>
+          <label><input type="radio" name="cardiopatias" /> No</label>
         </div>
       </div>
 
       <div class="checkbox-group">
-        <label>Alcoholismo</label>
+        <label>Asma</label>
         <div class="radio-options">
-          <label><input type="radio" name="alcohol" /> Sí</label>
-          <label><input type="radio" name="alcohol" /> No</label>
+          <label><input type="radio" name="asma" /> Sí</label>
+          <label><input type="radio" name="asma" /> No</label>
         </div>
       </div>
 
-      <div class="date-group">
-        <label>Fecha De Registro</label>
-        <input type="date">
+      <div class="checkbox-group">
+        <label>Otros</label>
+        <div class="radio-options">
+          <label><input type="radio" name="otros" /> Sí</label>
+          <label><input type="radio" name="otros" /> No</label>
+        </div>
       </div>
 
       <div class="textarea-group">
-        <textarea placeholder="Situación Familiar"></textarea>
-        <textarea placeholder="Situación Laboral"></textarea>
+        <textarea placeholder="Especifique si seleccionó 'Otros'..."></textarea>
       </div>
 
       <div class="tabs">
-        <a href="AH.html"><h2>Antecedentes Heredofamiliares</h2></a>
+        <a href="AP.html"><h2>Antecedentes No Patológicos</h2></a>
         <a href="EF.html"><h2>Exploración Física</h2></a>
         <a href="FI.html"><h2>Ficha De Identificación</h2></a>
       </div>

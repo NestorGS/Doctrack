@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añade una cita</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Figtree:ital,wght@0,300..900;1,300..900&family=Marmelad&family=McLaren&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sora:wght@100..800&family=Varela+Round&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+    body{
+        background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
+        background-size: cover; /* Hace que la imagen cubra toda la pantalla */
+  background-position: center; /* Centra la imagen en la pantalla */
+  background-attachment: fixed;
+  font-family: "Sora", sans-serif;
+    }
+    header{
+        display: flex;
+        justify-content: space-between;
+    }
+    header h1{
+        color: white;
+        font-size: 50px;
+        margin: 40px;
+    }
+.fondo{
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #114c5f;
+  width: 50%;
+  margin-left: 25%;
+  height: 500px;
+  border-radius: 39px;
+}
+.form-container{
+    background-color: white;
+    width: 96%;
+    height: 460px;
+    border-radius: 39px;
+}
+h2{
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    color: #114c5f;
+    background-color: #9cd2d3;
+    border-radius: 39px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.s1{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+}
+h3{
+color: #114c5f;
+font-size: 23px;
+}
+.s1, .s2 input::placeholder {
+  color: #bbb; /* texto gris claro */
+  font-weight: 400;
+  font-size: 16px;
+}
+input{
+    border: none;
+  border-bottom: 2px solid #114c5f; /* línea inferior */
+  outline: none;
+  font-size: 16px;
+  color: #333;
+  padding: 4px 0;
+  width: 290px;
+  background-color: transparent;
+}
+select{
+    border: none;
+  border-bottom: 2px solid #2c4d5e; /* línea inferior azul oscuro */
+  outline: none;
+  font-size: 16px;
+  color: #bbb;
+  padding: 4px 0;
+  background-color: transparent;
+  width: 290px;
+}
+select:invalid {
+  color: #bbb; /* gris claro para el placeholder */
+}
+.s2{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+.s2 input{
+    margin-top: 10px;
+}
+.s3{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+.s3 textarea{
+    border-radius: 10px;
+    border-width: 3px;
+    border-color: #114c5f;
+    width: 70%;
+    height: 250px;
+    font-size: 20px;
+}
+button{
+    margin-left: 40%;
+    margin-top: 20px;
+    width: 20%;
+    height: 40px;
+    border: none;
+    background-color: #114c5f;
+    color: white;
+    font-size: 20px;
+    border-radius: 25px;
+}
+button:hover{
+    background-color: #9cd2d3;
+}
+@media (max-width: 1325px) {
+  header {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header h1 {
+    font-size: 30px;
+    margin: 20px 0;
+    text-align: center;
+  }
+
+  .fondo {
+    width: 90%;
+    margin: 20px auto;
+    height: 200px;
+    padding: 20px 0;
+  }
+
+  .form-container {
+    height: auto;
+    padding: 20px;
+  }
+
+  .s1 {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  input, select {
+    width: 90%;
+  }
+
+  .s3 textarea {
+    width: 90%;
+    height: 180px;
+  }
+
+  button {
+    width: 60%;
+    margin: 20px auto 0 auto;
+    display: block;
+  }
+}
+    </style>
+</head>
+<body>
+    <header>
+        <img src="Imagenes/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="">
+        <h1>Añade un Doctor</h1>
+    </header>
+    <div class="fondo">
+        <div class="form-container">
+            <form action="">
+                <h2>Datos Generales de la cita</h2>
+                <div class="s1">
+                    <div class="nom">
+                        <h3>1.Nombre</h3>
+                        <input type="text" placeholder="Escribe el nombre del doctor">
+                    </div>
+                    <div class="med">
+                        <h3>2.Especialidad</h3>
+                        <select id="especialidad" name="especialidad" class="esp">
+                            <option value="ninguna">Ninguna</option>
+                            <option value="medicina_interna">Medicina Interna</option>
+                            <option value="pediatria">Pediatría</option>
+                            <option value="ginecologia_obstetricia">Ginecología y Obstetricia</option>
+                            <option value="cardiologia">Cardiología</option>
+                            <option value="neurologia">Neurología</option>
+                            <option value="dermatologia">Dermatología</option>
+                            <option value="oftalmologia">Oftalmología</option>
+                            <option value="otorrinolaringologia">Otorrinolaringología</option>
+                            <option value="psiquiatria">Psiquiatría</option>
+                            <option value="geriatria">Geriatría</option>
+                            <option value="cirugia_general">Cirugía General</option>
+                            <option value="neurocirugia">Neurocirugía</option>
+                            <option value="cirugia_cardiovascular">Cirugía Cardiovascular</option>
+                            <option value="cirugia_toracica">Cirugía Torácica</option>
+                            <option value="cirugia_plastica_reconstructiva">Cirugía Plástica y Reconstructiva</option>
+                            <option value="cirugia_ortopedica">Cirugía Ortopédica</option>
+                            <option value="cirugia_pediatrica">Cirugía Pediátrica</option>
+                            <option value="cirugia_oncologica">Cirugía Oncológica</option>
+                            <option value="endocrinologia">Endocrinología</option>
+                            <option value="nefrologia">Nefrología</option>
+                            <option value="gastroenterologia">Gastroenterología</option>
+                            <option value="hematologia">Hematología</option>
+                            <option value="infectologia">Infectología</option>
+                            <option value="oncologia">Oncología</option>
+                            <option value="alergologia_inmunologia">Alergología e Inmunología</option>
+                            <option value="reumatologia">Reumatología</option>
+                            <option value="neumologia">Neumología</option>
+                            <option value="medicina_fisica_rehabilitacion">Medicina Física y Rehabilitación</option>
+                            <option value="medicina_familiar">Medicina Familiar</option>
+                            <option value="medicina_preventiva">Medicina Preventiva</option>
+                            <option value="medicina_del_deporte">Medicina del Deporte</option>
+                            <option value="medicina_del_trabajo">Medicina del Trabajo</option>
+                            <option value="cuidados_paliativos">Cuidados Paliativos</option>
+                            <option value="genetica_medica">Genética Médica</option>
+                            <option value="medicina_urgencias">Medicina de Urgencias</option>
+                            <option value="anestesiologia">Anestesiología</option>
+                            <option value="radiologia">Radiología</option>
+                            <option value="patologia">Patología</option>
+                            <option value="medicina_nuclear">Medicina Nuclear</option>
+                            <option value="psicologia_clinica">Psicología Clínica</option>
+                            <option value="psicoanalisis">Psicoanálisis</option>
+                            <option value="neuropsicologia">Neuropsicología</option>
+                            <option value="terapia_ocupacional">Terapia Ocupacional</option>
+                        </select>        
+                    </div>
+                </div>
+                <div class="s1">
+                    <div class="nom">
+                        <h3>3.Apellido Paterno</h3>
+                        <input type="text" placeholder="Escribe el apellido paterno">
+                    </div>
+                    <div class="med">
+                        <h3>4.Cedula o Matricula</h3>
+                        <input type="text" placeholder="Escribe la cedula">
+                    </div>
+                </div>
+                <div class="s1">
+                    <div class="nom">
+                        <h3>5.Apellido Materno</h3>
+                        <input type="text" placeholder="Escribe el apellido materno">
+                    </div>
+                    <div class="med">
+                        <h3>6.Correo electronico</h3>
+                        <input type="email" placeholder="Escribe el correo">
+                    </div>
+                </div>
+                <button type="submit">Añadir</button>
+            </form>
+        </div>
+    </div>
+    
+    <a href="AdminD.html">Mientras se programa</a>
+</body>
+</html>

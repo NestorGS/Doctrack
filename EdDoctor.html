@@ -37,13 +37,13 @@
   background-color: #114c5f;
   width: 30%;
   margin-left: 35%;
-  height: 400px;
+  height: 600px;
   border-radius: 39px;
 }
 .form-container{
     background-color: white;
     width: 96%;
-    height: 360px;
+    height: 560px;
     border-radius: 39px;
 }
 h2{
@@ -101,9 +101,9 @@ select:invalid {
 }
 
 button{
-    margin-left: 40%;
+    margin-left: 35%;
     margin-top: 20px;
-    width: 20%;
+    width: 30%;
     height: 40px;
     border: none;
     background-color: #114c5f;
@@ -159,7 +159,7 @@ button:hover{
 <body>
     <header>
         <img src="Imagenes/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="">
-        <h1>Agrega Notas</h1>
+        <h1>Editar un Doctor</h1>
     </header>
     <div class="fondo">
         <div class="form-container">
@@ -167,15 +167,34 @@ button:hover{
                 <h2>Datos Generales de la cita</h2>
                 <div class="s1">
                     <div class="nom">
-                        <h3>Agregar Nota</h3>
-                         <input type="text" placeholder="Agregar una nota para el paciente"> 
+                        <h3>1.Nombre del doctor</h3>
+                        <select name="" id="">
+                            <option value="">Mientras lo programan</option>
+                        </select> 
                     </div>                   
+                    <div class="med">
+                        <h3>2.Selecciona el campo</h3>
+                        <select name="" id="">
+                            <option value="">1</option>
+                            <option value="">2</option>
+                            <option value="">3</option>
+                            <option value="">4</option>
+                            <option value="">5</option>
+                            <option value="">6</option>
+                            <option value="">7</option>
+                            <option value="">8</option>
+                        </select>
+                    </div>
+                    <div class="ot">
+                        <h3>3.Dato nuevo</h3>
+                        <input type="text" placeholder="Ingresa el nuevo dato">               
+                     </div>
                 </div>
-                <button type="submit">Enviar</button>
+                <button type="submit">Modificar</button>
             </form>
         </div>
     </div>
     
-    <a href="Tratamiento.html">Mientras se programa</a>
+    <a href="AdminD.html">Mientras se programa</a>
 </body>
 </html>

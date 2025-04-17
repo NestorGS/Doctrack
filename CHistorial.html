@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buscar Paciente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Sora", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
+      background-repeat: no-repeat;
+      background-size: cover;
+      color: #114c5f;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 60px;
+      margin-right: 10px;
+    }
+
+    .logo span {
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .consultar {
+      color: white;
+      font-size: 16px;
+      margin-right: 20px;
+      cursor: pointer;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      background-color: white;
+      border-radius: 30px;
+      padding: 10px 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .search-bar textarea {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      font-family: "Sora", sans-serif;
+      resize: none;
+      overflow: hidden;
+    }
+
+    .search-bar img {
+      width: 20px;
+      height: 20px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .table-container {
+      background-color: white;
+      border-radius: 20px;
+      padding: 10px;
+      overflow-x: auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background-color: #9cd2d3;
+    }
+
+    th, td {
+      text-align: center;
+      padding: 12px 8px;
+      font-size: 16px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    tbody tr:hover {
+      background-color: #f0f0f0;
+    }
+
+    .exit-btn {
+      display: block;
+      margin: 30px auto 0;
+      background-color: #114c5f;
+      color: white;
+      text-align: center;
+      padding: 10px 30px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .exit-btn:hover {
+      background-color: #9cd2d3;
+      color: #114c5f;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo">
+      <img src="Imagenes/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="DocTrack logo">
+    </div>
+    <div class="consultar">Consultar Historiales</div>
+  </div>
+
+  <div class="search-bar">
+    <textarea rows="1" placeholder="Escriba el nombre del paciente"></textarea>
+    
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Edad</th>
+          <th>Sexo</th>
+          <th>Descripción General</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Aquí se cargarían los datos dinámicamente -->
+      </tbody>
+    </table>
+  </div>
+
+  <a href="Historial.html" class="exit-btn">Salir</a>
+  <a href="CoHistorial.html">ve a la sig</a>
+</body>
+</html>
