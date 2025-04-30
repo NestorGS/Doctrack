@@ -109,7 +109,28 @@
       border-radius: 30px;
       font-size: 16px;
     }
+    
+    .date-group {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+    }
 
+    .date-group label {
+      font-size: 18px;
+      color: #114c5f;
+      margin-bottom: 10px;
+    }
+
+    input[type="date"] {
+      border: none;
+      border-bottom: 2px solid #114c5f;
+      background: transparent;
+      padding: 5px;
+      font-size: 16px;
+      color: #333;
+      width: 50%;
+    }
     button {
       margin: 30px auto 0;
       display: block;
@@ -179,12 +200,51 @@
         </div>
       </div>
 
+
+      <h2>Antecedentes Personales No Patológicos</h2>
+
+      <div class="checkbox-group">
+        <label>Baño Diario</label>
+        <div class="radio-options">
+          <label><input type="radio" name="baño" /> Sí</label>
+          <label><input type="radio" name="baño" /> No</label>
+        </div>
+      </div>
+
+      <div class="checkbox-group">
+        <label>Aseo Bucal</label>
+        <div class="radio-options">
+          <label><input type="radio" name="aseo" /> Sí</label>
+          <label><input type="radio" name="aseo" /> No</label>
+        </div>
+      </div>
+
+      <div class="checkbox-group">
+        <label>Tabaquismo</label>
+        <div class="radio-options">
+          <label><input type="radio" name="tabaco" /> Sí</label>
+          <label><input type="radio" name="tabaco" /> No</label>
+        </div>
+      </div>
+
+      <div class="checkbox-group">
+        <label>Alcoholismo</label>
+        <div class="radio-options">
+          <label><input type="radio" name="alcohol" /> Sí</label>
+          <label><input type="radio" name="alcohol" /> No</label>
+        </div>
+      </div>
+
+      <div class="date-group">
+        <label>Fecha De Registro</label>
+        <input type="date">
+      </div>
+
       <div class="textarea-group">
-        <textarea placeholder="Especifique si seleccionó 'Otros'..."></textarea>
+        <textarea placeholder="Descripción General"></textarea>
       </div>
 
       <div class="tabs">
-        <a href="AP.html"><h2>Antecedentes No Patológicos</h2></a>
         <a href="EF.html"><h2>Exploración Física</h2></a>
         <a href="FI.html"><h2>Ficha De Identificación</h2></a>
       </div>
