@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paciente-Principal</title>
+    <style>
+        
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #F2E6CF;
+    font-family: "Sora", sans-serif;
+}
+
+header {
+    background-color: #114c5f;
+    margin: 10px;
+    border-radius: 20px;
+}
+
+.head {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+.head img {
+    width: 80px;
+    height: auto;
+    margin-left: 40px;
+}
+.head h1{
+  color: white;
+    font-size: 25px;
+    margin: 0 40px;
+    transition: color 0.3s ease;
+
+}
+.head h2 {
+    color: white;
+    font-size: 20px;
+    margin: 0 40px;
+    transition: color 0.3s ease;
+
+}
+.head h2:hover{
+    color: #91CBD6;
+}
+.tex {
+    display: flex;
+}
+a {
+    text-decoration: none;
+}
+.bs{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.tab1{
+ width: 50%;
+ text-align: center;
+}
+.tab2{
+    width: 50%;
+    text-align: center;
+}
+ h3{
+    color: #114c5f;
+    font-size: 30px;
+    margin: 10px;
+}
+.tabla {
+  background-color: #f5ecd9; /* Color de fondo beige claro */
+  padding: 20px;
+  border-radius: 10px;
+  width: fit-content;
+  margin: 20px auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 800px;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #a3cdd1; /* Azul verdoso suave */
+  color: #1b2b33;
+}
+
+thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+}
+
+tbody td {
+  padding: 12px 16px;
+  border-top: 1px solid #ddd;
+  color: #333;
+}
+
+button{
+    border: none;
+    background-color: #114c5f;
+    color: white;
+    width: 20%;
+    height: 40px;
+    margin: 20px;
+    border-radius: 20px;
+}
+.bs2{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.exp{
+    width: 250px;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    background-color: #114c5f;
+    border-radius: 20px;
+  }
+  .exp {
+    color: white;
+  }
+.salir{
+    width: 20%;
+    height: 50px;
+    display: flex;
+    margin: 20px;
+    margin-left: 40%;
+    justify-content: center;
+    align-items: center;
+    background-color: #114c5f;
+    border-radius: 20px;
+  }
+  .salir {
+    color: white;
+  }
+  .salir:hover{
+    background-color: #9cd2d3;
+  } 
+  .ps{
+    width: 100%;
+    text-align: center;
+    margin: 20px;
+  }
+  @media screen and (max-width: 900px) {
+  .head {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .tex {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="head">
+            <div class="Ima">
+                <img src="img/Solo-Logo.png" alt="">
+            </div>
+            <div class="tex">
+              <h1>Bienvenido Doctor</h1>
+              <a href="Paciente.html"><h2 class="hov">Pagina-Principal</h2></a>
+              <a href="Cita.html"><h2>Pedir una cita</h2></a>
+              <h2 class="un">Seguimiento</h2>
+            </div>
+        </div>
+    </header>
+    <div class="ps">
+    <h3>Seguimiento de los Tratamientos</h3>
+</div>
+    <div class="bs">
+        <div class="tab1">
+            <h3>Tratamientos en Progreso</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre del medicamento</th>
+                            <th>Forma farmaceutica</th>
+                            <th>Concentración</th>
+                            <th>Dosis</th>
+                            <th>Via de administración</th>
+                            <th>Frecuencia</th>
+                            <th>Dias de aplicación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-citas">
+                        <!-- Las citas se llenarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab2">
+            <h3>Tratamientos Completados</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre del medicamento</th>
+                            <th>Forma farmaceutica</th>
+                            <th>Concentración</th>
+                            <th>Dosis</th>
+                            <th>Via de administración</th>
+                            <th>Frecuencia</th>
+                            <th>Dias de aplicación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-citas">
+                        <!-- Las citas se llenarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+</div>
+<div class="bs2">
+    <button>Marcar como completada</button>
+    <a href="EX" class="exp">Consultar Expedientes</a>
+</div>
+<a href="index.html" class="salir">Salir</a>
+        
+</body>
+</html>

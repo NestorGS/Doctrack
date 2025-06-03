@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+            font-family: 'Sora', sans-serif;
+            background-color: #F2E6CF;
+        }
+        header{
+            display: flex;
+        }
+        .s1{
+            border-top-right-radius: 50px;
+            border-bottom-right-radius: 50px;
+            width: 50%;
+            background-color: #114c5f;
+            display: flex;
+            margin-top: 10px;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .s1 h1{
+            color: white;
+            font-size: 40px;
+        }
+        .s2{
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           color: #114c5f;
+           font-size: 25px;
+           margin: 20px; 
+        }
+        .sec1{
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 0px;
+        }
+        h3{
+            color: white;
+            width: 400px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+            background-color: #114c5f;
+        }
+        .bs{
+            display: flex;
+        }
+        .table-container {
+  overflow-x: auto;
+}
+.fondo{
+  background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
+  width: 180px;
+  height: 150px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border-radius: 20px; 
+  margin: 40px; 
+}
+.fondo a{
+    width: 80%;
+    height: 90%;
+    background-color: #9cd2d3;
+    border-radius: 20px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+p{
+    font-size: 20px;
+    color: #114c5f;
+}
+table {
+  border-collapse: collapse;
+  width: 80%;
+  min-width: 800px;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #a3cdd1; /* Azul verdoso suave */
+  color: #1b2b33;
+}
+
+thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+}
+
+tbody td {
+  padding: 12px 16px;
+  border-top: 1px solid #ddd;
+  color: #333;
+}
+.salir{
+  width: 20%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 40%;
+  background-color: #114c5f;
+  border-radius: 20px;
+}
+.salir {
+  color: white;
+}
+.salir:hover{
+  background-color: #9cd2d3;
+}
+</style>
+</head>
+<body>
+    <header>
+        <div class="s1">
+        <img src="img/Solo-Logo.png" alt="">
+        <h1>Bienvenido</h1>
+    </div>
+    <div class="s2">
+        <h2>¿Qué quieres hacer hoy?</h2>
+    </div>
+    </header>
+    <div class="bs">
+    <div class="sec1">
+        <div class="ban">
+            <h3>Paciente</h3>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre del paciente</th>
+                        <th>Fecha de la Cita</th>
+                        <th>Medico Asignado</th>
+                        <th>Motivo</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-citas">
+                    <!-- Las citas se llenarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="sec2">
+        <div class="fondo">
+            <a href="MPaciente.html" class="section2">
+            <p>Editar</p>
+            </a>
+          </div>
+          <div class="fondo">
+            <a href="EPaciente.html"class="section2">
+            <p>Eliminar</p>    
+            </a>
+      </div>
+    </div>
+</div>
+<a href="index.html" class="salir">Salir</a>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Debes iniciar sesión primero.");
+      return (window.location.href = "index.html");
+    }
+
+    const uid = user.uid;
+    const docRef = doc(db, "usuarios", uid);
+    const userDoc = await getDoc(docRef);
+
+    if (!userDoc.exists()) {
+      alert("Usuario no registrado.");
+      return (window.location.href = "index.html");
+    }
+
+    const rol = userDoc.data().rol;
+    const pagina = window.location.pathname;
+
+    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
+      return (window.location.href = "Paciente.html");
+    }
+
+    if (rol === "doctor" && !pagina.includes("Doctor.html")) {
+      return (window.location.href = "Doctor.html");
+    }
+  });
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  }
+</script>
+
+</body>
+</html>

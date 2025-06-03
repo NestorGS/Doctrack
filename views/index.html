@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="container-form">
+            <form action="" class="sign-in">
+                <h2>Inicia Sesion</h2>
+                <span>Ingresa Correo y Contraseña</span>
+                <div class="container-input">
+                    <ion-icon name="mail-open-outline"></ion-icon>
+                    <input type="text" placeholder="Escriba su correo electronico">
+                </div>
+                <div class="container-input">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="text" placeholder="Escriba su contraseña">
+                </div>
+                <button class="button">Iniciar Sesion</button><br>
+                <p><a href="recuperar.html">¿Olvidaste tu contraseña?</a></p><br>
+                <p>Eres administrador?<a href="Admin.html"> Da Click Aqui</a></p>
+            </form>
+        </div>
+        <div class="container-form">
+            <form action="" class="sign-up">
+                <h2>Registrarse</h2>
+                <span>Selecciona tu rol:</span>
+                <a href="doc.html" class="doc">Doctor</a>
+                <a href="Pac.html" class="pac"><p>Paciente</p></a>
+            </form>
+        </div>
+
+        <div class="container-welcome">
+            <div class="welcome-sign-up welcome">
+                <h3>¡Bienvenidos!</h3>
+                <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="">
+                <button class="button" id="btn-sign-up">Registrarse</button>
+            </div>
+            <div class="welcome-sign-in welcome">
+                <h3>¡Hola, Registrate!</h3>
+                <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="">
+                <button class="button" id="btn-sign-in">Iniciar Sesion</button>
+            </div>
+        </div>
+
+    </div>
+    <script src="js/script.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+<script src="js/index.js"></script>
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.querySelector(".sign-in");
+    const emailInput = loginForm.querySelector("input[type='email']");
+    const passwordInput = loginForm.querySelector("input[type='password']");
+    const loginButton = loginForm.querySelector(".button");
+
+    loginButton.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      if (!email || !password) return alert("Llena todos los campos");
+
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        const userDoc = await getDoc(doc(db, "usuarios", cred.user.uid));
+
+        if (userDoc.exists()) {
+          const rol = userDoc.data().rol;
+          if (rol === "doctor") {
+            window.location.href = "Doctor.html";
+          } else if (rol === "paciente") {
+            window.location.href = "Paciente.html";
+          } else {
+            alert("Rol no definido.");
+          }
+        } else {
+          alert("Usuario sin información adicional.");
+        }
+      } catch (error) {
+        alert("Error al iniciar sesión: " + error.message);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Sesión activa:", user.email);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

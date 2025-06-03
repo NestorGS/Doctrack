@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Consultar Historial</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
+      color: #fff;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 80px;
+      margin-right: 10px;
+    }
+
+    .logo span {
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .container {
+      background: white;
+      color: black;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    h2 {
+      background: #9cd2d3;
+      height: 40px;
+      border-radius: 10px;
+      text-align: center;
+      width: 100%;
+      margin: 0px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .section-title {
+      background: #9cd2d3;
+      padding: 5px 10px;
+      border-radius: 10px;
+      margin: 20px auto 10px;
+      text-align: center;
+      display: block;
+      width: fit-content;
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .field label {
+      width: 200px;
+      font-weight: bold;
+    }
+
+    .value {
+      flex: 1;
+      border: 1px solid #114c5f;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    .button {
+      background: #114c5f;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto 0;
+    }
+
+    .button:hover {
+      background: #114c5f;
+    }
+
+    .adjunto-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .button-small {
+      background: #114c5f;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .button-small:hover {
+      background: #114c5f;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="DocTrack logo">
+    </div>
+    <div class="consultar"><h1>Consultar Historiales</h1></div>
+  </div>
+  <div class="container">
+    <h2>Historial del Paciente</h2>
+
+    <span class="section-title">Ficha de Identificación</span>
+    <div class="field"><label>Estado Civil:</label><input type="text" name="estado_civil"></div>
+    <div class="field"><label>Sexo:</label><input type="text" name="sexo"></div>
+    <div class="field"><label>Edad:</label><input type="text" name="edad"></div>
+    <div class="field"><label>Escolaridad:</label><input type="text" name="escolaridad"></div>
+    <div class="field"><label>Religión:</label><input type="text" name="religion"></div>
+    <div class="field"><label>Descripción General:</label><input type="text" name="desc_general_id"></div>
+    <div class="field"><label>Ocupación:</label><input type="text" name="ocupacion"></div>
+    <div class="field"><label>Interrogatorio:</label><input type="text" name="interrogatorio"></div>
+
+    <span class="section-title">Antecedentes Heredofamiliares</span>
+    <div class="field"><label>Cáncer:</label><input type="text" name="cancer"></div>
+    <div class="field"><label>Nefropatías:</label><input type="text" name="nefropatias"></div>
+    <div class="field"><label>Enfermedades Mentales:</label><input type="text" name="mentales"></div>
+    <div class="field"><label>Neurológicas:</label><input type="text" name="neurologicas"></div>
+    <div class="field"><label>Hipertensión:</label><input type="text" name="hipertension"></div>
+    <div class="field"><label>Descripción General:</label><input type="text" name="desc_general_ah"></div>
+    <div class="field"><label>Cardiopatía:</label><input type="text" name="cardiopatia"></div>
+    <div class="field"><label>Convulsiones:</label><input type="text" name="convulsiones"></div>
+    <div class="field"><label>Dislipidemias:</label><input type="text" name="dislipidemias"></div>
+    <div class="field"><label>Patología Tiroidea:</label><input type="text" name="tiroidea"></div>
+
+    <span class="section-title">Antecedentes Personales No Patológicos</span>
+    <div class="field"><label>Baño Diario:</label><input type="text" name="bano_diario"></div>
+    <div class="field"><label>Situación Familiar:</label><input type="text" name="situacion_familiar"></div>
+    <div class="field"><label>Situación Laboral:</label><input type="text" name="situacion_laboral"></div>
+    <div class="field"><label>Aseo Bucal:</label><input type="text" name="aseo_bucal"></div>
+    <div class="field"><label>Tabaquismo:</label><input type="text" name="tabaquismo"></div>
+    <div class="field"><label>Alcoholismo:</label><input type="text" name="alcoholismo"></div>
+    <div class="field"><label>Fecha De Registro:</label><input type="text" name="fecha_registro"></div>
+
+    <span class="section-title">Exploración Física</span>
+    <div class="field"><label>Temperatura:</label><input type="text" name="temperatura"></div>
+    <div class="field"><label>Peso:</label><input type="text" name="peso"></div>
+    <div class="field"><label>Tensión Arterial:</label><input type="text" name="tension_arterial"></div>
+    <div class="field"><label>Frecuencia Cardíaca:</label><input type="text" name="frecuencia_cardiaca"></div>
+    <div class="field"><label>Frecuencia Respiratoria:</label><input type="text" name="frecuencia_respiratoria"></div>
+    <div class="field"><label>Descripción del Examen:</label><input type="text" name="desc_examen"></div>
+    <div class="field"><label>Talla:</label><input type="text" name="talla"></div>
+
+    <div class="adjunto-container">
+      <button class="button-small">Archivo Adjunto</button>
+    </div>
+
+    <a class="button" href="NotaSub.html">AGREGAR NOTA SUBSECUENTE</a>
+    <button class="button">Guardar</button>
+  </div>
+  <a href="Historial.html">Regresar</a>
+  <script src="js/cohistorial.js"></script>
+</body>
+
+</html>

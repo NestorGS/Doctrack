@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paciente-Principal</title>
+    <style>
+        
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #F2E6CF;
+    font-family: "Sora", sans-serif;
+}
+
+header {
+    background-color: #114c5f;
+    margin: 10px;
+    border-radius: 20px;
+}
+
+.head {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+
+.head img {
+    width: 80px;
+    height: auto;
+    margin-left: 40px;
+}
+.head h1{
+  color: white;
+    font-size: 25px;
+    margin: 0 40px;
+    transition: color 0.3s ease;
+
+}
+.head h2 {
+    color: white;
+    font-size: 20px;
+    margin: 0 40px;
+    transition: color 0.3s ease;
+
+}
+.head h2:hover{
+    color: #91CBD6;
+}
+.tex {
+    display: flex;
+}
+a {
+    text-decoration: none;
+}
+.bs{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: left;
+}
+.sec1{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.sec1 input{
+    width: 50%;
+    height: 100px;
+    margin: 20px;
+    border: none;
+    background-color: #9cd2d3;
+    color: #114c5f;
+    border-radius: 20px;
+}
+.sec2{
+    display: flex;
+    justify-content: center;
+    width: 50%;
+    flex-direction: column;
+    align-items: center;
+}
+ h3{
+    color: #114c5f;
+    font-size: 30px;
+    margin: 10px;
+}
+textarea{
+    font-size: 20px;
+    border-color: #114c5f;
+    border-radius: 20px;
+    height: 300px;
+    width: 60%;
+}
+form{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+button{
+    border: none;
+    background-color: #114c5f;
+    color: white;
+    width: 20%;
+    height: 40px;
+    margin: 20px;
+    border-radius: 20px;
+}
+.salir{
+    width: 20%;
+    height: 50px;
+    display: flex;
+    margin: 20px;
+    margin-left: 40%;
+    justify-content: center;
+    align-items: center;
+    background-color: #114c5f;
+    border-radius: 20px;
+  }
+  .salir {
+    color: white;
+  }
+  .salir:hover{
+    background-color: #9cd2d3;
+  } 
+  @media(max-width: 910px){
+    .bs{
+        flex-direction: column;
+    }
+    .head{
+        flex-direction: column;
+    }
+    .tex{
+        flex-direction: column;
+    }
+  }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="head">
+            <div class="Ima">
+                <img src="img/Solo-Logo.png" alt="">
+            </div>
+            <div class="tex">
+              <h1>Bienvenido Doctor</h1>
+              <a href="Paciente.html"><h2 class="hov">Pagina-Principal</h2></a>
+              <h2 class="un">Pedir una Cita</h2>
+                <a href="Seg.html"><h2>Seguimiento</h2></a>
+            </div>
+        </div>
+    </header>
+    <div class="bs">
+        <div class="sec1">
+            <form action="">
+                <h3>Horarios:</h3>
+            <input type="datetime-local" name="" id="">
+        </div>
+        <div class="sec2">
+            <h3>Motivo de la Cita</h3>
+            <textarea name="" id=""></textarea>
+            <button type="submit">Aceptar</button>
+        </form>
+            
+    </div>
+    
+    
+</div>
+<a href="index.html" class="salir">Salir</a>
+<script src="js/cita.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Debes iniciar sesión primero.");
+      return (window.location.href = "index.html");
+    }
+
+    const uid = user.uid;
+    const docRef = doc(db, "usuarios", uid);
+    const userDoc = await getDoc(docRef);
+
+    if (!userDoc.exists()) {
+      alert("Usuario no registrado.");
+      return (window.location.href = "index.html");
+    }
+
+    const rol = userDoc.data().rol;
+    const pagina = window.location.pathname;
+
+    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
+      return (window.location.href = "Paciente.html");
+    }
+
+    if (rol === "doctor" && !pagina.includes("Doctor.html")) {
+      return (window.location.href = "Doctor.html");
+    }
+  });
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  }
+</script>
+
+</body>
+</html>

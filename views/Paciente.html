@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paciente-Principal</title>
+    <link rel="stylesheet" href="css/Paciente.css">
+</head>
+<body>
+    <header>
+        <div class="head">
+            <div class="Ima">
+                <img src="img/Solo-Logo.png" alt="">
+            </div>
+            <div class="tex">
+              <h1>Bienvenido Doctor</h1>
+                <h2 class="un">Pagina-Principal</h2>
+                <a href="Cita.html"><h2 class="hov">Pedir una Cita</h2></a>
+                <a href="Seg.html"><h2>Seguimiento</h2></a>
+            </div>
+        </div>
+    </header>
+    <div class="bs">
+        <div class="sec1">
+            <a href="" class="chat">Consultar Chat</a>
+            <a href="index.html" class="salir">Salir</a>
+        </div>
+        <div class="sec2">
+            <div class="sec2-1">
+                <p>Tratamiento</p>
+                <p>Hora de tratamiento</p>
+                <p>Proxima cita</p>
+                <p>Medico correspondiente</p>
+            </div>
+            <div class="sec2-2">
+                <div class="trat"></div>
+                <div class="hor"></div>
+                <div class="prox"></div>
+                <div class="med"></div>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Debes iniciar sesión primero.");
+      return (window.location.href = "index.html");
+    }
+
+    const uid = user.uid;
+    const docRef = doc(db, "usuarios", uid);
+    const userDoc = await getDoc(docRef);
+
+    if (!userDoc.exists()) {
+      alert("Usuario no registrado.");
+      return (window.location.href = "index.html");
+    }
+
+    const rol = userDoc.data().rol;
+    const pagina = window.location.pathname;
+
+    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
+      return (window.location.href = "Paciente.html");
+    }
+
+    if (rol === "doctor" && !pagina.includes("Doctor.html")) {
+      return (window.location.href = "Doctor.html");
+    }
+  });
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  }
+</script>
+
+</body>
+</html>
