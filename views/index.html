@@ -15,11 +15,11 @@
                 <span>Ingresa Correo y Contraseña</span>
                 <div class="container-input">
                     <ion-icon name="mail-open-outline"></ion-icon>
-                    <input type="text" placeholder="Escriba su correo electronico">
+                    <input type="email" placeholder="Escriba su correo electrónico" id="email">
                 </div>
                 <div class="container-input">
                     <ion-icon name="lock-closed-outline"></ion-icon>
-                    <input type="text" placeholder="Escriba su contraseña">
+                    <input type="password" placeholder="Escriba su contraseña" id="password">
                 </div>
                 <button class="button">Iniciar Sesion</button><br>
                 <p><a href="recuperar.html">¿Olvidaste tu contraseña?</a></p><br>
@@ -59,24 +59,27 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
     getAuth,
-    signInWithEmailAndPassword,
-    onAuthStateChanged
+    signInWithEmailAndPassword
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
     getFirestore,
     doc,
-    getDoc
+    getDoc,
+    collection,
+    query,
+    where,
+    getDocs
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
- const firebaseConfig = {
-  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-  authDomain: "doctrack-46fc2.firebaseapp.com",
-  projectId: "doctrack-46fc2",
-  storageBucket: "doctrack-46fc2.firebasestorage.app",
-  messagingSenderId: "865552814891",
-  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-  measurementId: "G-XQPNKXK08Y"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.firebasestorage.app",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -94,29 +97,29 @@
       if (!email || !password) return alert("Llena todos los campos");
 
       try {
-        const cred = await signInWithEmailAndPassword(auth, email, password);
-        const userDoc = await getDoc(doc(db, "usuarios", cred.user.uid));
+              // Primero intenta buscar en 'doctores'
+        const docRef = doc(db, "doctores", cred.user.uid);
+        const docSnap = await getDoc(docRef);
 
-        if (userDoc.exists()) {
-          const rol = userDoc.data().rol;
-          if (rol === "doctor") {
-            window.location.href = "Doctor.html";
-          } else if (rol === "paciente") {
+        if (docSnap.exists()) {
+          window.location.href = "Doctor.html";
+        } else {
+          // Si no es doctor, intenta en 'pacientes'
+          const pacRef = doc(db, "pacientes", cred.user.uid);
+          const pacSnap = await getDoc(pacRef);
+
+          if (pacSnap.exists()) {
             window.location.href = "Paciente.html";
           } else {
-            alert("Rol no definido.");
+            alert("El usuario no está registrado como doctor ni paciente.");
           }
-        } else {
-          alert("Usuario sin información adicional.");
         }
+
+
+        // Si no se encontró en ninguna colección
+        alert("Tu cuenta no está asociada correctamente en la base de datos.");
       } catch (error) {
         alert("Error al iniciar sesión: " + error.message);
-      }
-    });
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("Sesión activa:", user.email);
       }
     });
   });
