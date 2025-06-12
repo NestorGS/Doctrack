@@ -148,12 +148,13 @@
 
     try {
       const cred = await createUserWithEmailAndPassword(auth, correo, password);
-      await setDoc(doc(db, "usuarios", cred.user.uid), {
+      await setDoc(doc(db, "doctores", cred.user.uid), {
         nombre,
-        paterno,
-        materno,
+        ap_paterno: paterno,
+        ap_materno: materno,
         cedula,
         correo,
+        contraseña: password,
         especialidad,
         rol: "doctor"
       });

@@ -38,9 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (errores.length > 0) {
       e.preventDefault(); // Evita acción si hay errores
       alert("Corrige los siguientes errores:\n\n" + errores.join("\n"));
-    } else {
-      alert("Registro exitoso (simulado).");
-      // Aquí podrías enviar el formulario o hacer lógica adicional
     }
   });
 });

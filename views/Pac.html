@@ -15,19 +15,19 @@
         <div class="formu">
         <button class="info-button" onclick="toggleForm()">Información Personal</button>
         <div class="form-container" id="formPersonal">
-            <input type="text" placeholder="Nombre(s)">
-            <input type="text" placeholder="Apellido Paterno">
-            <input type="text" placeholder="Apellido Materno">
-            <input type="text" placeholder="CURP">
-            <input type="date" placeholder="Fecha de Nacimiento">
-        </div>
-    </div>
-    <div class="cont">
-        <input type="password" placeholder="Contraseña">
-        <input type="password" placeholder="Confirmar Contraseña">
-        <button class="btn">Registrarse</button><br>
+           <input type="text" id="nombre" placeholder="Nombre(s)">
+<input type="text" id="paterno" placeholder="Apellido Paterno">
+<input type="text" id="materno" placeholder="Apellido Materno">
+<input type="text" id="curp" placeholder="CURP">
+<input type="date" id="nacimiento" placeholder="Fecha de Nacimiento">
+<input type="email" id="correo" placeholder="Correo Electrónico">
+<input type="password" id="password" placeholder="Contraseña">
+<input type="password" id="confirmar" placeholder="Confirmar Contraseña">
+<button class="btn" id="registrarBtn">Registrarse</button>
+
+        
         <a href="Paciente.html">Boton para usar mientras se programa</a>
-    </div>
+   
     </div>
     <a href="index.html">
     <div class="reg">
@@ -133,23 +133,23 @@
 
 
     try {
-      const cred = await createUserWithEmailAndPassword(auth, correo, password);
-      await setDoc(doc(db, "usuarios", cred.user.uid), {
-        nombre,
-        paterno,
-        materno,
-        curp,
-        nacimiento,
-        correo,
-        rol: "paciente"
-      });
+  const cred = await createUserWithEmailAndPassword(auth, correo, password);
+  await setDoc(doc(db, "usuarios", cred.user.uid), {
+    nombre,
+    paterno,
+    materno,
+    curp,
+    nacimiento,
+    correo,
+    rol: "paciente"
+  });
 
-      alert("Registro exitoso.");
-      window.location.href = "Paciente.html";
-    } catch (error) {
-      alert("Error al registrar: " + error.message);
-    }
-  
+  alert("Registro exitoso.");
+  window.location.href = "Paciente.html";
+} catch (error) {
+  alert("Error al registrar: " + error.message);
+}
+
 </script>
 
 </body>
