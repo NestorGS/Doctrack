@@ -363,19 +363,41 @@ select{
     getDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID
+ const firebaseConfig = {
+  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+  authDomain: "doctrack-46fc2.firebaseapp.com",
+  projectId: "doctrack-46fc2",
+  storageBucket: "doctrack-46fc2.firebasestorage.app",
+  messagingSenderId: "865552814891",
+  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+  measurementId: "G-XQPNKXK08Y"
 };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+
+   // Función para cargar pacientes
+  async function cargarPacientes() {
+    const select = document.getElementById("pacientesSelect");
+    select.innerHTML = `<option value="">Pacientes</option>`; // limpiar opciones
+
+    try {
+      const querySnapshot = await getDocs(collection(db, "pacientes"));
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const option = document.createElement("option");
+        option.value = doc.id; // o data.CURP si prefieres
+        option.textContent = data.nombre || "Paciente sin nombre";
+        select.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Error al cargar pacientes:", error);
+    }
+  }
+
+  // Ejecutar al cargar la página
+  cargarPacientes();
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -403,6 +425,8 @@ select{
       return (window.location.href = "Doctor.html");
     }
   });
+
+ 
 
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {

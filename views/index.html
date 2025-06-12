@@ -21,7 +21,7 @@
                     <ion-icon name="lock-closed-outline"></ion-icon>
                     <input type="password" placeholder="Escriba su contraseña" id="password">
                 </div>
-                <button class="button">Iniciar Sesion</button><br>
+                <button type="button" class="button">Iniciar Sesion</button>
                 <p><a href="recuperar.html">¿Olvidaste tu contraseña?</a></p><br>
                 <p>Eres administrador?<a href="Admin.html"> Da Click Aqui</a></p>
             </form>
@@ -88,27 +88,35 @@
     const passwordInput = loginForm.querySelector("input[type='password']");
     const loginButton = loginForm.querySelector(".button");
 
-    loginButton.addEventListener("click", async () => {
+    loginButton.addEventListener("click", async (e) => {
+  e.preventDefault();
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
       if (!email || !password) return alert("Llena todos los campos");
 
       try {
         const cred = await signInWithEmailAndPassword(auth, email, password);
-        const userDoc = await getDoc(doc(db, "usuarios", cred.user.uid));
+        let rol = null;
 
-        if (userDoc.exists()) {
-          const rol = userDoc.data().rol;
-          if (rol === "doctor") {
-            window.location.href = "Doctor.html";
-          } else if (rol === "paciente") {
-            window.location.href = "Paciente.html";
-          } else {
-            alert("Rol no definido.");
-          }
-        } else {
-          alert("Usuario sin información adicional.");
-        }
+const docUsuario = await getDoc(doc(db, "usuarios", cred.user.uid));
+if (docUsuario.exists()) {
+  rol = docUsuario.data().rol;
+} else {
+  const docDoctor = await getDoc(doc(db, "doctores", cred.user.uid));
+  if (docDoctor.exists()) {
+    rol = "doctor"; // Puedes extraer más campos si los necesitas
+  }
+}
+
+
+   if (rol === "paciente") {
+  window.location.href = "Paciente.html";
+} else if (rol === "doctor") {
+  window.location.href = "Doctor.html";
+} else {
+  alert("Rol no definido o usuario no registrado correctamente.");
+}
+
       } catch (error) {
         alert("Error al iniciar sesión: " + error.message);
       }
