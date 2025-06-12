@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.querySelector(".sign-in");
-  const emailInput = loginForm.querySelector('input[placeholder*="correo"]');
-  const passwordInput = loginForm.querySelector('input[placeholder*="contraseña"]');
+ const emailInput = document.getElementById("email");
+ const passwordInput = document.getElementById("password");
   const loginButton = loginForm.querySelector(".button");
 
   function contieneCaracteresPeligrosos(texto) {

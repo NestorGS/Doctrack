@@ -16,11 +16,11 @@
         <button class="info-button" onclick="toggleForm()">Información Personal</button>
         
         <div class="form-container" id="formPersonal">
-            <input type="text" placeholder="Nombre(s)">
-            <input type="text" placeholder="Apellido Paterno">
-            <input type="text" placeholder="Apellido Materno">
-            <input type="email" placeholder="Correo electronico">
-            <input type="text" placeholder="Cedula o Matricula">
+            <input id="nombre" type="text" placeholder="Nombre(s)">
+            <input id="paterno" type="text" placeholder="Apellido Paterno">
+            <input id="materno" type="text" placeholder="Apellido Materno">
+            <input id="correo" type="email" placeholder="Correo electronico">
+            <input id="cedula" type="text" placeholder="Cedula o Matricula">
             <select id="especialidad" name="especialidad" class="esp">
                 <option value="ninguna">Ninguna</option>
                 <option value="medicina_interna">Medicina Interna</option>
@@ -70,9 +70,9 @@
         </div>
     </div>
     <div class="cont">
-        <input type="password" placeholder="Contraseña">
-        <input type="password" placeholder="Confirmar Contraseña">
-        <button class="btn">Registrarse</button><br>
+        <input id="password" type="password" placeholder="Contraseña">
+        <input id="confirmar"type="password" placeholder="Confirmar Contraseña">
+        <button id="registrarBtn" class="btn">Registrarse</button><br>
         <a href="Doctor.html">Boton mientras se programa</a>
     </div>
     </div>
@@ -114,15 +114,16 @@
     setDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-   const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID
+ const firebaseConfig = {
+  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+  authDomain: "doctrack-46fc2.firebaseapp.com",
+  projectId: "doctrack-46fc2",
+  storageBucket: "doctrack-46fc2.firebasestorage.app",
+  messagingSenderId: "865552814891",
+  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+  measurementId: "G-XQPNKXK08Y"
 };
+
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
