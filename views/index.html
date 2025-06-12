@@ -122,12 +122,34 @@ if (docUsuario.exists()) {
       }
     });
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("Sesión activa:", user.email);
+    onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      // Primero intentamos buscar en 'usuarios'
+      const docUsuario = await getDoc(doc(db, "usuarios", user.uid));
+      if (docUsuario.exists()) {
+        window.location.href = "Paciente.html";
+        return;
       }
-    });
-  });
+
+      // Si no existe en 'usuarios', buscamos en 'doctores'
+      const docDoctor = await getDoc(doc(db, "doctores", user.uid));
+      if (docDoctor.exists()) {
+        window.location.href = "Doctor.html";
+        return;
+      }
+
+      // Si no existe en ninguna colección
+      alert("Usuario no registrado.");
+      await auth.signOut();
+    } catch (error) {
+      console.error("Error comprobando sesión:", error);
+      await auth.signOut();
+    }
+  }
+});
+});
+
 </script>
 
 </body>
