@@ -54,28 +54,24 @@
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <script src="js/index.js"></script>
 
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
     getAuth,
-    signInWithEmailAndPassword
+    signInWithEmailAndPassword,
+    onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
     getFirestore,
     doc,
-    getDoc,
-    collection,
-    query,
-    where,
-    getDocs
+    getDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
     authDomain: "doctrack-46fc2.firebaseapp.com",
     projectId: "doctrack-46fc2",
-    storageBucket: "doctrack-46fc2.firebasestorage.app",
+    storageBucket: "doctrack-46fc2.appspot.com",
     messagingSenderId: "865552814891",
     appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
     measurementId: "G-XQPNKXK08Y"
@@ -86,44 +82,57 @@
   const db = getFirestore(app);
 
   document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.querySelector(".sign-in");
-    const emailInput = loginForm.querySelector("input[type='email']");
-    const passwordInput = loginForm.querySelector("input[type='password']");
-    const loginButton = loginForm.querySelector(".button");
+    const emailInput = document.querySelector("#email");
+    const passwordInput = document.querySelector("#password");
+    const loginButton = document.querySelector(".sign-in .button");
 
-    loginButton.addEventListener("click", async () => {
+    loginButton.addEventListener("click", async (e) => {
+      e.preventDefault();
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
+
       if (!email || !password) return alert("Llena todos los campos");
 
       try {
-              // Primero intenta buscar en 'doctores'
-        const docRef = doc(db, "doctores", cred.user.uid);
-        const docSnap = await getDoc(docRef);
+        const credentials = await signInWithEmailAndPassword(auth, email, password);
+        const uid = credentials.user.uid;
 
-        if (docSnap.exists()) {
+        const usuarioSnap = await getDoc(doc(db, "usuarios", uid));
+        const doctorSnap = await getDoc(doc(db, "doctores", uid));
+
+        if (usuarioSnap.exists()) {
+          window.location.href = "Paciente.html";
+        } else if (doctorSnap.exists()) {
           window.location.href = "Doctor.html";
         } else {
-          // Si no es doctor, intenta en 'pacientes'
-          const pacRef = doc(db, "pacientes", cred.user.uid);
-          const pacSnap = await getDoc(pacRef);
-
-          if (pacSnap.exists()) {
-            window.location.href = "Paciente.html";
-          } else {
-            alert("El usuario no está registrado como doctor ni paciente.");
-          }
+          alert("Usuario no registrado en la base de datos.");
+          await auth.signOut();
         }
-
-
-        // Si no se encontró en ninguna colección
-        alert("Tu cuenta no está asociada correctamente en la base de datos.");
       } catch (error) {
         alert("Error al iniciar sesión: " + error.message);
       }
     });
+
+    // Validación de sesión activa en ambas colecciones
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const usuarioSnap = await getDoc(doc(db, "usuarios", user.uid));
+          const doctorSnap = await getDoc(doc(db, "doctores", user.uid));
+
+          if (!usuarioSnap.exists() && !doctorSnap.exists()) {
+            alert("Usuario no registrado en la base de datos.");
+            await auth.signOut();
+          }
+        } catch (err) {
+          console.error("Error comprobando sesión:", err);
+          await auth.signOut();
+        }
+      }
+    });
   });
 </script>
+
 
 </body>
 </html>

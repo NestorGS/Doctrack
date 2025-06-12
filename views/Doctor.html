@@ -406,7 +406,7 @@ select{
     }
 
     const uid = user.uid;
-    const docRef = doc(db, "usuarios", uid);
+    const docRef = doc(db, "usuarios","doctores", uid);
     const userDoc = await getDoc(docRef);
 
     if (!userDoc.exists()) {
