@@ -21,7 +21,7 @@
                     <ion-icon name="lock-closed-outline"></ion-icon>
                     <input type="password" placeholder="Escriba su contraseña" id="password">
                 </div>
-                <button type="button" class="button">Iniciar Sesion</button>
+                <button class="button">Iniciar Sesion</button><br>
                 <p><a href="recuperar.html">¿Olvidaste tu contraseña?</a></p><br>
                 <p>Eres administrador?<a href="Admin.html"> Da Click Aqui</a></p>
             </form>
@@ -68,15 +68,15 @@
     getDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
- const firebaseConfig = {
-  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-  authDomain: "doctrack-46fc2.firebaseapp.com",
-  projectId: "doctrack-46fc2",
-  storageBucket: "doctrack-46fc2.firebasestorage.app",
-  messagingSenderId: "865552814891",
-  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-  measurementId: "G-XQPNKXK08Y"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -89,68 +89,59 @@
     const loginButton = loginForm.querySelector(".button");
 
     loginButton.addEventListener("click", async (e) => {
-  e.preventDefault();
+      e.preventDefault();
       const email = emailInput.value.trim();
       const password = passwordInput.value.trim();
       if (!email || !password) return alert("Llena todos los campos");
 
       try {
         const cred = await signInWithEmailAndPassword(auth, email, password);
-        let rol = null;
+        const uid = cred.user.uid;
 
-const docUsuario = await getDoc(doc(db, "usuarios", cred.user.uid));
-if (docUsuario.exists()) {
-  rol = docUsuario.data().rol;
-} else {
-  const docDoctor = await getDoc(doc(db, "doctores", cred.user.uid));
-  if (docDoctor.exists()) {
-    rol = "doctor"; // Puedes extraer más campos si los necesitas
-  }
-}
+        // Buscar primero en 'usuarios'
+        const userDoc = await getDoc(doc(db, "usuarios", uid));
+        if (userDoc.exists()) {
+          window.location.href = "Paciente.html";
+          return;
+        }
 
+        // Si no está, buscar en 'doctores'
+        const doctorDoc = await getDoc(doc(db, "doctores", uid));
+        if (doctorDoc.exists()) {
+          window.location.href = "Doctor.html";
+          return;
+        }
 
-   if (rol === "paciente") {
-  window.location.href = "Paciente.html";
-} else if (rol === "doctor") {
-  window.location.href = "Doctor.html";
-} else {
-  alert("Rol no definido o usuario no registrado correctamente.");
-}
-
+        // Si no está en ninguna colección
+        alert("Usuario no registrado correctamente.");
+        await auth.signOut();
       } catch (error) {
         alert("Error al iniciar sesión: " + error.message);
       }
     });
 
+    // Sesión persistente: redirige si ya está logueado
     onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    try {
-      // Primero intentamos buscar en 'usuarios'
-      const docUsuario = await getDoc(doc(db, "usuarios", user.uid));
-      if (docUsuario.exists()) {
-        window.location.href = "Paciente.html";
-        return;
+      if (user) {
+        const uid = user.uid;
+        const userDoc = await getDoc(doc(db, "usuarios", uid));
+        if (userDoc.exists()) {
+          window.location.href = "Paciente.html";
+          return;
+        }
+
+        const doctorDoc = await getDoc(doc(db, "doctores", uid));
+        if (doctorDoc.exists()) {
+          window.location.href = "Doctor.html";
+          return;
+        }
+
+        await auth.signOut();
       }
-
-      // Si no existe en 'usuarios', buscamos en 'doctores'
-      const docDoctor = await getDoc(doc(db, "doctores", user.uid));
-      if (docDoctor.exists()) {
-        window.location.href = "Doctor.html";
-        return;
-      }
-
-      // Si no existe en ninguna colección
-      alert("Usuario no registrado.");
-      await auth.signOut();
-    } catch (error) {
-      console.error("Error comprobando sesión:", error);
-      await auth.signOut();
-    }
-  }
-});
-});
-
+    });
+  });
 </script>
+
 
 </body>
 </html>
