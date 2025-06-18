@@ -62,76 +62,108 @@
   import {
     getFirestore,
     doc,
-    setDoc
+    setDoc,
+    updateDoc,
+    getDocs,
+    getDoc,
+    collection
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
- const firebaseConfig = {
-  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-  authDomain: "doctrack-46fc2.firebaseapp.com",
-  projectId: "doctrack-46fc2",
-  storageBucket: "doctrack-46fc2.firebasestorage.app",
-  messagingSenderId: "865552814891",
-  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-  measurementId: "G-XQPNKXK08Y"
-};
-
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.firebasestorage.app",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
   document.getElementById("registrarBtn").addEventListener("click", async () => {
-  const nombre = document.getElementById("nombre").value.trim();
-  const paterno = document.getElementById("paterno").value.trim();
-  const materno = document.getElementById("materno").value.trim();
-  const curp = document.getElementById("curp").value.trim();
-  const nacimiento = document.getElementById("nacimiento").value.trim();
-  const correo = document.getElementById("correo").value.trim();
-  const password = document.getElementById("password").value;
-  const confirmar = document.getElementById("confirmar").value;
+    const nombre = document.getElementById("nombre").value.trim();
+    const paterno = document.getElementById("paterno").value.trim();
+    const materno = document.getElementById("materno").value.trim();
+    const curp = document.getElementById("curp").value.trim();
+    const nacimiento = document.getElementById("nacimiento").value.trim();
+    const correo = document.getElementById("correo").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmar = document.getElementById("confirmar").value;
 
-  const curpRegex = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]{2}$/;
+    const curpRegex = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]{2}$/;
 
-  if (!nombre || !paterno || !materno || !curp || !nacimiento || !correo || !password || !confirmar) {
-    return alert("Todos los campos son obligatorios.");
-  }
+    if (!nombre || !paterno || !materno || !curp || !nacimiento || !correo || !password || !confirmar) {
+      return alert("Todos los campos son obligatorios.");
+    }
 
-  if (!curpRegex.test(curp)) {
-    return alert("CURP inválido. Asegúrate de que tenga el formato oficial (18 caracteres, en mayúsculas).");
-  }
+    if (!curpRegex.test(curp)) {
+      return alert("CURP inválido.");
+    }
 
-  const fechaNacimiento = new Date(nacimiento);
-  const hoy = new Date();
-  if (fechaNacimiento > hoy) {
-    return alert("La fecha de nacimiento no puede ser futura.");
-  }
+    const fechaNacimiento = new Date(nacimiento);
+    const hoy = new Date();
+    if (fechaNacimiento > hoy) {
+      return alert("La fecha de nacimiento no puede ser futura.");
+    }
 
-  if (password !== confirmar) {
-    return alert("Las contraseñas no coinciden.");
-  }
+    if (password !== confirmar) {
+      return alert("Las contraseñas no coinciden.");
+    }
 
-  try {
-    const cred = await createUserWithEmailAndPassword(auth, correo, password);
-    await setDoc(doc(db, "usuarios", cred.user.uid), {
-      nombre,
-      paterno,
-      materno,
-      curp,
-      nacimiento,
-      correo,
-      password,
-      rol: "paciente"
-    });
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, correo, password);
+      const pacienteID = cred.user.uid;
 
-    alert("Registro exitoso.");
-    window.location.href = "Paciente.html";
-  } catch (error) {
-    alert("Error al registrar: " + error.message);
-  }
-});
+      // 1️⃣ Obtener doctores disponibles
+      const doctoresSnap = await getDocs(collection(db, "doctores"));
+      const doctores = doctoresSnap.docs.map(doc => doc.id);
+      if (doctores.length === 0) throw new Error("No hay doctores disponibles");
 
+      // 2️⃣ Leer índice global (config/global)
+      const configRef = doc(db, "config", "global");
+      const configSnap = await getDoc(configRef);
+      let lastIndex = 0;
+      if (configSnap.exists() && configSnap.data().lastDoctorAssignedIndex !== undefined) {
+        lastIndex = configSnap.data().lastDoctorAssignedIndex;
+      }
 
+      // 3️⃣ Calcular siguiente doctor
+      const nextIndex = (lastIndex + 1) % doctores.length;
+      const doctorID = doctores[nextIndex];
+
+      // 4️⃣ Guardar paciente con doctor asignado
+      await setDoc(doc(db, "usuarios", pacienteID), {
+        nombre,
+        paterno,
+        materno,
+        curp,
+        nacimiento,
+        correo,
+        password,
+        rol: "paciente",
+        assignedDoctor: doctorID
+      });
+
+      // 5️⃣ Agregar paciente al doctor
+      const doctorRef = doc(db, "doctores", doctorID);
+      await updateDoc(doctorRef, {
+        [`pacientes.${pacienteID}`]: true
+      });
+
+      // 6️⃣ Actualizar índice global
+      await setDoc(configRef, { lastDoctorAssignedIndex: nextIndex }, { merge: true });
+
+      alert("Registro exitoso.");
+      window.location.href = "Paciente.html";
+    } catch (error) {
+      alert("Error al registrar: " + error.message);
+    }
+  });
 </script>
+
 
 </body>
 </html>
