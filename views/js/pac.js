@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         });
     });
-
+    
     const form = document.querySelector("form");
     const inputs = form.querySelectorAll("input[type='text'], input[type='password'], input[type='date']");
     const [nombre, paterno, materno, curp, nacimiento, pass, confirmPass] = inputs;
