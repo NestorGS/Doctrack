@@ -163,60 +163,61 @@ button:hover{
     <div class="fondo">
         <div class="form-container">
             <form action="">
-                <h2>Datos Generales de la cita</h2>
-                <div class="s1">
-                    <div class="nom">
-                        <h3>1.Nombre del medicamento</h3>
-                        <input type="text" placeholder="Escribe el nombre del medicamento">
-                    </div>
-                    <div class="med">
-                        <h3>2.Nombre del paciente</h3>
-                        <input type="text" placeholder="Escribe el nombre del paciente">
-                    </div>
-                </div>
-                <div class="s1">
-                    <div class="nom">
-                        <h3>3.Forma farmaceutica.</h3>
-                        <select name="" id="">
-                            <option value="">Selecciona la forma</option>
-                            <option value="">Pomada</option>
-                            <option value="">Capsula</option>
-                            <option value="">Salinas</option>
-                            <option value="">jarabes</option>
-                        </select>
-                    </div>
-                    <div class="med">
-                        <h3>4.Dosis</h3>
-                        <input type="text" placeholder="Escribe la dosis">                       
-                    </div>
-                </div>
-                <div class="s1">
-                    <div class="nom">
-                        <h3>5.Via de administración</h3>
-                        <select name="" id="">
-                            <option value="">Selecciona la forma</option>
-                            <option value="">Orales</option>
-                            <option value="">Tópicas</option>
-                            <option value="">Parenterales</option>
-                            <option value="">Nasales</option>
-                        </select> 
-                  </div>
-                    <div class="med">
-                        <h3>6.Frecuencia</h3>
-                        <input type="text" placeholder="Escribe la Frecuencia">                       
-                    </div>
-                </div>
-                <div class="s1">
-                    <div class="nom">
-                        <h3>7.Concentración</h3>
-                        <input type="text" placeholder="Escribe la concentración">
-                    </div>
-                    <div class="med">
-                        <h3>8.Dias de aplicación</h3>
-                        <input type="text" placeholder="Escribe los dias de aplicacion">
-                    </div>
-                </div>
-                <button type="submit">Añadir</button>
+                 <h2>Datos Generales de la cita</h2>
+  <div class="s1">
+    <div class="nom">
+      <h3>1.Nombre del medicamento</h3>
+      <input type="text" id="medicamento" placeholder="Escribe el nombre del medicamento">
+    </div>
+    <div class="med">
+      <h3>2.Nombre del paciente</h3>
+      <input type="text" id="paciente" placeholder="Escribe el nombre del paciente">
+    </div>
+  </div>
+  <div class="s1">
+    <div class="nom">
+      <h3>3.Forma farmacéutica</h3>
+      <select id="forma">
+        <option value="">Selecciona la forma</option>
+        <option value="Pomada">Pomada</option>
+        <option value="Cápsula">Cápsula</option>
+        <option value="Salinas">Salinas</option>
+        <option value="Jarabe">Jarabe</option>
+      </select>
+    </div>
+    <div class="med">
+      <h3>4.Dosis</h3>
+      <input type="text" id="dosis" placeholder="Escribe la dosis">
+    </div>
+  </div>
+  <div class="s1">
+    <div class="nom">
+      <h3>5.Vía de administración</h3>
+      <select id="via">
+        <option value="">Selecciona la forma</option>
+        <option value="Orales">Orales</option>
+        <option value="Tópicas">Tópicas</option>
+        <option value="Parenterales">Parenterales</option>
+        <option value="Nasales">Nasales</option>
+      </select>
+    </div>
+    <div class="med">
+      <h3>6.Frecuencia</h3>
+      <input type="text" id="frecuencia" placeholder="Escribe la frecuencia">
+    </div>
+  </div>
+  <div class="s1">
+    <div class="nom">
+      <h3>7.Concentración</h3>
+      <input type="text" id="concentracion" placeholder="Escribe la concentración">
+    </div>
+    <div class="med">
+      <h3>8.Días de aplicación</h3>
+      <input type="text" id="dias" placeholder="Escribe los días de aplicación">
+    </div>
+  </div>
+  <button type="submit" id="btnGuardar">Añadir</button>
+</form>
             </form>
         </div>
     </div>
@@ -226,65 +227,57 @@ button:hover{
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-  import {
     getFirestore,
-    doc,
-    getDoc
+    collection,
+    addDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-   const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
 
   const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  const db = getFirestore(app); // <-- ¡IMPORTANTE!
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
+  document.getElementById("btnGuardar").addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const tratamiento = {
+      medicamento: document.getElementById("medicamento").value.trim(),
+      paciente: document.getElementById("paciente").value.trim(),
+      forma: document.getElementById("forma").value,
+      dosis: document.getElementById("dosis").value.trim(),
+      via: document.getElementById("via").value,
+      frecuencia: document.getElementById("frecuencia").value.trim(),
+      concentracion: document.getElementById("concentracion").value.trim(),
+      dias: document.getElementById("dias").value.trim(),
+      creado: new Date()
+    };
+
+    for (let key in tratamiento) {
+      if (!tratamiento[key]) {
+        return alert(`Falta llenar el campo: ${key}`);
+      }
     }
 
-    const uid = user.uid;
-    const docRef = doc(db, "usuarios", uid);
-    const userDoc = await getDoc(docRef);
-
-    if (!userDoc.exists()) {
-      alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
-    }
-
-    const rol = userDoc.data().rol;
-    const pagina = window.location.pathname;
-
-    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
-      return (window.location.href = "Paciente.html");
-    }
-
-    if (rol === "doctor" && !pagina.includes("Doctor.html")) {
-      return (window.location.href = "Doctor.html");
+    try {
+      await addDoc(collection(db, "tratamientos"), tratamiento);
+      alert("Tratamiento registrado correctamente.");
+      window.location.href = "Tratamiento.html";
+    } catch (error) {
+      console.error("Error al guardar:", error);
+      alert("Error al registrar el tratamiento.");
     }
   });
-
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
-    });
-  }
 </script>
+
+
 
 </body>
 </html>
