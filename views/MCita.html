@@ -168,22 +168,35 @@ button:hover{
                 <div class="s1">
                     <div class="nom">
                         <h3>1.Nombre del paciente</h3>
-                        <select name="" id="">
-                            <option value="">Mientras lo programan</option>
-                        </select> 
-                    </div>                   
+                        <div class="sele">
+                          <select name="" id="selectPacientes">
+                            <option value="" disabled selected>Pacientes</option>
+                          </select>
+                        </div>
+                    </div>    
                     <div class="med">
-                        <h3>2.Selecciona el campo</h3>
-                        <select name="" id="">
-                            <option value="">1</option>
-                            <option value="">2</option>
-                            <option value="">3</option>
-                        </select>
+                      <h3>2. Selecciona la cita a modificar</h3>
+                      <select id="selectCitas">
+                        <option disabled selected>Selecciona una cita</option>
+                      </select>
+                    </div>
+                    <div class="med">
+                        <h3>3.Selecciona el campo</h3>
+                   <select id="selectCampo">
+  <option disabled selected value="">Selecciona un campo</option>
+  <option value="motivo">Motivo</option>
+  <option value="fecha">Fecha y hora</option>
+</select>
                     </div>
                     <div class="ot">
-                        <h3>3.Dato nuevo</h3>
-                        <input type="text" placeholder="Ingresa el nuevo dato">               
+                        <h3>4.Dato nuevo</h3>
+                        <input type="text" placeholder="Ingresa el nuevo dato" id="nuevoDato">
                      </div>
+                     <div>
+                       <h3>Modificar fecha</h3>         
+                        <input type="datetime-local" id="nuevaFecha">
+   </div>
+                        <br>
                 </div>
                 <button type="submit">Modificar</button>
             </form>
@@ -192,6 +205,161 @@ button:hover{
     
     <a href="Doctor.html">Mientras se programa</a>
     <script src="js/Mcita.js"></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    updateDoc,
+    doc,
+    Timestamp
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain:        "doctrack-46fc2.firebaseapp.com",
+    projectId:         "doctrack-46fc2",
+    storageBucket:     "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId:             "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId:     "G-XQPNKXK08Y"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  const selectPacientes = document.getElementById("selectPacientes");
+  const selectCitas     = document.getElementById("selectCitas");
+  const selectCampo     = document.getElementById("selectCampo");
+  const inputNuevoDato  = document.getElementById("nuevoDato");
+  const inputNuevaFecha = document.getElementById("nuevaFecha");
+  const form            = document.querySelector("form");
+
+  let doctorId = null;
+  let citasPaciente = [];
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return (window.location.href = "index.html");
+    doctorId = user.uid;
+
+    const snap = await getDocs(
+      query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", doctorId)
+      )
+    );
+
+    selectPacientes.innerHTML =
+      `<option value="" disabled selected>Pacientes</option>`;
+
+    snap.forEach((p) => {
+      const d   = p.data();
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      opt.textContent = `${d.nombre} ${d.paterno} ${d.materno}`;
+      selectPacientes.appendChild(opt);
+    });
+  });
+
+  selectPacientes.addEventListener("change", async () => {
+    const pacienteId = selectPacientes.value;
+    if (!pacienteId) return;
+
+    const citasSnap = await getDocs(
+      query(
+        collection(db, "citas"),
+        where("doctorID", "==", doctorId),
+        where("pacienteId", "==", pacienteId)
+      )
+    );
+
+    citasPaciente = [];
+    selectCitas.innerHTML =
+      `<option value="" disabled selected>Selecciona una cita</option>`;
+
+    if (citasSnap.empty) {
+      alert("Este paciente no tiene citas registradas.");
+      return;
+    }
+
+    citasSnap.forEach((c) => {
+      const data = c.data();
+      if (!data.fechaCita || !(data.fechaCita instanceof Timestamp)) return;
+
+      const iso   = data.fechaCita.toDate().toISOString().slice(0, 16);
+      const opt   = document.createElement("option");
+      opt.value   = c.id;
+      opt.textContent = `${iso.replace("T", " ")} - ${data.motivo || "Sin motivo"}`;
+      selectCitas.appendChild(opt);
+
+      citasPaciente.push({ id: c.id, ...data });
+    });
+  });
+
+  selectCitas.addEventListener("change", () => {
+    const citaSel = citasPaciente.find((c) => c.id === selectCitas.value);
+    if (!citaSel) return;
+
+    inputNuevoDato.value  = citaSel.motivo || "";
+    inputNuevaFecha.value = citaSel.fechaCita
+      .toDate()
+      .toISOString()
+      .slice(0, 16);
+  });
+
+  form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const citaId = selectCitas.value;
+  if (!citaId) return alert("Selecciona una cita a modificar.");
+
+  const campo = selectCampo.value;
+  const nuevoTexto  = inputNuevoDato.value.trim();
+  const nuevaFechaV = inputNuevaFecha.value;
+
+  const cambios = {};
+
+  if (campo === "motivo") {
+    if (!nuevoTexto) return alert("Ingresa el nuevo motivo.");
+    cambios.motivo = nuevoTexto;
+  }
+
+  if (campo === "fecha") {
+    if (!nuevaFechaV) return alert("Selecciona la nueva fecha.");
+    const nuevaFecha = new Date(nuevaFechaV);
+    if (isNaN(nuevaFecha.getTime())) return alert("Fecha inválida.");
+    cambios.fechaCita = Timestamp.fromDate(nuevaFecha);
+  }
+
+  if (Object.keys(cambios).length === 0) {
+    return alert("No se ingresaron cambios.");
+  }
+
+  try {
+    const citaRef = doc(db, "citas", citaId);
+    console.log("Actualizando:", citaId, cambios); // Debug
+    await updateDoc(citaRef, cambios);
+    alert("Cita actualizada correctamente.");
+    window.location.href = "Doctor.html";
+  } catch (err) {
+    console.error("Error al actualizar cita:", err);
+    alert("Error al modificar la cita.");
+  }
+});
+
+</script>
+
+
+
+
+
 
 </body>
 </html>

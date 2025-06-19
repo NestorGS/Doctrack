@@ -308,26 +308,20 @@ select{
                     </a>
                   </div>
                   <div class="fondo">
-                    <a href="ECita.html"class="section2">
-                    <p>Eliminar</p>    
+                    <a href="MCita.html" class="section2">
+                    <p>Modificar</p>
                     </a>
-              </div>
-              <div class="fondo">
-                <a href="MCita.html" class="section2">
-                  <p>Modificar</p>
-                </a>
-          </div>
-          </div>
+                  </div>
+    </div>
         <div class="tabla">
           <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Nombre del paciente</th>
-                        <th>Fecha de la Cita</th>
-                        
-                        <th>Motivo</th>
+                        <th>Fecha y Hora de la Cita</th>  
+                        <th>Motivo</th>  
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody id="tabla-citas">
@@ -342,13 +336,14 @@ select{
       <a href="Nota.html">Notas</a>
     </div>
     <div class="sele">
-      <select name="" id="">
-        <option value="">Pacientes</option>
-      </select>
+        <select name="" id="selectPacientes">
+          <option value="" disabled selected>Pacientes</option>
+        </select>
     </div>
       <a href="index.html" class="salir">Salir</a>
   </div>
 </div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
@@ -358,34 +353,166 @@ select{
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
     getFirestore,
-    doc,
-    getDoc
+    collection,
+    query,
+    where,
+    getDocs,
+    deleteDoc,
+    doc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
- const firebaseConfig = {
-  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-  authDomain: "doctrack-46fc2.firebaseapp.com",
-  projectId: "doctrack-46fc2",
-  storageBucket: "doctrack-46fc2.firebasestorage.app",
-  messagingSenderId: "865552814891",
-  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-  measurementId: "G-XQPNKXK08Y"
-};
+  /* ───────── CONFIG FIREBASE ───────── */
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain:        "doctrack-46fc2.firebaseapp.com",
+    projectId:         "doctrack-46fc2",
+    storageBucket:     "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId:             "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId:     "G-XQPNKXK08Y"
+  };
 
-  const app = initializeApp(firebaseConfig);
+  const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db = getFirestore(app);
+  const db   = getFirestore(app);
 
+  const selectPacientes = document.getElementById("selectPacientes");
+  const tablaCitas      = document.getElementById("tabla-citas");
 
+  /* ───────── FUNC. UTIL PARA PINTAR LA TABLA ───────── */
+  async function cargarCitas(doctorId, pacienteId = null) {
+    // Vaciar tabla
+    tablaCitas.innerHTML = "";
+
+    // Construir consulta
+    let q = query(
+      collection(db, "citas"),
+      where("doctorID", "==", doctorId)
+    );
+    if (pacienteId) {
+      q = query(
+        collection(db, "citas"),
+        where("doctorID", "==", doctorId),
+        where("pacienteId", "==", pacienteId)
+      );
+    }
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      const row = document.createElement("tr");
+      const td  = document.createElement("td");
+      td.colSpan = 4;
+      td.textContent = pacienteId
+        ? "Este paciente no tiene citas."
+        : "No hay citas registradas.";
+      td.style.textAlign = "center";
+      row.appendChild(td);
+      tablaCitas.appendChild(row);
+      return;
+    }
+
+    snap.forEach((docCita) => {
+      const cita = docCita.data();
+      const row  = document.createElement("tr");
+
+      // Nombre
+      const nombreTd = document.createElement("td");
+      nombreTd.textContent = cita.pacienteNombre || cita.nombrePaciente || "—";
+
+      // Fecha
+      const fechaTd = document.createElement("td");
+      fechaTd.textContent = cita.fechaCita.toDate().toLocaleString("es-MX");
+
+      // Motivo
+      const motivoTd = document.createElement("td");
+      motivoTd.textContent = cita.motivo;
+
+      // Botón eliminar
+      const eliminarTd  = document.createElement("td");
+      const btnEliminar = document.createElement("button");
+      btnEliminar.textContent = "❌";
+      btnEliminar.style.cssText = `
+        background:#ff4d4d;color:#fff;border:none;border-radius:10px;
+        cursor:pointer;font-size:16px;`;
+      btnEliminar.title = "Eliminar cita";
+
+      btnEliminar.addEventListener("click", async () => {
+        if (confirm("¿Seguro que deseas eliminar esta cita?")) {
+          try {
+            await deleteDoc(doc(db, "citas", docCita.id));
+            row.remove();
+            alert("Cita eliminada.");
+          } catch (err) {
+            console.error("Error eliminando cita:", err);
+            alert("Error al eliminar la cita.");
+          }
+        }
+      });
+
+      eliminarTd.appendChild(btnEliminar);
+
+      row.appendChild(nombreTd);
+      row.appendChild(fechaTd);
+      row.appendChild(motivoTd);
+      row.appendChild(eliminarTd);
+      tablaCitas.appendChild(row);
+    });
+  }
+
+  /* ───────── MAIN ───────── */
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
+      window.location.href = "index.html";
+      return;
+    }
+
+    const doctorId = user.uid;
+
+    try {
+      /* 1. Poblar <select> con pacientes asignados */
+      const pacientesQ = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", doctorId)
+      );
+      const pacientesSnap = await getDocs(pacientesQ);
+
+      selectPacientes.innerHTML =
+        `<option value="" selected>Todos los pacientes</option>`;
+
+      if (pacientesSnap.empty) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.textContent = "Sin pacientes asignados";
+        selectPacientes.appendChild(opt);
+      } else {
+        pacientesSnap.forEach((p) => {
+          const data = p.data();
+          const opt  = document.createElement("option");
+          opt.value  = p.id;  // UID paciente
+          opt.textContent = `${data.nombre} ${data.paterno} ${data.materno}`;
+          selectPacientes.appendChild(opt);
+        });
+      }
+
+      /* 2. Cargar todas las citas inicialmente */
+      await cargarCitas(doctorId);
+
+      /* 3. Escuchar cambios en el <select> para filtrar */
+      selectPacientes.addEventListener("change", async () => {
+        const pacienteIdElegido = selectPacientes.value || null;
+        await cargarCitas(doctorId, pacienteIdElegido);
+      });
+
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+      alert("Error al cargar citas o pacientes.");
     }
   });
 
- 
-
+  /* ───────── CERRAR SESIÓN (si tu HTML tiene #logoutBtn) ───────── */
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
@@ -394,6 +521,9 @@ select{
     });
   }
 </script>
+
+
+
 
 </body>
 </html>

@@ -188,28 +188,33 @@ button:hover{
     </header>
     <div class="fondo">
         <div class="form-container">
-            <form action="">
-                <h2>Datos Generales de la cita</h2>
-                <div class="s1">
-                    <div class="nom">
-                        <h3>1.Nombre del paciente</h3>
-                        <input type="text" placeholder="Escribe el nombre del paciente">
-                    </div>
-                    <div class="med">
-                        
-                      
-                    </div>
-                </div>
-                <div class="s2">
-                        <h3>2.Agenda de disponibilidad</h3>
-                        <input type="date" name="" id="">
-                </div>
-                <div class="s3">
-                    <h3>Motivo General</h3>
-                    <textarea name="" id=""></textarea>
-                </div>
-                <button type="submit">Añadir</button>
-            </form>
+            <form id="formCita">
+  <h2>Datos Generales de la cita</h2>
+
+  <div class="s1">
+    <div class="nom">
+      <h3>1.Nombre del paciente</h3>
+      <div class="sele">
+        <select name="" id="selectPacientes">
+          <option value="" disabled selected>Pacientes</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="s2">
+    <h3>2.Agenda de disponibilidad</h3>
+    <input type="datetime-local" id="fechaCita">
+  </div>
+
+  <div class="s3">
+    <h3>Motivo General</h3>
+    <textarea id="motivoCita" placeholder="Describe el motivo de la cita"></textarea>
+  </div>
+
+  <button type="submit">Añadir</button>
+</form>
+
         </div>
     </div>
     
@@ -217,79 +222,142 @@ button:hover{
     <script src="js/Acita.js"></script>
 
 </body>
- <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      doc,
-      getDoc,
-      Timestamp
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    doc,
+    getDoc,
+    query,
+    where,
+    getDocs,
+    Timestamp
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-      authDomain: "doctrack-46fc2.firebaseapp.com",
-      projectId: "doctrack-46fc2",
-      storageBucket: "doctrack-46fc2.appspot.com",
-      messagingSenderId: "865552814891",
-      appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-      measurementId: "G-XQPNKXK08Y"
-    };
+  /* ───────── Config Firebase ───────── */
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
 
-    let doctorID = null;
+  const selectPacientes = document.getElementById("selectPacientes");
+  const formCita        = document.getElementById("formCita");
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        alert("Debes iniciar sesión primero.");
-        return (window.location.href = "index.html");
-      }
+  let doctorID = null;
 
-      const docSnap = await getDoc(doc(db, "doctores", user.uid));
-      if (!docSnap.exists()) {
-        alert("No tienes permisos para registrar citas.");
-        return (window.location.href = "index.html");
-      }
+  /* ───────── Autenticación y carga de pacientes ───────── */
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Debes iniciar sesión primero.");
+      window.location.href = "index.html";
+      return;
+    }
 
-      doctorID = user.uid;
-    });
+    // Verifica que sea un doctor registrado
+    const docSnap = await getDoc(doc(db, "doctores", user.uid));
+    if (!docSnap.exists()) {
+      alert("No tienes permisos para registrar citas.");
+      window.location.href = "index.html";
+      return;
+    }
 
-    document.getElementById("formCita").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    doctorID = user.uid;
 
-      const nombrePaciente = document.getElementById("nombrePaciente").value.trim();
-      const fechaCita = document.getElementById("fechaCita").value;
-      const motivo = document.getElementById("motivoCita").value.trim();
+    /* ▼ Cargar pacientes asignados ▼ */
+    try {
+      const q = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", doctorID)
+      );
 
-      if (!nombrePaciente || !fechaCita || !motivo) {
-        return alert("Por favor, llena todos los campos.");
-      }
+      const snap = await getDocs(q);
 
-      try {
-        await addDoc(collection(db, "citas"), {
-          nombrePaciente,
-          fechaCita: Timestamp.fromDate(new Date(fechaCita)),
-          motivo,
-          doctorID,
-          creadaEn: Timestamp.now()
+      // Limpiar y placeholder
+      selectPacientes.innerHTML =
+        `<option value="" disabled selected>Pacientes</option>`;
+
+      if (snap.empty) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.textContent = "Sin pacientes asignados";
+        selectPacientes.appendChild(opt);
+      } else {
+        snap.forEach((pac) => {
+          const p = pac.data();
+          const opt = document.createElement("option");
+          opt.value = pac.id;  // podemos guardar el UID del paciente
+          opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
+          selectPacientes.appendChild(opt);
         });
-
-        alert("Cita registrada correctamente.");
-        window.location.href = "Doctor.html";
-      } catch (error) {
-        console.error("Error al registrar la cita:", error);
-        alert("Error al registrar la cita. Intenta de nuevo.");
       }
-    });
-  </script>
+    } catch (err) {
+      console.error("Error al cargar pacientes:", err);
+      alert("Error al cargar pacientes");
+    }
+  });
+
+  /* ───────── Envío del formulario ───────── */
+  formCita.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const pacienteId   = selectPacientes.value;
+    const pacienteNombre = selectPacientes.options[selectPacientes.selectedIndex]?.textContent || "";
+    const fechaCitaInput = document.getElementById("fechaCita").value;
+    const motivo        = document.getElementById("motivoCita").value.trim();
+
+    if (!pacienteId || !fechaCitaInput || !motivo) {
+      return alert("Por favor, llena todos los campos.");
+    }
+
+    const fechaCita = new Date(fechaCitaInput);
+    const ahora     = new Date();
+
+    /* 1️⃣ Fecha futura */
+    if (fechaCita <= ahora) {
+      return alert("La fecha y hora de la cita debe ser futura.");
+    }
+
+    /* 2️⃣ Hora entre 7 am y 6 pm */
+    const hora = fechaCita.getHours();
+    if (hora < 7 || hora >= 18) {
+      return alert("La hora de la cita debe ser entre 7:00 a.m. y 6:00 p.m.");
+    }
+
+    try {
+      await addDoc(collection(db, "citas"), {
+        pacienteId,
+        pacienteNombre,
+        fechaCita: Timestamp.fromDate(fechaCita),
+        motivo,
+        doctorID,
+        creadaEn: Timestamp.now()
+      });
+
+      alert("Cita registrada correctamente.");
+      window.location.href = "Doctor.html";
+    } catch (error) {
+      console.error("Error al registrar la cita:", error);
+      alert("Error al registrar la cita. Intenta de nuevo.");
+    }
+  });
+</script>
+
+
 </body>
 </html>

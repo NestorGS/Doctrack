@@ -170,9 +170,14 @@ button:hover{
             <form action="">
                 <h2>Datos Generales de la cita</h2>
                     <div class="nom">
-                        <h3>1.Id de la Cita</h3>
-                        <input type="text" placeholder="Escribe el nombre del paciente">
+                        <h3>Eliminar  Cita</h3>
+                        <div class="sele">
+                          <select name="" id="selectPacientes">
+                            <option value="" disabled selected>Selecciona un paciente</option>
+                          </select>
+                        </div>
                     </div>
+                    
                 <button type="submit">Eliminar</button>
             </form>
         </div>
@@ -180,7 +185,8 @@ button:hover{
     
     <a href="Doctor.html">Mientras se programa</a>
     <script src="js/Ecita.js"></script>
-<script type="module">
+
+    <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
     getAuth,
@@ -190,10 +196,14 @@ button:hover{
   import {
     getFirestore,
     doc,
-    getDoc
+    getDoc,
+    collection,
+    query,
+    where,
+    getDocs
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-   const firebaseConfig = {
+  const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
     authDomain: "doctrack-46fc2.firebaseapp.com",
     projectId: "doctrack-46fc2",
@@ -201,11 +211,13 @@ button:hover{
     messagingSenderId: "865552814891",
     appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
     measurementId: "G-XQPNKXK08Y"
-};
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+
+  const selectPacientes = document.getElementById("selectPacientes");
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -229,6 +241,36 @@ button:hover{
       return (window.location.href = "Paciente.html");
     }
 
+    // 🟡 Llenar el select con pacientes asignados
+    try {
+      const pacientesQuery = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", uid)
+      );
+      const snapshot = await getDocs(pacientesQuery);
+
+      // Limpiar y agregar opción por defecto
+      selectPacientes.innerHTML = `<option value="" disabled selected>Selecciona un paciente</option>`;
+
+      if (snapshot.empty) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.textContent = "Sin pacientes asignados";
+        selectPacientes.appendChild(opt);
+      } else {
+        snapshot.forEach((doc) => {
+          const p = doc.data();
+          const opt = document.createElement("option");
+          opt.value = doc.id;
+          opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
+          selectPacientes.appendChild(opt);
+        });
+      }
+    } catch (error) {
+      console.error("Error al cargar pacientes:", error);
+      alert("Ocurrió un error al cargar los pacientes.");
+    }
   });
 
   const logoutBtn = document.getElementById("logoutBtn");
@@ -239,6 +281,7 @@ button:hover{
     });
   }
 </script>
+
 
 </body>
 </html>

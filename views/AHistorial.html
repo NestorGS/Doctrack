@@ -34,11 +34,18 @@
     display: flex;
   justify-content: space-evenly;
   align-items: center;
+  flex-direction: column;
   background-color: #114c5f;
   width: 80%;
   margin-left: 10%;
   height: 700px;
   border-radius: 39px;
+}
+.bs{
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
+
 }
 .form-container{
     background-color: white;
@@ -60,7 +67,10 @@ h2{
 }
 .s1, .s2{
   height: 90%;
-  width: 40%;
+  width: 45%;
+}
+.s3{
+  width: 45%;
 }
 h3{
 color: #114c5f;
@@ -150,26 +160,25 @@ button:hover{
         <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="">
         <h1>Añade un historial</h1>
     </header>
-    <div class="fondo">
+   <div class="fondo">
+      <div class="bs">
       <div class="s1">
         <a href="FI.html">
             <div class="form-container">
                 <h2>Ficha de identificación</h2>    
         </div>
       </a>
-      <a href="AP.html">
-        <div class="form-container">
-            <h2>Antecedentes personales no patologicos</h2>    
-        </div>
-      </a>
       </div>
       <div class="s2">
         <a href="AH.html">
         <div class="form-container">
-          <h2>Antecedentes Heredofamiliares</h2>    
+          <h2>Antecedentes</h2>    
         </div>
       </a>
-      <a href="EF.html">
+      </div>
+      </div>
+      <div class="s3">
+        <a href="EF">
        <div class="form-container">
       <h2>Exploración Fisica</h2>    
        </div>

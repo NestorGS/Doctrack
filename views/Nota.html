@@ -164,14 +164,23 @@ button:hover{
     <div class="fondo">
         <div class="form-container">
             <form action="">
-                <h2>Datos Generales de la cita</h2>
+                <h2>Escribe una nota</h2>
                 <div class="s1">
                     <div class="nom">
                         <h3>Agregar Nota</h3>
+                        <br>
+                         <div class="sele">
+                          <select name="" id="selectPacientes">
+                            <option value="" disabled selected>Pacientes</option>
+                          </select>
+                        </div>
+                        <br>
                          <input type="text" placeholder="Agregar una nota para el paciente"> 
                     </div>                   
                 </div>
-                <button type="submit">Enviar</button>
+                <a href="Tratamiento.html">
+                  <button type="button">Enviar</button>
+                </a>
             </form>
         </div>
     </div>
@@ -187,51 +196,73 @@ button:hover{
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
     getFirestore,
-    doc,
-    getDoc
+    collection,
+    query,
+    where,
+    getDocs
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
- const firebaseConfig = {
-    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-    authDomain: "doctrack-46fc2.firebaseapp.com",
-    projectId: "doctrack-46fc2",
-    storageBucket: "doctrack-46fc2.appspot.com",
+  /* ───── CONFIG FIREBASE ───── */
+  const firebaseConfig = {
+    apiKey:            "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain:        "doctrack-46fc2.firebaseapp.com",
+    projectId:         "doctrack-46fc2",
+    storageBucket:     "doctrack-46fc2.appspot.com",
     messagingSenderId: "865552814891",
-    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-    measurementId: "G-XQPNKXK08Y"
-};
+    appId:             "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId:     "G-XQPNKXK08Y"
+  };
 
-  const app = initializeApp(firebaseConfig);
+  const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db = getFirestore(app);
+  const db   = getFirestore(app);
 
+  const selectPacientes = document.getElementById("selectPacientes");
+
+  /* ───── AUTENTICACIÓN Y CARGA DE PACIENTES ───── */
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
+      window.location.href = "index.html";
+      return;
     }
 
-    const uid = user.uid;
-    const docRef = doc(db, "usuarios", uid);
-    const userDoc = await getDoc(docRef);
+    const doctorId = user.uid;
 
-    if (!userDoc.exists()) {
-      alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
-    }
+    try {
+      // 1. Traer pacientes cuyo assignedDoctor sea este doctor
+      const q = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", doctorId)
+      );
+      const snap = await getDocs(q);
 
-    const rol = userDoc.data().rol;
-    const pagina = window.location.pathname;
+      // 2. Limpiar y colocar placeholder
+      selectPacientes.innerHTML =
+        `<option value="" disabled selected>Pacientes</option>`;
 
-    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
-      return (window.location.href = "Paciente.html");
-    }
-
-    if (rol === "doctor" && !pagina.includes("Doctor.html")) {
-      return (window.location.href = "Doctor.html");
+      if (snap.empty) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.textContent = "Sin pacientes asignados";
+        selectPacientes.appendChild(opt);
+      } else {
+        snap.forEach((p) => {
+          const d   = p.data();
+          const opt = document.createElement("option");
+          opt.value = p.id;   // UID del paciente
+          opt.textContent = `${d.nombre} ${d.paterno} ${d.materno}`;
+          selectPacientes.appendChild(opt);
+        });
+      }
+    } catch (err) {
+      console.error("Error al cargar pacientes:", err);
+      alert("Ocurrió un error al cargar la lista de pacientes.");
     }
   });
 
+  /* ───── BOTÓN LOGOUT (si existe) ───── */
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
@@ -240,6 +271,7 @@ button:hover{
     });
   }
 </script>
+
 
 </body>
 </html>
