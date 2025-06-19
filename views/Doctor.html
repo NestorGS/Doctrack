@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagina Principal Doctor</title>
-    <link rel="stylesheet" href="css/PaginaD.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Figtree:ital,wght@0,300..900;1,300..900&family=Marmelad&family=McLaren&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sora:wght@100..800&family=Varela+Round&display=swap" rel="stylesheet">
@@ -327,7 +326,7 @@ select{
                         <th>Id</th>
                         <th>Nombre del paciente</th>
                         <th>Fecha de la Cita</th>
-                        <th>Medico Asignado</th>
+                        
                         <th>Motivo</th>
                     </tr>
                 </thead>
@@ -377,52 +376,11 @@ select{
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-   // Función para cargar pacientes
-  async function cargarPacientes() {
-    const select = document.getElementById("pacientesSelect");
-    select.innerHTML = `<option value="">Pacientes</option>`; // limpiar opciones
-
-    try {
-      const querySnapshot = await getDocs(collection(db, "pacientes"));
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const option = document.createElement("option");
-        option.value = doc.id; // o data.CURP si prefieres
-        option.textContent = data.nombre || "Paciente sin nombre";
-        select.appendChild(option);
-      });
-    } catch (error) {
-      console.error("Error al cargar pacientes:", error);
-    }
-  }
-
-  // Ejecutar al cargar la página
-  cargarPacientes();
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("Debes iniciar sesión primero.");
       return (window.location.href = "index.html");
-    }
-
-    const uid = user.uid;
-    const docRef = doc(db, "usuarios","doctores", uid);
-    const userDoc = await getDoc(docRef);
-
-    if (!userDoc.exists()) {
-      alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
-    }
-
-    const rol = userDoc.data().rol;
-    const pagina = window.location.pathname;
-
-    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
-      return (window.location.href = "Paciente.html");
-    }
-
-    if (rol === "doctor" && !pagina.includes("Doctor.html")) {
-      return (window.location.href = "Doctor.html");
     }
   });
 

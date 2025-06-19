@@ -196,14 +196,12 @@ button:hover{
                         <input type="text" placeholder="Escribe el nombre del paciente">
                     </div>
                     <div class="med">
-                        <h3>2.Medico Asignado</h3>
-                        <select name="" id="">
-                            <option value="">Mientras lo programan</option>
-                        </select>
+                        
+                      
                     </div>
                 </div>
                 <div class="s2">
-                        <h3>3.Agenda de disponibilidad</h3>
+                        <h3>2.Agenda de disponibilidad</h3>
                         <input type="date" name="" id="">
                 </div>
                 <div class="s3">
@@ -219,66 +217,79 @@ button:hover{
     <script src="js/Acita.js"></script>
 
 </body>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-  import {
-    getFirestore,
-    doc,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+ <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      doc,
+      getDoc,
+      Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-    authDomain: "doctrack-46fc2.firebaseapp.com",
-    projectId: "doctrack-46fc2",
-    storageBucket: "doctrack-46fc2.appspot.com",
-    messagingSenderId: "865552814891",
-    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-    measurementId: "G-XQPNKXK08Y"
-};
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+      authDomain: "doctrack-46fc2.firebaseapp.com",
+      projectId: "doctrack-46fc2",
+      storageBucket: "doctrack-46fc2.appspot.com",
+      messagingSenderId: "865552814891",
+      appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+      measurementId: "G-XQPNKXK08Y"
+    };
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
-    }
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    const uid = user.uid;
-    const docRef = doc(db, "usuarios", uid);
-    const userDoc = await getDoc(docRef);
+    let doctorID = null;
 
-    if (!userDoc.exists()) {
-      alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
-    }
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        alert("Debes iniciar sesión primero.");
+        return (window.location.href = "index.html");
+      }
 
-    const rol = userDoc.data().rol;
-    const pagina = window.location.pathname;
+      const docSnap = await getDoc(doc(db, "doctores", user.uid));
+      if (!docSnap.exists()) {
+        alert("No tienes permisos para registrar citas.");
+        return (window.location.href = "index.html");
+      }
 
-    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
-      return (window.location.href = "Paciente.html");
-    }
-
-    if (rol === "doctor" && !pagina.includes("Doctor.html")) {
-      return (window.location.href = "Doctor.html");
-    }
-  });
-
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
+      doctorID = user.uid;
     });
-  }
-</script>
 
+    document.getElementById("formCita").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nombrePaciente = document.getElementById("nombrePaciente").value.trim();
+      const fechaCita = document.getElementById("fechaCita").value;
+      const motivo = document.getElementById("motivoCita").value.trim();
+
+      if (!nombrePaciente || !fechaCita || !motivo) {
+        return alert("Por favor, llena todos los campos.");
+      }
+
+      try {
+        await addDoc(collection(db, "citas"), {
+          nombrePaciente,
+          fechaCita: Timestamp.fromDate(new Date(fechaCita)),
+          motivo,
+          doctorID,
+          creadaEn: Timestamp.now()
+        });
+
+        alert("Cita registrada correctamente.");
+        window.location.href = "Doctor.html";
+      } catch (error) {
+        console.error("Error al registrar la cita:", error);
+        alert("Error al registrar la cita. Intenta de nuevo.");
+      }
+    });
+  </script>
+</body>
 </html>

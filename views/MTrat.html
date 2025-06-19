@@ -231,7 +231,7 @@ button:hover{
     }
 
     const uid = user.uid;
-    const docRef = doc(db, "usuarios", uid);
+    const docRef = doc(db, "doctores", uid);
     const userDoc = await getDoc(docRef);
 
     if (!userDoc.exists()) {
@@ -246,9 +246,7 @@ button:hover{
       return (window.location.href = "Paciente.html");
     }
 
-    if (rol === "doctor" && !pagina.includes("Doctor.html")) {
-      return (window.location.href = "Doctor.html");
-    }
+
   });
 
   const logoutBtn = document.getElementById("logoutBtn");
