@@ -182,11 +182,12 @@ button:hover{
                     </div>
                     <div class="med">
                         <h3>3.Selecciona el campo</h3>
-                   <select id="selectCampo">
+               <select id="selectCampo">
   <option disabled selected value="">Selecciona un campo</option>
   <option value="motivo">Motivo</option>
-  <option value="fecha">Fecha y hora</option>
+  <option value="fechaCita">Fecha y hora</option> <!-- ✅ CAMBIO CRUCIAL -->
 </select>
+
                     </div>
                     <div class="ot">
                         <h3>4.Dato nuevo</h3>
@@ -331,12 +332,13 @@ button:hover{
     cambios.motivo = nuevoTexto;
   }
 
-  if (campo === "fecha") {
-    if (!nuevaFechaV) return alert("Selecciona la nueva fecha.");
-    const nuevaFecha = new Date(nuevaFechaV);
-    if (isNaN(nuevaFecha.getTime())) return alert("Fecha inválida.");
-    cambios.fechaCita = Timestamp.fromDate(nuevaFecha);
-  }
+ if (campo === "fecha") {
+  if (!nuevaFechaV) return alert("Selecciona la nueva fecha.");
+  const nuevaFecha = new Date(nuevaFechaV);
+  if (isNaN(nuevaFecha.getTime())) return alert("Fecha inválida.");
+  cambios.fecha = Timestamp.fromDate(nuevaFecha); // ✅ ESTE SÍ COINCIDE CON TU BASE DE DATOS
+}
+
 
   if (Object.keys(cambios).length === 0) {
     return alert("No se ingresaron cambios.");

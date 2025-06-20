@@ -286,6 +286,13 @@ select{
     </style>
 </head>
 <body>
+  <script>
+  // Evita que el navegador muestre versión en caché
+  if (performance.navigation.type === 2) {
+    location.reload(true);
+  }
+</script>
+
     <header>
         <div class="head">
             <div class="Ima">
@@ -317,13 +324,15 @@ select{
           <div class="table-container">
             <table>
                 <thead>
-                    <tr>
-                        <th>Nombre del paciente</th>
-                        <th>Fecha y Hora de la Cita</th>  
-                        <th>Motivo</th>  
-                        <th>Eliminar</th>
-                    </tr>
-                </thead>
+  <tr>
+    <th>Nombre del paciente</th>
+    <th>Fecha y Hora de la Cita</th>  
+    <th>Motivo</th>  
+    <th>Eliminar</th>
+    <th>Modificar</th> <!-- ✅ NUEVA COLUMNA -->
+  </tr>
+</thead>
+
                 <tbody id="tabla-citas">
                     <!-- Las citas se llenarán dinámicamente -->
                 </tbody>
@@ -352,14 +361,17 @@ select{
     signOut
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
-    getFirestore,
-    collection,
-    query,
-    where,
-    getDocs,
-    deleteDoc,
-    doc
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,        // o onSnapshot si usas escucha en tiempo real
+  deleteDoc,
+  updateDoc,      // ✅ AGREGADO
+  doc,
+  Timestamp       // ✅ AGREGADO
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
 
   /* ───────── CONFIG FIREBASE ───────── */
   const firebaseConfig = {
@@ -412,54 +424,142 @@ select{
       return;
     }
 
-    snap.forEach((docCita) => {
-      const cita = docCita.data();
-      const row  = document.createElement("tr");
+   snap.forEach((docCita) => {
+  const cita = docCita.data();           // datos de Firestore
+  const row  = document.createElement("tr");
 
-      // Nombre
-      const nombreTd = document.createElement("td");
-      nombreTd.textContent = cita.pacienteNombre || cita.nombrePaciente || "—";
+  /* ───────── Celda: Nombre del paciente ───────── */
+  const nombreTd = document.createElement("td");
+  nombreTd.textContent =
+    cita.pacienteNombre ?? cita.nombrePaciente ?? "—";
 
-      // Fecha
-      const fechaTd = document.createElement("td");
-      fechaTd.textContent = cita.fechaCita.toDate().toLocaleString("es-MX");
+  /* ───────── Celda: Fecha y hora ───────── */
+  const fechaTd = document.createElement("td");
+  fechaTd.textContent = cita.fechaCita
+    .toDate()
+    .toLocaleString("es-MX");
 
-      // Motivo
-      const motivoTd = document.createElement("td");
-      motivoTd.textContent = cita.motivo;
+  /* ───────── Celda: Motivo ───────── */
+  const motivoTd = document.createElement("td");
+  motivoTd.textContent = cita.motivo;
 
-      // Botón eliminar
-      const eliminarTd  = document.createElement("td");
-      const btnEliminar = document.createElement("button");
-      btnEliminar.textContent = "❌";
-      btnEliminar.style.cssText = `
-        background:#ff4d4d;color:#fff;border:none;border-radius:10px;
-        cursor:pointer;font-size:16px;`;
-      btnEliminar.title = "Eliminar cita";
+  /* ───────── Celda: Botón eliminar ───────── */
+  const eliminarTd = document.createElement("td");
+  const btnEliminar = document.createElement("button");
+  btnEliminar.textContent = "❌";
+  btnEliminar.title = "Eliminar cita";
+  btnEliminar.style.cssText = `
+    background:#ff4d4d;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+  `;
+  btnEliminar.addEventListener("click", async () => {
+    if (confirm("¿Seguro que deseas eliminar esta cita?")) {
+      await deleteDoc(doc(db, "citas", docCita.id));
+    }
+  });
+  eliminarTd.appendChild(btnEliminar);
 
-      btnEliminar.addEventListener("click", async () => {
-        if (confirm("¿Seguro que deseas eliminar esta cita?")) {
-          try {
-            await deleteDoc(doc(db, "citas", docCita.id));
-            row.remove();
-            alert("Cita eliminada.");
-          } catch (err) {
-            console.error("Error eliminando cita:", err);
-            alert("Error al eliminar la cita.");
-          }
-        }
-      });
+  /* ───────── Celda: Botón editar en línea ───────── */
+  const modificarTd = document.createElement("td");
+  const btnEditar = document.createElement("button");
+  btnEditar.textContent = "✏️";
+  btnEditar.title = "Editar cita";
+  btnEditar.style.cssText = `
+    background:#ffd966;
+    color:black;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+  `;
 
-      eliminarTd.appendChild(btnEliminar);
+  /* ── Lógica al hacer clic en ✏️ ── */
+  btnEditar.addEventListener("click", () => {
+    /* 1. Crear inputs editables */
+    const motivoInput = document.createElement("input");
+    motivoInput.type  = "text";
+    motivoInput.value = cita.motivo;
+    motivoInput.style.width = "90%";
 
-      row.appendChild(nombreTd);
-      row.appendChild(fechaTd);
-      row.appendChild(motivoTd);
-      row.appendChild(eliminarTd);
-      tablaCitas.appendChild(row);
+    const fechaInput = document.createElement("input");
+    fechaInput.type  = "datetime-local";
+    fechaInput.value = cita.fechaCita
+      .toDate()
+      .toISOString()
+      .slice(0, 16); // yyyy-MM-ddTHH:mm
+
+    /* 2. Botones guardar / cancelar */
+    const btnGuardar = document.createElement("button");
+    btnGuardar.textContent = "💾";
+    btnGuardar.title = "Guardar";
+    btnGuardar.style.marginRight = "8px";
+
+    const btnCancelar = document.createElement("button");
+    btnCancelar.textContent = "❌";
+    btnCancelar.title = "Cancelar";
+
+    /* 3. Cambiar a modo edición en la fila */
+    motivoTd.innerHTML = "";
+    motivoTd.appendChild(motivoInput);
+
+    fechaTd.innerHTML = "";
+    fechaTd.appendChild(fechaInput);
+
+    modificarTd.innerHTML = "";
+    modificarTd.appendChild(btnGuardar);
+    modificarTd.appendChild(btnCancelar);
+
+    /* 4. GUARDAR CAMBIOS */
+    btnGuardar.addEventListener("click", async () => {
+      const nuevoMotivo = motivoInput.value.trim();
+      const nuevaFecha  = new Date(fechaInput.value);
+
+      if (!nuevoMotivo || isNaN(nuevaFecha.getTime())) {
+        alert("Datos inválidos.");
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, "citas", docCita.id), {
+          motivo   : nuevoMotivo,
+          fechaCita: Timestamp.fromDate(nuevaFecha)
+        });
+        alert("Cita actualizada ✅");
+      } catch (e) {
+  console.error("❌ Error al guardar la cita en Firestore:", e.code, e.message);
+  alert(`Error: ${e.code} - ${e.message}`);
+}
+
     });
-  }
 
+    /* 5. CANCELAR EDICIÓN */
+    btnCancelar.addEventListener("click", () => {
+      motivoTd.textContent = cita.motivo;
+      fechaTd.textContent  = cita.fechaCita
+        .toDate()
+        .toLocaleString("es-MX");
+      modificarTd.innerHTML = "";
+      modificarTd.appendChild(btnEditar);
+    });
+  });
+
+  modificarTd.appendChild(btnEditar);
+
+  /* ───────── Añadir todas las celdas a la fila ───────── */
+  row.appendChild(nombreTd);
+  row.appendChild(fechaTd);
+  row.appendChild(motivoTd);
+  row.appendChild(eliminarTd);
+  row.appendChild(modificarTd);
+
+  /* ───────── Agregar fila al <tbody> ───────── */
+  tablaCitas.appendChild(row);
+});
+  }
   /* ───────── MAIN ───────── */
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
