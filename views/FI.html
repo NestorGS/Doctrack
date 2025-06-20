@@ -127,21 +127,26 @@
     <div class="form-container">
       <h2>Datos Generales</h2>
 
+      <!-- 1 · FILA Nombre ahora es un SELECT -->
       <div class="form-row">
         <div class="input-field">
-          <label for="nombre">Nombre</label>
-          <input type="text" id="nombre" name="nombre" placeholder="Nombre completo">
+          <label for="selectPacientes">Nombre del paciente</label>
+          <select id="selectPacientes">
+            <option value="" disabled selected>Pacientes</option>
+          </select>
         </div>
+
         <div class="input-field">
           <label for="edad">Edad</label>
-          <input type="text" id="edad" name="edad" placeholder="Ej: 28">
+          <input type="text" id="edad" placeholder="Ej: 28">
         </div>
       </div>
 
+      <!-- resto del formulario sin cambios -->
       <div class="form-row">
         <div class="input-field">
           <label for="genero">Género</label>
-          <select id="genero" name="genero">
+          <select id="genero">
             <option value="">Seleccione</option>
             <option value="femenino">Femenino</option>
             <option value="masculino">Masculino</option>
@@ -150,29 +155,29 @@
         </div>
         <div class="input-field">
           <label for="ocupacion">Ocupación</label>
-          <input type="text" id="ocupacion" name="ocupacion" placeholder="Ej: Estudiante, Ingeniero">
+          <input type="text" id="ocupacion" placeholder="Ej: Estudiante, Ingeniero">
         </div>
       </div>
 
       <div class="form-row">
         <div class="input-field">
           <label for="estado-civil">Estado Civil</label>
-          <input type="text" id="estado-civil" name="estado-civil" placeholder="Ej: Soltero(a), Casado(a)">
+          <input type="text" id="estado-civil" placeholder="Ej: Soltero(a), Casado(a)">
         </div>
         <div class="input-field">
           <label for="religion">Religión</label>
-          <input type="text" id="religion" name="religion" placeholder="Ej: Católico, Ateo">
+          <input type="text" id="religion" placeholder="Ej: Católico, Ateo">
         </div>
       </div>
 
       <div class="form-row">
         <div class="input-field">
           <label for="telefono">Teléfono</label>
-          <input type="text" id="telefono" name="telefono" placeholder="Ej: 555-123-4567">
+          <input type="text" id="telefono" placeholder="Ej: 555-123-4567">
         </div>
         <div class="input-field">
           <label for="correo">Correo Electrónico</label>
-          <input type="text" id="correo" name="correo" placeholder="Ej: ejemplo@mail.com">
+          <input type="text" id="correo" placeholder="Ej: ejemplo@mail.com">
         </div>
       </div>
 
@@ -181,24 +186,29 @@
         <a href="EF.html"><h2>Exploración Física</h2></a>
       </div>
 
-      <button type="submit">Guardar</button>
+      <button id="btnGuardar" type="button">Guardar</button>
+
     </div>
+
     <a href="AHistorial.html">regresa mientras lo programan</a>
   </div>
-  <script src="js/FI.js"></script>
-<script type="module">
+
+  <!--  SUSTITUYE COMPLETO tu <script type="module"> por este  -->
+ <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
     getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
     doc,
-    getDoc
+    setDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+  /* ---------- config ---------- */
   const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
     authDomain: "doctrack-46fc2.firebaseapp.com",
@@ -207,36 +217,111 @@
     messagingSenderId: "865552814891",
     appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
     measurementId: "G-XQPNKXK08Y"
-};
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  };
 
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  const selectPacientes = document.getElementById("selectPacientes");
+  const btnGuardar      = document.getElementById("btnGuardar");
+
+  /* ---------- cargar pacientes del doctor ---------- */
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
+      window.location.href = "index.html";
+      return;
     }
 
-    const uid = user.uid;
-    const docRef = doc(db, "doctores", uid);
-    const userDoc = await getDoc(docRef);
+    try {
+      const q = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", user.uid)
+      );
+      const snap = await getDocs(q);
 
-    if (!userDoc.exists()) {
-      alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
+      selectPacientes.innerHTML =
+        `<option value="" disabled selected>Pacientes</option>`;
+
+      if (snap.empty) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.textContent = "Sin pacientes asignados";
+        selectPacientes.appendChild(opt);
+      } else {
+        snap.forEach((p) => {
+          const d = p.data();
+          const opt = document.createElement("option");
+          opt.value = p.id; // UID paciente
+          opt.textContent = `${d.nombre} ${d.paterno} ${d.materno}`;
+          selectPacientes.appendChild(opt);
+        });
+      }
+    } catch (err) {
+      console.error("Error cargando pacientes:", err);
+      alert("No se pudo cargar la lista de pacientes.");
     }
-
-    const rol = userDoc.data().rol;
-    const pagina = window.location.pathname;
-
-    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
-      return (window.location.href = "Paciente.html");
-    }
-
-    
   });
 
+  /* ---------- validaciones y guardado ---------- */
+  btnGuardar.addEventListener("click", async () => {
+    const pacienteId   = selectPacientes.value;
+    const edad         = document.getElementById("edad").value.trim();
+    const genero       = document.getElementById("genero").value;
+    const ocupacion    = document.getElementById("ocupacion").value.trim();
+    const estadoCivil  = document.getElementById("estado-civil").value.trim();
+    const religion     = document.getElementById("religion").value.trim();
+    const telefono     = document.getElementById("telefono").value.trim();
+    const correo       = document.getElementById("correo").value.trim();
+
+    // — RegEx —
+    const regSoloLetras  = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
+    const regEdad        = /^(?:[1-9][0-9]?|1[01][0-9]|120)$/;   // 1-120
+    const regTelefono    = /^[0-9]{7,15}$/;
+    const regCorreo      = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // — Validaciones —
+    if (!pacienteId)               return alert("Selecciona un paciente.");
+    if (!regEdad.test(edad))       return alert("Edad inválida (1-120).");
+    if (!genero)                   return alert("Selecciona el género.");
+    if (!regSoloLetras.test(ocupacion))
+      return alert("Ocupación: solo letras y espacios.");
+    if (!regSoloLetras.test(estadoCivil))
+      return alert("Estado civil: solo letras y espacios.");
+    if (!regSoloLetras.test(religion))
+      return alert("Religión: solo letras y espacios.");
+    if (!regTelefono.test(telefono))
+      return alert("Teléfono inválido (7-15 dígitos numéricos).");
+    if (!regCorreo.test(correo))
+      return alert("Correo electrónico inválido.");
+
+    try {
+      const fichaRef = doc(db, "identificacion_paciente", pacienteId);
+      await setDoc(fichaRef, {
+        correo,
+        edad,
+        estadocivil: estadoCivil,
+        ocupacion,
+        religion,
+        sexo: genero,
+        telefono,
+        creadaPor: auth.currentUser.uid,
+        creadaEn : new Date()
+      });
+
+      alert("Ficha de identificación guardada exitosamente ✅");
+      // Opcional: limpiar campos
+      // document.querySelectorAll('input, select').forEach(e => e.value = "");
+      // selectPacientes.selectedIndex = 0;
+    } catch (e) {
+      console.error("❌ Error al guardar:", e);
+      alert("Ocurrió un error al guardar.");
+    }
+  });
+
+  /* ---------- cerrar sesión si tienes #logoutBtn ---------- */
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
@@ -247,4 +332,5 @@
 </script>
 
 </body>
+
 </html>
