@@ -314,11 +314,7 @@ select{
                     <p>Añadir</p>
                     </a>
                   </div>
-                  <div class="fondo">
-                    <a href="MCita.html" class="section2">
-                    <p>Modificar</p>
-                    </a>
-                  </div>
+                  
     </div>
         <div class="tabla">
           <div class="table-container">
@@ -514,27 +510,38 @@ select{
     modificarTd.appendChild(btnCancelar);
 
     /* 4. GUARDAR CAMBIOS */
-    btnGuardar.addEventListener("click", async () => {
-      const nuevoMotivo = motivoInput.value.trim();
-      const nuevaFecha  = new Date(fechaInput.value);
+   btnGuardar.addEventListener("click", async () => {
+  const nuevoMotivo = motivoInput.value.trim();
+  const nuevaFecha  = new Date(fechaInput.value);
 
-      if (!nuevoMotivo || isNaN(nuevaFecha.getTime())) {
-        alert("Datos inválidos.");
-        return;
-      }
+  if (!nuevoMotivo || isNaN(nuevaFecha.getTime())) {
+    alert("Datos inválidos.");
+    return;
+  }
 
-      try {
-        await updateDoc(doc(db, "citas", docCita.id), {
-          motivo   : nuevoMotivo,
-          fechaCita: Timestamp.fromDate(nuevaFecha)
-        });
-        alert("Cita actualizada ✅");
-      } catch (e) {
-  console.error("❌ Error al guardar la cita en Firestore:", e.code, e.message);
-  alert(`Error: ${e.code} - ${e.message}`);
-}
-
+  try {
+    await updateDoc(doc(db, "citas", docCita.id), {
+      motivo: nuevoMotivo,
+      fechaCita: Timestamp.fromDate(nuevaFecha)
     });
+
+    alert("Cita actualizada correctamente ✅");
+
+    // ✅ ACTUALIZA LOS ELEMENTOS VISUALMENTE
+    motivoTd.textContent = nuevoMotivo;
+    fechaTd.textContent = nuevaFecha.toLocaleString("es-MX");
+    modificarTd.innerHTML = "";
+    modificarTd.appendChild(btnEditar); // vuelve a mostrar ✏️
+
+    // ✅ ACTUALIZA el objeto local para futuras ediciones (opcional)
+    cita.motivo = nuevoMotivo;
+    cita.fechaCita = Timestamp.fromDate(nuevaFecha);
+
+  } catch (e) {
+    console.error("Error al guardar:", e);
+    alert("Ocurrió un error al guardar.");
+  }
+});
 
     /* 5. CANCELAR EDICIÓN */
     btnCancelar.addEventListener("click", () => {
