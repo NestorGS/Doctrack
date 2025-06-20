@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  alert('hola')
   const loginForm = document.querySelector(".sign-in");
  const emailInput = document.getElementById("email");
  const passwordInput = document.getElementById("password");
