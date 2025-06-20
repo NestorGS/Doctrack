@@ -59,7 +59,8 @@
       gap: 30px;
       margin-bottom: 30px;
     }
-
+    
+    
     .input-field {
       flex: 1 1 calc(50% - 30px);
       display: flex;
@@ -126,7 +127,6 @@
   <div class="fondo">
     <div class="form-container">
       <h2>Datos Generales</h2>
-
       <!-- 1 · FILA Nombre ahora es un SELECT -->
       <div class="form-row">
         <div class="input-field">
@@ -198,15 +198,17 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut }
     from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-  import {
-    getFirestore,
-    collection,
-    query,
-    where,
-    getDocs,
-    doc,
-    setDoc
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+ import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+  getDoc // ← esto es lo que te faltaba
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
 
   /* ---------- config ---------- */
   const firebaseConfig = {
@@ -297,8 +299,16 @@
     if (!regCorreo.test(correo))
       return alert("Correo electrónico inválido.");
 
-    try {
+        try {
       const fichaRef = doc(db, "identificacion_paciente", pacienteId);
+      const fichaSnap = await getDoc(fichaRef);
+
+      // ⚠️ Si ya existe una ficha para este paciente, no crearla de nuevo
+      if (fichaSnap.exists()) {
+        alert("Este paciente ya tiene una ficha registrada.");
+        return;
+      }
+
       await setDoc(fichaRef, {
         correo,
         edad,
@@ -312,13 +322,12 @@
       });
 
       alert("Ficha de identificación guardada exitosamente ✅");
-      // Opcional: limpiar campos
-      // document.querySelectorAll('input, select').forEach(e => e.value = "");
-      // selectPacientes.selectedIndex = 0;
+
     } catch (e) {
-      console.error("❌ Error al guardar:", e);
-      alert("Ocurrió un error al guardar.");
+      console.error("❌ Error al guardar ficha:", e.message || e);
+      alert("Ocurrió un error al guardar. Revisa la consola para más detalles.");
     }
+
   });
 
   /* ---------- cerrar sesión si tienes #logoutBtn ---------- */

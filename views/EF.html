@@ -53,6 +53,7 @@
       margin-bottom: 30px;
     }
 
+
     .input-group {
       display: flex;
       flex-direction: column;
@@ -116,11 +117,27 @@
       background-color: #9cd2d3;
       color: #114c5f;
     }
+
+select {
+  border-radius: 15px;
+  border: 2px solid #114c5f;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-family: "Sora", sans-serif;
+  background-color: white;
+  color: #114c5f;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+
   </style>
 </head>
 <body>
   <header>
-    <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="Logo DocTrack" height="60">
+    <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png"
+         alt="Logo DocTrack" height="60">
     <h1>Añadir Historial De Un Paciente</h1>
   </header>
 
@@ -128,35 +145,50 @@
     <div class="form-container">
       <h2>Exploración Física</h2>
 
+      <!-- 1 · Nombre del paciente (select) + Edad -->
+      <div class="form-row">
+        <div class="input-field">
+          <label for="selectPacientes">Nombre del paciente</label>
+          <select id="selectPacientes">
+            <option value="" disabled selected>Pacientes</option>
+          </select>
+        </div>
+        <br>
+        <div class="input-field">
+          <label for="edad">Edad</label>
+          <input type="text" id="edad" placeholder="Ej: 28">
+        </div>
+      </div>
+      <br>
       <div class="input-group">
         <div class="input-field">
-          <label>Peso (kg)</label>
-          <input type="text" placeholder="Ej: 68.5">
+          <label for="peso">Peso (kg)</label>
+          <input type="text" id="peso" placeholder="Ej: 68.5">
         </div>
 
         <div class="input-field">
-          <label>Estatura (cm)</label>
-          <input type="text" placeholder="Ej: 170">
+          <label for="estatura">Estatura (cm)</label>
+          <input type="text" id="estatura" placeholder="Ej: 170">
         </div>
 
         <div class="input-field">
-          <label>Presión Arterial</label>
-          <input type="text" placeholder="Ej: 120/80">
+          <label for="presionArterial">Presión Arterial</label>
+          <input type="text" id="presionArterial" placeholder="Ej: 120/80">
         </div>
 
         <div class="input-field">
-          <label>Frecuencia Cardíaca</label>
-          <input type="text" placeholder="Ej: 72 lpm">
+          <label for="frecuenciaCardiaca">Frecuencia Cardíaca</label>
+          <input type="text" id="frecuenciaCardiaca" placeholder="Ej: 72 lpm">
         </div>
 
         <div class="input-field">
-          <label>Frecuencia Respiratoria</label>
-          <input type="text" placeholder="Ej: 18 rpm">
+          <label for="frecuenciaRespiratoria">Frecuencia Respiratoria</label>
+          <input type="text" id="frecuenciaRespiratoria" placeholder="Ej: 18 rpm">
         </div>
 
         <div class="input-field">
-          <label>Observaciones Generales</label>
-          <textarea placeholder="Notas adicionales..."></textarea>
+          <label for="observaciones">Observaciones Generales</label>
+          <textarea id="observaciones" placeholder="Notas adicionales..."></textarea>
         </div>
       </div>
 
@@ -165,70 +197,158 @@
         <a href="FI.html"><h2>Ficha De Identificación</h2></a>
       </div>
 
-      <button>Guardar</button>
+      <button id="btnGuardar" type="button">Guardar</button>
     </div>
   </div>
-  <script src="js/EF.js"></script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-  import {
-    getFirestore,
-    doc,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-    authDomain: "doctrack-46fc2.firebaseapp.com",
-    projectId: "doctrack-46fc2",
-    storageBucket: "doctrack-46fc2.appspot.com",
-    messagingSenderId: "865552814891",
-    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-    measurementId: "G-XQPNKXK08Y"
-};
+  <script type="module">
+    /* ---------- Firebase imports ---------- */
+    import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged }
+           from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      addDoc,
+      Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    /* ---------- Config ---------- */
+    const firebaseConfig = {
+      apiKey:            "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+      authDomain:        "doctrack-46fc2.firebaseapp.com",
+      projectId:         "doctrack-46fc2",
+      storageBucket:     "doctrack-46fc2.appspot.com",
+      messagingSenderId: "865552814891",
+      appId:             "1:865552814891:web:cf8e79d5ffd847067bab6e",
+      measurementId:     "G-XQPNKXK08Y"
+    };
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
-    }
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
 
-    const uid = user.uid;
-    const docRef = doc(db, "doctores", uid);
-    const userDoc = await getDoc(docRef);
+    /* ---------- Elementos DOM ---------- */
+    const selectPacientes         = document.getElementById("selectPacientes");
+    const btnGuardar              = document.getElementById("btnGuardar");
+    const inputEdad               = document.getElementById("edad");
+    const inputPeso               = document.getElementById("peso");
+    const inputEstatura           = document.getElementById("estatura");
+    const inputPresion            = document.getElementById("presionArterial");
+    const inputFC                 = document.getElementById("frecuenciaCardiaca");
+    const inputFR                 = document.getElementById("frecuenciaRespiratoria");
+    const inputObservaciones      = document.getElementById("observaciones");
 
-    if (!userDoc.exists()) {
-      alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
-    }
+    let doctorId = null;
 
-    const rol = userDoc.data().rol;
-    const pagina = window.location.pathname;
+    /* ---------- Autenticación y carga de pacientes ---------- */
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        alert("Debes iniciar sesión primero."); location.href = "index.html";
+        return;
+      }
+      doctorId = user.uid;
 
-    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
-      return (window.location.href = "Paciente.html");
-    }
+      try {
+        const q = query(
+          collection(db, "usuarios"),
+          where("rol", "==", "paciente"),
+          where("assignedDoctor", "==", doctorId)
+        );
+        const snap = await getDocs(q);
 
-  
-  });
+        selectPacientes.innerHTML =
+          `<option value="" disabled selected>Pacientes</option>`;
 
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
+        if (snap.empty) {
+          const opt = document.createElement("option");
+          opt.disabled = true; opt.textContent = "Sin pacientes asignados";
+          selectPacientes.appendChild(opt);
+        } else {
+          snap.forEach(p => {
+            const d   = p.data();
+            const opt = document.createElement("option");
+            opt.value = p.id;
+            opt.textContent = `${d.nombre} ${d.paterno} ${d.materno}`;
+            selectPacientes.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.error("Error cargando pacientes:", err);
+        alert("No se pudo cargar la lista de pacientes.");
+      }
     });
+
+    /* ---------- Guardar en Firestore ---------- */
+    btnGuardar.addEventListener("click", async () => {
+      const pacienteId = selectPacientes.value;
+      if (!pacienteId) return alert("Selecciona un paciente.");
+
+      const datos = {
+        doctorId,
+        pacienteId,
+        edad:                 inputEdad.value.trim(),
+        peso:                 inputPeso.value.trim(),
+        estatura:             inputEstatura.value.trim(),
+        presion_arterial:     inputPresion.value.trim(),
+        frecuencia_cardiaca:  inputFC.value.trim(),
+        frecuencia_respiratoria: inputFR.value.trim(),
+        observaciones_generales: inputObservaciones.value.trim(),
+        createdAt: Timestamp.now()
+      };
+
+      /* Validación mínima */
+      if (!datos.edad || !datos.peso || !datos.estatura) {
+        return alert("Completa al menos edad, peso y estatura.");
+      }
+
+      try {
+        await addDoc(collection(db, "exploracion_fisica"), datos);
+        alert("Exploración física guardada correctamente.");
+        /* limpiar campos */
+        inputEdad.value = inputPeso.value = inputEstatura.value =
+        inputPresion.value = inputFC.value = inputFR.value =
+        inputObservaciones.value = "";
+        selectPacientes.selectedIndex = 0;
+      } catch (err) {
+        console.error("Error guardando:", err);
+        alert("Error al guardar. Intenta de nuevo.");
+      }
+    });
+
+    /* ───  Detectar cambio de paciente y traer su edad ─── */
+selectPacientes.addEventListener("change", async () => {
+  const pacienteId = selectPacientes.value;
+  if (!pacienteId) { inputEdad.value = ""; return; }
+
+  try {
+    /*  La estructura es:
+        identificacion_paciente/{pacienteId}/{docAutoId}
+    */
+    const subSnap = await getDocs(
+      collection(db, "identificacion_paciente", pacienteId)
+    );
+
+    if (!subSnap.empty) {
+      /* Tomamos el primer documento (suponiendo que solo hay uno) */
+      const data = subSnap.docs[0].data();
+      inputEdad.value = data.edad || "";           // ← rellena la edad
+    } else {
+      inputEdad.value = "";
+      console.warn("Paciente sin ficha de identificación.");
+    }
+  } catch (err) {
+    console.error("Error obteniendo edad:", err);
+    inputEdad.value = "";
   }
-</script>
+});
+  </script>
+</body>
+
+
 
 </body>
 </html>

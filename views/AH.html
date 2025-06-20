@@ -159,6 +159,12 @@
   <div class="fondo">
     <div class="form-container">
       <h2>Antecedentes Heredofamiliares</h2>
+      <div class="input-field">
+          <label for="selectPacientes">Nombre del paciente</label>
+          <select id="selectPacientes">
+            <option value="" disabled selected>Pacientes</option>
+          </select>
+        </div>
 
       <div class="checkbox-group">
         <label>Diabetes</label>
@@ -235,10 +241,6 @@
         </div>
       </div>
 
-      <div class="date-group">
-        <label>Fecha De Registro</label>
-        <input type="date">
-      </div>
 
       <div class="textarea-group">
         <textarea placeholder="Descripción General"></textarea>
@@ -249,23 +251,27 @@
         <a href="FI.html"><h2>Ficha De Identificación</h2></a>
       </div>
 
-      <button>Guardar</button>
+      <button id="btnGuardar" type="button">Guardar</button>
+
     </div>
   </div>
   <script src="js/AH.js"></script>
+<!-- Sustituye COMPLETAMENTE el <script type="module"> que tenías por esto -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
     getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
     doc,
-    getDoc
+    getDoc,
+    setDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+  /* ───────── Firebase config ───────── */
   const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
     authDomain: "doctrack-46fc2.firebaseapp.com",
@@ -274,44 +280,109 @@
     messagingSenderId: "865552814891",
     appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
     measurementId: "G-XQPNKXK08Y"
-};
+  };
 
-  const app = initializeApp(firebaseConfig);
+  const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db = getFirestore(app);
+  const db   = getFirestore(app);
 
+  const selectPacientes = document.getElementById("selectPacientes");
+  const btnGuardar      = document.getElementById("btnGuardar");
+
+  /* ───────── Cargar pacientes ───────── */
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("Debes iniciar sesión primero.");
       return (window.location.href = "index.html");
     }
 
-    const uid = user.uid;
-    const docRef = doc(db, "doctores", uid);
-    const userDoc = await getDoc(docRef);
+    try {
+      const q = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", user.uid)
+      );
+      const snap = await getDocs(q);
 
-    if (!userDoc.exists()) {
-      alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
+      selectPacientes.innerHTML =
+        `<option value="" disabled selected>Pacientes</option>`;
+
+      snap.forEach((d) => {
+        const p = d.data();
+        const opt = document.createElement("option");
+        opt.value = d.id;
+        opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
+        selectPacientes.appendChild(opt);
+      });
+    } catch (e) {
+      console.error("Error cargando pacientes:", e);
+      alert("No se pudo cargar la lista de pacientes.");
     }
-
-    const rol = userDoc.data().rol;
-    const pagina = window.location.pathname;
-
-    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
-      return (window.location.href = "Paciente.html");
-    }
-
-  
   });
 
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
-    });
-  }
+  /* ───────── Guardar antecedentes ───────── */
+  btnGuardar.addEventListener("click", async () => {
+    const pacienteId = selectPacientes.value;
+    if (!pacienteId) return alert("Selecciona un paciente.");
+
+    /* util para leer radio */
+    const valorRadio = (name) =>
+      [...document.querySelectorAll(`input[name="${name}"]`)]
+        .find(r => r.checked)?.parentElement.textContent?.trim().toLowerCase();
+
+    const diabetes     = valorRadio("diabetes");
+    const hipertension = valorRadio("hipertension");
+    const cardiopatias = valorRadio("cardiopatias");
+    const asma         = valorRadio("asma");
+    const otros        = valorRadio("otros");
+
+    const bano   = valorRadio("baño");
+    const aseo   = valorRadio("aseo");
+    const tabaco = valorRadio("tabaco");
+    const alcohol= valorRadio("alcohol");
+
+    const descripcion = document.querySelector("textarea").value.trim();
+
+    // Validar que cada bloque tenga respuesta
+    const radiosOK = [diabetes, hipertension, cardiopatias, asma, otros,
+                      bano, aseo, tabaco, alcohol].every(v => v === "sí" || v === "no");
+
+    if (!radiosOK) {
+      alert("Responde todas las preguntas (Sí/No).");
+      return;
+    }
+
+    try {
+      const ref = doc(db, "antecedentes_paciente", pacienteId);
+      const snap = await getDoc(ref);
+
+      if (snap.exists()) {
+        alert("Este paciente ya tiene un registro de antecedentes.");
+        return;
+      }
+
+      await setDoc(ref, {
+        diabetes   : diabetes === "sí",
+        hipertension: hipertension === "sí",
+        cardiopatias: cardiopatias === "sí",
+        asma       : asma === "sí",
+        otro       : otros === "sí",
+        aseo_fisico: bano === "sí",
+        aseo_bucal : aseo === "sí",
+        tabaquismo : tabaco === "sí",
+        alcoholismo: alcohol === "sí",
+        descripcion,
+        creadaPor: auth.currentUser.uid,
+        creadaEn : new Date()
+      });
+
+      alert("Antecedentes guardados correctamente ✅");
+
+    } catch (e) {
+      console.error("Error al guardar antecedentes:", e);
+      alert("No se pudo guardar. Revisa consola.");
+    }
+  });
 </script>
 
 </body>

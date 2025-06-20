@@ -48,13 +48,24 @@ header {
 }
 .head h2 {
     color: white;
-    font-size: 20px;
+    font-size: 16px;
     margin: 0 40px;
     transition: color 0.3s ease;
-
 }
 .head h2:hover{
     color: #91CBD6;
+}
+.head button{
+    margin: 0px;
+    padding: 15px ;
+    border-radius: 10px;
+    background-color: #9Cd2d3;
+    color: #114c5f;
+    border: none;
+}
+.head button:hover{
+    cursor: pointer;
+    color: red;
 }
 .tex {
     display: flex;
@@ -226,6 +237,7 @@ a {
               <a href="Tratamiento.html"><h2>Tratamiento del Paciente</h2></a>
               <h2 class="un">Historial</h2>
             </div>
+            <button><h3>Cerrar sesion</h3></button>
         </div>
     </header>
     <h1>¿Qué quieres hacer hoy?</h1>
@@ -246,7 +258,6 @@ a {
                 </a>
           </div>
         </div>
-        <div class="salir"><a href="index.html">Salir</a></div>
         <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
