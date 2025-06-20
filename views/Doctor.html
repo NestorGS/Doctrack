@@ -512,10 +512,22 @@ select{
     /* 4. GUARDAR CAMBIOS */
    btnGuardar.addEventListener("click", async () => {
   const nuevoMotivo = motivoInput.value.trim();
-  const nuevaFecha  = new Date(fechaInput.value);
+  const nuevaFecha = new Date(fechaInput.value);
 
   if (!nuevoMotivo || isNaN(nuevaFecha.getTime())) {
-    alert("Datos inválidos.");
+    alert("Completa el motivo y una fecha válida.");
+    return;
+  }
+
+  const ahora = new Date();
+  if (nuevaFecha < ahora) {
+    alert("No puedes agendar una cita en el pasado.");
+    return;
+  }
+
+  const hora = nuevaFecha.getHours();
+  if (hora < 7 || hora >= 18) {
+    alert("La cita debe estar entre las 07:00 a.m. y las 6:00 p.m.");
     return;
   }
 
@@ -527,21 +539,22 @@ select{
 
     alert("Cita actualizada correctamente ✅");
 
-    // ✅ ACTUALIZA LOS ELEMENTOS VISUALMENTE
+    // Actualiza la vista de la fila
     motivoTd.textContent = nuevoMotivo;
     fechaTd.textContent = nuevaFecha.toLocaleString("es-MX");
     modificarTd.innerHTML = "";
-    modificarTd.appendChild(btnEditar); // vuelve a mostrar ✏️
+    modificarTd.appendChild(btnEditar);
 
-    // ✅ ACTUALIZA el objeto local para futuras ediciones (opcional)
+    // Actualiza objeto local
     cita.motivo = nuevoMotivo;
     cita.fechaCita = Timestamp.fromDate(nuevaFecha);
 
   } catch (e) {
     console.error("Error al guardar:", e);
-    alert("Ocurrió un error al guardar.");
+    alert("No se pudo guardar.");
   }
 });
+
 
     /* 5. CANCELAR EDICIÓN */
     btnCancelar.addEventListener("click", () => {
