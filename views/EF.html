@@ -302,8 +302,8 @@ select {
       createdAt: Timestamp.now()
     };
 
-    if (!datos.edad || !datos.peso || !datos.estatura) {
-      return alert("Completa al menos edad, peso y estatura.");
+    if (!datos.peso || !datos.estatura) {
+      return alert("Completa al menos peso y estatura.");
     }
 
     try {
