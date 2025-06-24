@@ -153,11 +153,6 @@ select {
             <option value="" disabled selected>Pacientes</option>
           </select>
         </div>
-        <br>
-        <div class="input-field">
-          <label for="edad">Edad</label>
-          <input type="text" id="edad" placeholder="Ej: 28">
-        </div>
       </div>
       <br>
       <div class="input-group">
@@ -201,151 +196,134 @@ select {
     </div>
   </div>
 
-  <script type="module">
-    /* ---------- Firebase imports ---------- */
-    import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged }
-           from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      query,
-      where,
-      getDocs,
-      addDoc,
-      Timestamp
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    collection,
+    query,
+    where,
+    getDocs,
+    addDoc,
+    Timestamp
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    /* ---------- Config ---------- */
-    const firebaseConfig = {
-      apiKey:            "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-      authDomain:        "doctrack-46fc2.firebaseapp.com",
-      projectId:         "doctrack-46fc2",
-      storageBucket:     "doctrack-46fc2.appspot.com",
-      messagingSenderId: "865552814891",
-      appId:             "1:865552814891:web:cf8e79d5ffd847067bab6e",
-      measurementId:     "G-XQPNKXK08Y"
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const selectPacientes = document.getElementById("selectPacientes");
+  const inputEdad = document.getElementById("edad");
+  const inputPeso = document.querySelector("input[placeholder='Ej: 68.5']");
+  const inputEstatura = document.querySelector("input[placeholder='Ej: 170']");
+  const inputPresion = document.querySelector("input[placeholder='Ej: 120/80']");
+  const inputFC = document.querySelector("input[placeholder='Ej: 72 lpm']");
+  const inputFR = document.querySelector("input[placeholder='Ej: 18 rpm']");
+  const inputObservaciones = document.querySelector("textarea");
+  const btnGuardar = document.querySelector("button");
+
+  let doctorId = null;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Debes iniciar sesión primero.");
+      return (location.href = "index.html");
+    }
+
+    doctorId = user.uid;
+
+    try {
+      const q = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", doctorId)
+      );
+      const snap = await getDocs(q);
+
+      selectPacientes.innerHTML = "";
+
+      if (snap.empty) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.selected = true;
+        opt.textContent = "Sin pacientes asignados";
+        selectPacientes.appendChild(opt);
+      } else {
+        const defaultOpt = document.createElement("option");
+        defaultOpt.disabled = true;
+        defaultOpt.selected = true;
+        defaultOpt.textContent = "Selecciona un paciente";
+        selectPacientes.appendChild(defaultOpt);
+
+        snap.forEach(p => {
+          const d = p.data();
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = `${d.nombre} ${d.paterno || ""} ${d.materno || ""}`;
+          selectPacientes.appendChild(opt);
+        });
+      }
+    } catch (err) {
+      console.error("Error cargando pacientes:", err);
+      alert("No se pudo cargar la lista de pacientes.");
+    }
+  });
+
+  btnGuardar.addEventListener("click", async () => {
+    const pacienteId = selectPacientes.value;
+    if (!pacienteId) return alert("Selecciona un paciente válido.");
+
+    const datos = {
+      doctorId,
+      pacienteId,
+      edad: inputEdad.value.trim(),
+      peso: inputPeso.value.trim(),
+      estatura: inputEstatura.value.trim(),
+      presion_arterial: inputPresion.value.trim(),
+      frecuencia_cardiaca: inputFC.value.trim(),
+      frecuencia_respiratoria: inputFR.value.trim(),
+      observaciones_generales: inputObservaciones.value.trim(),
+      createdAt: Timestamp.now()
     };
 
-    const app  = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
-
-    /* ---------- Elementos DOM ---------- */
-    const selectPacientes         = document.getElementById("selectPacientes");
-    const btnGuardar              = document.getElementById("btnGuardar");
-    const inputEdad               = document.getElementById("edad");
-    const inputPeso               = document.getElementById("peso");
-    const inputEstatura           = document.getElementById("estatura");
-    const inputPresion            = document.getElementById("presionArterial");
-    const inputFC                 = document.getElementById("frecuenciaCardiaca");
-    const inputFR                 = document.getElementById("frecuenciaRespiratoria");
-    const inputObservaciones      = document.getElementById("observaciones");
-
-    let doctorId = null;
-
-    /* ---------- Autenticación y carga de pacientes ---------- */
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        alert("Debes iniciar sesión primero."); location.href = "index.html";
-        return;
-      }
-      doctorId = user.uid;
-
-      try {
-        const q = query(
-          collection(db, "usuarios"),
-          where("rol", "==", "paciente"),
-          where("assignedDoctor", "==", doctorId)
-        );
-        const snap = await getDocs(q);
-
-        selectPacientes.innerHTML =
-          `<option value="" disabled selected>Pacientes</option>`;
-
-        if (snap.empty) {
-          const opt = document.createElement("option");
-          opt.disabled = true; opt.textContent = "Sin pacientes asignados";
-          selectPacientes.appendChild(opt);
-        } else {
-          snap.forEach(p => {
-            const d   = p.data();
-            const opt = document.createElement("option");
-            opt.value = p.id;
-            opt.textContent = `${d.nombre} ${d.paterno} ${d.materno}`;
-            selectPacientes.appendChild(opt);
-          });
-        }
-      } catch (err) {
-        console.error("Error cargando pacientes:", err);
-        alert("No se pudo cargar la lista de pacientes.");
-      }
-    });
-
-    /* ---------- Guardar en Firestore ---------- */
-    btnGuardar.addEventListener("click", async () => {
-      const pacienteId = selectPacientes.value;
-      if (!pacienteId) return alert("Selecciona un paciente.");
-
-      const datos = {
-        doctorId,
-        pacienteId,
-        edad:                 inputEdad.value.trim(),
-        peso:                 inputPeso.value.trim(),
-        estatura:             inputEstatura.value.trim(),
-        presion_arterial:     inputPresion.value.trim(),
-        frecuencia_cardiaca:  inputFC.value.trim(),
-        frecuencia_respiratoria: inputFR.value.trim(),
-        observaciones_generales: inputObservaciones.value.trim(),
-        createdAt: Timestamp.now()
-      };
-
-      /* Validación mínima */
-      if (!datos.edad || !datos.peso || !datos.estatura) {
-        return alert("Completa al menos edad, peso y estatura.");
-      }
-
-      try {
-        await addDoc(collection(db, "exploracion_fisica"), datos);
-        alert("Exploración física guardada correctamente.");
-        /* limpiar campos */
-        inputEdad.value = inputPeso.value = inputEstatura.value =
-        inputPresion.value = inputFC.value = inputFR.value =
-        inputObservaciones.value = "";
-        selectPacientes.selectedIndex = 0;
-      } catch (err) {
-        console.error("Error guardando:", err);
-        alert("Error al guardar. Intenta de nuevo.");
-      }
-    });
-
-    /* ───  Detectar cambio de paciente y traer su edad ─── */
-selectPacientes.addEventListener("change", async () => {
-  const pacienteId = selectPacientes.value;
-  if (!pacienteId) { inputEdad.value = ""; return; }
-
-  try {
-    /*  La estructura es:
-        identificacion_paciente/{pacienteId}/{docAutoId}
-    */
-    const subSnap = await getDocs(
-      collection(db, "identificacion_paciente", pacienteId)
-    );
-
-    if (!subSnap.empty) {
-      /* Tomamos el primer documento (suponiendo que solo hay uno) */
-      const data = subSnap.docs[0].data();
-      inputEdad.value = data.edad || "";           // ← rellena la edad
-    } else {
-      inputEdad.value = "";
-      console.warn("Paciente sin ficha de identificación.");
+    if (!datos.edad || !datos.peso || !datos.estatura) {
+      return alert("Completa al menos edad, peso y estatura.");
     }
-  } catch (err) {
-    console.error("Error obteniendo edad:", err);
-    inputEdad.value = "";
-  }
-});
-  </script>
+
+    try {
+      await addDoc(collection(db, "exploracion_fisica"), datos);
+      alert("Exploración física guardada correctamente.");
+
+      inputEdad.value = inputPeso.value = inputEstatura.value =
+      inputPresion.value = inputFC.value = inputFR.value =
+      inputObservaciones.value = "";
+
+      selectPacientes.selectedIndex = 0;
+    } catch (err) {
+      console.error("Error guardando:", err);
+      alert("Error al guardar. Intenta de nuevo.");
+    }
+  });
+</script>
+
+
 </body>
 
 
