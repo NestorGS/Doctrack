@@ -230,7 +230,6 @@ select {
   const db = getFirestore(app);
 
   const selectPacientes = document.getElementById("selectPacientes");
-  const inputEdad = document.getElementById("edad");
   const inputPeso = document.querySelector("input[placeholder='Ej: 68.5']");
   const inputEstatura = document.querySelector("input[placeholder='Ej: 170']");
   const inputPresion = document.querySelector("input[placeholder='Ej: 120/80']");
@@ -302,15 +301,11 @@ select {
       createdAt: Timestamp.now()
     };
 
-    if (!datos.peso || !datos.estatura) {
-      return alert("Completa al menos peso y estatura.");
-    }
-
     try {
       await addDoc(collection(db, "exploracion_fisica"), datos);
       alert("Exploración física guardada correctamente.");
 
-      inputEdad.value = inputPeso.value = inputEstatura.value =
+      inputPeso.value = inputEstatura.value =
       inputPresion.value = inputFC.value = inputFR.value =
       inputObservaciones.value = "";
 
@@ -321,11 +316,6 @@ select {
     }
   });
 </script>
-
-
-</body>
-
-
 
 </body>
 </html>
