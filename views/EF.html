@@ -289,6 +289,23 @@ select {
     const pacienteId = selectPacientes.value;
     if (!pacienteId) return alert("Selecciona un paciente válido.");
 
+    try {
+      // Verificar si ya existe un registro con ese pacienteId
+      const q = query(
+        collection(db, "exploracion_fisica"),
+        where("pacienteId", "==", pacienteId)
+      );
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        alert("Este paciente ya tiene una exploración registrada. Puedes modificarla en la sección correspondiente.");
+        return;
+      }
+    } catch (err) {
+      console.error("Error al verificar duplicados:", err);
+      return alert("Error al verificar si ya existe una exploración.");
+    }
+
     const datos = {
       doctorId,
       pacienteId,
@@ -316,6 +333,7 @@ select {
     }
   });
 </script>
+
 
 </body>
 </html>
