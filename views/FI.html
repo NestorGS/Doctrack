@@ -266,62 +266,64 @@
 
   /* ---------- validaciones y guardado ---------- */
   btnGuardar.addEventListener("click", async () => {
-    const pacienteId = selectPacientes.value;
-    const nombrePaciente = selectPacientes.options[selectPacientes.selectedIndex]?.textContent?.trim() || "";
+  const pacienteId = selectPacientes.value;
+  const nombrePaciente = selectPacientes.options[selectPacientes.selectedIndex]?.textContent?.trim() || "";
 
-    const edad = document.getElementById("edad").value.trim();
-    const genero = document.getElementById("genero").value;
-    const ocupacion = document.getElementById("ocupacion").value.trim();
-    const estadoCivil = document.getElementById("estado-civil").value.trim();
-    const religion = document.getElementById("religion").value.trim();
-    const telefono = document.getElementById("telefono").value.trim();
-    const correo = document.getElementById("correo").value.trim();
+  const edad         = document.getElementById("edad").value.trim();
+  const genero       = document.getElementById("genero").value;
+  const ocupacion    = document.getElementById("ocupacion").value.trim();
+  const estadoCivil  = document.getElementById("estado-civil").value.trim();
+  const religion     = document.getElementById("religion").value.trim();
+  const telefono     = document.getElementById("telefono").value.trim();
+  const correo       = document.getElementById("correo").value.trim();
 
-    // — RegEx —
-    const regSoloLetras = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
-    const regEdad = /^(?:[1-9][0-9]?|1[01][0-9]|120)$/;
-    const regTelefono = /^[0-9]{7,15}$/;
-    const regCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // — RegEx —
+  const regSoloLetras = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
+  const regEdad = /^(?:[1-9][0-9]?|1[01][0-9]|120)$/;
+  const regTelefono = /^[0-9]{7,15}$/;
+  const regCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // — Validaciones —
-    if (!pacienteId) return alert("Selecciona un paciente.");
-    if (!regEdad.test(edad)) return alert("Edad inválida (1-120).");
-    if (!genero) return alert("Selecciona el género.");
-    if (!regSoloLetras.test(ocupacion)) return alert("Ocupación inválida.");
-    if (!regSoloLetras.test(estadoCivil)) return alert("Estado civil inválido.");
-    if (!regSoloLetras.test(religion)) return alert("Religión inválida.");
-    if (!regTelefono.test(telefono)) return alert("Teléfono inválido (7-15 dígitos).");
-    if (!regCorreo.test(correo)) return alert("Correo electrónico inválido.");
+  // — Validaciones —
+  if (!pacienteId) return alert("Selecciona un paciente.");
+  if (!regEdad.test(edad)) return alert("Edad inválida (1-120).");
+  if (!genero) return alert("Selecciona el género.");
+  if (!regSoloLetras.test(ocupacion)) return alert("Ocupación inválida.");
+  if (!regSoloLetras.test(estadoCivil)) return alert("Estado civil inválido.");
+  if (!regSoloLetras.test(religion)) return alert("Religión inválida.");
+  if (!regTelefono.test(telefono)) return alert("Teléfono inválido (7-15 dígitos).");
+  if (!regCorreo.test(correo)) return alert("Correo electrónico inválido.");
 
-    try {
-      const fichaRef = doc(db, "identificacion_paciente", pacienteId);
-      const fichaSnap = await getDoc(fichaRef);
+  try {
+    const fichaRef = doc(db, "identificacion_paciente", pacienteId);
+    const fichaSnap = await getDoc(fichaRef);
 
-      if (fichaSnap.exists()) {
-        alert("Este paciente ya tiene una ficha registrada.");
-        return;
-      }
-
-      await setDoc(fichaRef, {
-        nombre: nombrePaciente,
-        correo,
-        edad,
-        estadocivil: estadoCivil,
-        ocupacion,
-        religion,
-        sexo: genero,
-        telefono,
-        creadaPor: auth.currentUser.uid,
-        creadaEn: new Date()
-      });
-
-      alert("Ficha de identificación guardada exitosamente ✅");
-
-    } catch (e) {
-      console.error("❌ Error al guardar ficha:", e.message || e);
-      alert("Ocurrió un error al guardar. Revisa la consola para más detalles.");
+    // ❌ Ya existe una ficha con este ID de paciente
+    if (fichaSnap.exists()) {
+      alert("⚠️ Este paciente ya tiene una ficha registrada. Si deseas modificarla, ve a la sección correspondiente.");
+      return;
     }
-  });
+
+    // ✅ Crear nuevo registro
+    await setDoc(fichaRef, {
+      nombre: nombrePaciente,
+      correo,
+      edad,
+      estadocivil: estadoCivil,
+      ocupacion,
+      religion,
+      sexo: genero,
+      telefono,
+      creadaPor: auth.currentUser.uid,
+      creadaEn: new Date()
+    });
+
+    alert("✅ Ficha de identificación guardada exitosamente.");
+  } catch (e) {
+    console.error("❌ Error al guardar ficha:", e.message || e);
+    alert("Ocurrió un error al guardar. Revisa la consola para más detalles.");
+  }
+});
+
 
   /* ---------- cerrar sesión si tienes #logoutBtn ---------- */
   const logoutBtn = document.getElementById("logoutBtn");
