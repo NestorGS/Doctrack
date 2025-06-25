@@ -16,6 +16,18 @@ header {
     border-radius: 20px;
 }
 
+.info-field {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 25px;
+  border: none;
+  background-color: white;
+  color: #114c5f;
+  margin-bottom: 20px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
 .head {
     display: flex;
     align-items: center;
@@ -51,6 +63,9 @@ header {
     background-color: #9Cd2d3;
     color: #114c5f;
     border: none;
+}
+.head button h3{
+  font-size: small;
 }
 .head button:hover{
     cursor: pointer;

@@ -21,25 +21,24 @@
              <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
         </div>
     </header>
-    <div class="bs">
-        <div class="sec1">
-            <a href="" class="chat">Consultar Chat</a>
-        </div>
-        <div class="sec2">
-            <div class="sec2-1">
-                <p>Tratamiento</p>
-                <p>Hora de tratamiento</p>
-                <p>Proxima cita</p>
-                
-            </div>
-            <div class="sec2-2">
-                <div class="trat"></div>
-                <div class="hor"></div>
-                <div class="prox"></div>
-                
-            </div>
-        </div>
+   <div class="bs">
+  <div class="sec1">
+    <a href="" class="chat">Consultar Chat</a>
+  </div>
+  <div class="sec2">
+    <div class="sec2-1">
+      <p>Tratamiento</p>
+      <p>Hora de tratamiento</p>
+      <p>Proxima cita</p>
     </div>
+    <div class="sec2-2">
+      <input type="text" id="tratamientoField" readonly class="info-field" />
+      <input type="text" id="horaField" readonly class="info-field" />
+      <input type="text" id="proximaField" readonly class="info-field" />
+    </div>
+  </div>
+</div>
+
    <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
@@ -49,6 +48,10 @@
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
     getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
     doc,
     getDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
@@ -66,6 +69,10 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+
+  const tratamientoInput = document.getElementById("tratamientoField");
+  const horaInput = document.getElementById("horaField");
+  const proximaInput = document.getElementById("proximaField");
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -90,9 +97,32 @@
       if (!permitidas.some(p => rutaActual.endsWith(p))) {
         return (window.location.href = "Paciente.html");
       }
-    }
 
-    if (rol === "doctor") {
+      try {
+        // Buscar tratamiento del paciente
+        const tratamientosRef = collection(db, "tratamientos");
+        const q = query(tratamientosRef, where("pacienteId", "==", uid));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+          const tratamientoData = snapshot.docs[0].data();
+
+          tratamientoInput.value = tratamientoData.tratamiento || "Sin datos";
+          horaInput.value = tratamientoData.hora || "Sin datos";
+          proximaInput.value = tratamientoData.proxima_cita || "Sin datos";
+        } else {
+          tratamientoInput.value = "Sin datos";
+          horaInput.value = "Sin datos";
+          proximaInput.value = "Sin datos";
+        }
+      } catch (error) {
+        console.error("Error al obtener tratamiento:", error);
+        tratamientoInput.value = "Error";
+        horaInput.value = "Error";
+        proximaInput.value = "Error";
+      }
+
+    } else if (rol === "doctor") {
       const permitidas = ["/Doctor.html", "/Tratamiento.html", "/Historial.html"];
       if (!permitidas.some(p => rutaActual.endsWith(p))) {
         return (window.location.href = "Doctor.html");
@@ -100,7 +130,7 @@
     }
   });
 
-  // ✅ Lógica de cierre de sesión
+  // Cerrar sesión
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
@@ -114,6 +144,8 @@
     });
   }
 </script>
+
+
 
 </body>
 </html>

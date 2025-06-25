@@ -174,8 +174,10 @@
     <div class="field"><label>Frecuencia Respiratoria:</label><textarea id="frecuencia_respiratoria"></textarea></div>
     <div class="field"><label>Observaciones:</label><textarea id="observaciones_generales"></textarea></div>
     <div class="field"><label>Estatura:</label><textarea id="estatura"></textarea></div>
-
-    <button class="button">Guardar</button>
+    <div class="adjunto-container">
+      <button class="button-small">Agregar Archivo Adjunto</button>
+    </div>
+    <button id="btnGuardar" disabled class="button">Guardar</button>
   </div>
 
     <div class="regreso">
@@ -196,7 +198,10 @@
     getDoc,
     getDocs,
     query,
-    where
+    where,
+    setDoc,
+    updateDoc,
+    serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -214,6 +219,9 @@
   const db = getFirestore(app);
 
   const selectPacientes = document.getElementById("selectPacientes");
+  const btnGuardar = document.getElementById("btnGuardar");
+  btnGuardar.disabled = true;
+
 
   const campos = {
     edad: "edad",
@@ -221,7 +229,6 @@
     ocupacion: "ocupacion",
     estadocivil: "estadocivil",
     religion: "religion",
-
     hipertension: "hipertension",
     diabetes: "diabetes",
     cardiopatias: "cardiopatias",
@@ -231,7 +238,6 @@
     tabaquismo: "tabaquismo",
     aseo_bucal: "aseo_bucal",
     aseo_fisico: "aseo_fisico",
-
     peso: "peso",
     presion_arterial: "presion_arterial",
     frecuencia_cardiaca: "frecuencia_cardiaca",
@@ -244,6 +250,8 @@
   for (const key in campos) {
     inputs[key] = document.getElementById(campos[key]);
   }
+
+  let doctorId = null;
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -259,13 +267,15 @@
       return;
     }
 
+    doctorId = user.uid;
+
     const q = query(
       collection(db, "usuarios"),
       where("rol", "==", "paciente"),
       where("assignedDoctor", "==", user.uid)
     );
     const snap = await getDocs(q);
-    selectPacientes.innerHTML = `<option disabled selected>Pacientes</option>`;
+    selectPacientes.innerHTML = `<option disabled selected value="">Pacientes</option>`;
     snap.forEach(pac => {
       const d = pac.data();
       const opt = document.createElement("option");
@@ -277,8 +287,11 @@
 
   selectPacientes.addEventListener("change", async () => {
     const pacienteId = selectPacientes.value;
+    if (selectPacientes.value !== "") {
+      btnGuardar.disabled = false;
+    } 
 
-    // Identificación
+
     try {
       const snap = await getDoc(doc(db, "identificacion_paciente", pacienteId));
       if (snap.exists()) {
@@ -293,7 +306,6 @@
       console.error("Error cargando identificación:", e);
     }
 
-    // Antecedentes
     try {
       const snap = await getDoc(doc(db, "antecedentes_paciente", pacienteId));
       if (snap.exists()) {
@@ -312,7 +324,6 @@
       console.error("Error cargando antecedentes:", e);
     }
 
-    // Exploración física
     try {
       const q = query(
         collection(db, "exploracion_fisica"),
@@ -332,70 +343,60 @@
       console.error("Error cargando exploración física:", e);
     }
   });
-</script>
-<script type="module">
-import {
-  doc,
-  setDoc,
-  updateDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-document.querySelector(".button").addEventListener("click", async () => {
-  const pacienteId = selectPacientes.value;
-  if (!pacienteId) {
-    alert("Selecciona un paciente primero.");
-    return;
-  }
+  btnGuardar.addEventListener("click", async () => {
+    const pacienteId = selectPacientes.value;
+    if (!pacienteId) return alert("Selecciona un paciente.");
 
-  try {
-    // GUARDAR ANTECEDENTES
-    const antecedentesRef = doc(db, "antecedentes_paciente", pacienteId);
-    await setDoc(antecedentesRef, {
-      pacienteId: pacienteId,
-      hipertension: inputs.hipertension.value === "true",
-      diabetes: inputs.diabetes.value === "true",
-      cardiopatias: inputs.cardiopatias.value === "true",
-      asma: inputs.asma.value === "true",
-      otro: inputs.otro.value === "true",
-      tabaquismo: inputs.tabaquismo.value === "true",
-      alcoholismo: inputs.alcoholismo.value === "true",
-      aseo_bucal: inputs.aseo_bucal.value === "true",
-      aseo_fisico: inputs.aseo_fisico.value === "true",
-      creadaPor: doctorID,
-      creadaEn: serverTimestamp()
-    }, { merge: true });
+    const antecedentes = {};
+    const exploracion = {};
 
-    // GUARDAR EXPLORACIÓN FÍSICA
-    const q = query(collection(db, "exploracion_fisica"), where("pacienteId", "==", pacienteId));
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-      const docId = snap.docs[0].id;
-      const exploraRef = doc(db, "exploracion_fisica", docId);
-      await updateDoc(exploraRef, {
-        peso: inputs.peso.value,
-        estatura: inputs.estatura.value,
-        presion_arterial: inputs.presion_arterial.value,
-        frecuencia_cardiaca: inputs.frecuencia_cardiaca.value,
-        frecuencia_respiratoria: inputs.frecuencia_respiratoria.value,
-        observaciones_generales: inputs.observaciones_generales.value
-      });
+    const camposBooleanos = [
+      "hipertension", "diabetes", "cardiopatias", "asma", "otro",
+      "alcoholismo", "tabaquismo", "aseo_bucal", "aseo_fisico"
+    ];
+
+    for (const key of Object.keys(inputs)) {
+      const val = inputs[key].value;
+      if (camposBooleanos.includes(key)) {
+        antecedentes[key] = (val.toLowerCase() === "sí");
+      } else if (["peso", "presion_arterial", "frecuencia_cardiaca", "frecuencia_respiratoria", "observaciones_generales", "estatura"].includes(key)) {
+        exploracion[key] = val;
+      }
     }
 
-    alert("Datos actualizados correctamente.");
+    antecedentes.creadaEn = new Date();
+    antecedentes.creadaPor = doctorId;
+    antecedentes.pacienteId = pacienteId;
 
-    // LIMPIAR CAMPOS
-    for (const key in inputs) {
-      inputs[key].value = "";
+    exploracion.doctorId = doctorId;
+    exploracion.pacienteId = pacienteId;
+    exploracion.createdAt = new Date();
+
+    try {
+      await setDoc(doc(db, "antecedentes_paciente", pacienteId), antecedentes, { merge: true });
+
+      const q = query(
+        collection(db, "exploracion_fisica"),
+        where("pacienteId", "==", pacienteId)
+      );
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        await updateDoc(doc(db, "exploracion_fisica", snap.docs[0].id), exploracion);
+      } else {
+        await setDoc(doc(collection(db, "exploracion_fisica")), exploracion);
+      }
+
+      alert("Datos guardados correctamente.");
+
+      // Limpiar formulario y reiniciar selección
+      for (const i of Object.values(inputs)) i.value = "";
+      selectPacientes.selectedIndex = 0;
+    } catch (e) {
+      console.error("Error guardando datos:", e);
+      alert("Error al guardar los datos.");
     }
-
-    selectPacientes.selectedIndex = 0;
-
-  } catch (error) {
-    console.error("Error al guardar:", error);
-    alert("Ocurrió un error al guardar los datos.");
-  }
-});
+  });
 </script>
 
 
