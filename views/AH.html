@@ -148,6 +148,32 @@
       background-color: #9cd2d3;
       color: #114c5f;
     }
+
+    select {
+      border-radius: 15px;
+      border: 2px solid #114c5f;
+      padding: 10px 15px;
+      font-size: 16px;
+      font-family: "Sora", sans-serif;
+      background-color: white;
+      color: #114c5f;
+      width: 100%;
+      appearance: none; /* Opcional: oculta la flecha del sistema en algunos navegadores */
+    }
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+
+    .input-field label {
+      font-size: 18px;
+      color: #114c5f;
+      margin-bottom: 5px;
+    }
+
+
   </style>
 </head>
 <body>
@@ -256,7 +282,7 @@
     </div>
   </div>
   <script src="js/AH.js"></script>
-<!-- Sustituye COMPLETAMENTE el <script type="module"> que tenías por esto -->
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
@@ -271,7 +297,7 @@
     setDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  /* ───────── Firebase config ───────── */
+  // ───── Firebase Config ─────
   const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
     authDomain: "doctrack-46fc2.firebaseapp.com",
@@ -282,18 +308,19 @@
     measurementId: "G-XQPNKXK08Y"
   };
 
-  const app  = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db   = getFirestore(app);
+  const db = getFirestore(app);
 
   const selectPacientes = document.getElementById("selectPacientes");
-  const btnGuardar      = document.getElementById("btnGuardar");
+  const btnGuardar = document.getElementById("btnGuardar");
 
-  /* ───────── Cargar pacientes ───────── */
+  // ───── Cargar pacientes ─────
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
+      window.location.href = "index.html";
+      return;
     }
 
     try {
@@ -302,16 +329,16 @@
         where("rol", "==", "paciente"),
         where("assignedDoctor", "==", user.uid)
       );
+
       const snap = await getDocs(q);
 
-      selectPacientes.innerHTML =
-        `<option value="" disabled selected>Pacientes</option>`;
+      selectPacientes.innerHTML = `<option value="" disabled selected>Pacientes</option>`;
 
-      snap.forEach((d) => {
-        const p = d.data();
+      snap.forEach((docSnap) => {
+        const d = docSnap.data();
         const opt = document.createElement("option");
-        opt.value = d.id;
-        opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
+        opt.value = docSnap.id; // ← Este será el ID del paciente
+        opt.textContent = `${d.nombre} ${d.paterno} ${d.materno}`;
         selectPacientes.appendChild(opt);
       });
     } catch (e) {
@@ -320,12 +347,12 @@
     }
   });
 
-  /* ───────── Guardar antecedentes ───────── */
+  // ───── Guardar antecedentes ─────
   btnGuardar.addEventListener("click", async () => {
     const pacienteId = selectPacientes.value;
     if (!pacienteId) return alert("Selecciona un paciente.");
 
-    /* util para leer radio */
+    // Obtener valores de los radios
     const valorRadio = (name) =>
       [...document.querySelectorAll(`input[name="${name}"]`)]
         .find(r => r.checked)?.parentElement.textContent?.trim().toLowerCase();
@@ -336,20 +363,18 @@
     const asma         = valorRadio("asma");
     const otros        = valorRadio("otros");
 
-    const bano   = valorRadio("baño");
-    const aseo   = valorRadio("aseo");
-    const tabaco = valorRadio("tabaco");
-    const alcohol= valorRadio("alcohol");
+    const bano     = valorRadio("baño");
+    const aseo     = valorRadio("aseo");
+    const tabaco   = valorRadio("tabaco");
+    const alcohol  = valorRadio("alcohol");
 
-    const descripcion = document.querySelector("textarea").value.trim();
+    const descripcion = document.querySelector("textarea")?.value.trim() || "";
 
-    // Validar que cada bloque tenga respuesta
     const radiosOK = [diabetes, hipertension, cardiopatias, asma, otros,
                       bano, aseo, tabaco, alcohol].every(v => v === "sí" || v === "no");
 
     if (!radiosOK) {
-      alert("Responde todas las preguntas (Sí/No).");
-      return;
+      return alert("Responde todas las preguntas (Sí/No).");
     }
 
     try {
@@ -357,33 +382,34 @@
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
-        alert("Este paciente ya tiene un registro de antecedentes.");
+        alert("Este paciente ya tiene antecedentes registrados.");
         return;
       }
 
       await setDoc(ref, {
-        diabetes   : diabetes === "sí",
-        hipertension: hipertension === "sí",
-        cardiopatias: cardiopatias === "sí",
-        asma       : asma === "sí",
-        otro       : otros === "sí",
-        aseo_fisico: bano === "sí",
-        aseo_bucal : aseo === "sí",
-        tabaquismo : tabaco === "sí",
-        alcoholismo: alcohol === "sí",
-        descripcion,
-        creadaPor: auth.currentUser.uid,
-        creadaEn : new Date()
+        pacienteId, // ← se guarda explícitamente también en el documento
+        diabetes        : diabetes === "sí",
+        hipertension    : hipertension === "sí",
+        cardiopatias    : cardiopatias === "sí",
+        asma            : asma === "sí",
+        otro            : otros === "sí",
+        aseo_fisico     : bano === "sí",
+        aseo_bucal      : aseo === "sí",
+        tabaquismo      : tabaco === "sí",
+        alcoholismo     : alcohol === "sí",
+        descripcion     : descripcion || "",
+        creadaPor       : auth.currentUser.uid,
+        creadaEn        : new Date()
       });
 
       alert("Antecedentes guardados correctamente ✅");
-
     } catch (e) {
       console.error("Error al guardar antecedentes:", e);
       alert("No se pudo guardar. Revisa consola.");
     }
   });
 </script>
+
 
 </body>
 </html>
