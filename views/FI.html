@@ -193,24 +193,21 @@
     <a href="AHistorial.html">regresa mientras lo programan</a>
   </div>
 
-  <!--  SUSTITUYE COMPLETO tu <script type="module"> por este  -->
- <script type="module">
+  <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut }
     from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
- import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  setDoc,
-  getDoc // ← esto es lo que te faltaba
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    setDoc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-
-  /* ---------- config ---------- */
   const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
     authDomain: "doctrack-46fc2.firebaseapp.com",
@@ -221,12 +218,12 @@
     measurementId: "G-XQPNKXK08Y"
   };
 
-  const app  = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db   = getFirestore(app);
+  const db = getFirestore(app);
 
   const selectPacientes = document.getElementById("selectPacientes");
-  const btnGuardar      = document.getElementById("btnGuardar");
+  const btnGuardar = document.getElementById("btnGuardar");
 
   /* ---------- cargar pacientes del doctor ---------- */
   onAuthStateChanged(auth, async (user) => {
@@ -269,47 +266,44 @@
 
   /* ---------- validaciones y guardado ---------- */
   btnGuardar.addEventListener("click", async () => {
-    const pacienteId   = selectPacientes.value;
-    const edad         = document.getElementById("edad").value.trim();
-    const genero       = document.getElementById("genero").value;
-    const ocupacion    = document.getElementById("ocupacion").value.trim();
-    const estadoCivil  = document.getElementById("estado-civil").value.trim();
-    const religion     = document.getElementById("religion").value.trim();
-    const telefono     = document.getElementById("telefono").value.trim();
-    const correo       = document.getElementById("correo").value.trim();
+    const pacienteId = selectPacientes.value;
+    const nombrePaciente = selectPacientes.options[selectPacientes.selectedIndex]?.textContent?.trim() || "";
+
+    const edad = document.getElementById("edad").value.trim();
+    const genero = document.getElementById("genero").value;
+    const ocupacion = document.getElementById("ocupacion").value.trim();
+    const estadoCivil = document.getElementById("estado-civil").value.trim();
+    const religion = document.getElementById("religion").value.trim();
+    const telefono = document.getElementById("telefono").value.trim();
+    const correo = document.getElementById("correo").value.trim();
 
     // — RegEx —
-    const regSoloLetras  = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
-    const regEdad        = /^(?:[1-9][0-9]?|1[01][0-9]|120)$/;   // 1-120
-    const regTelefono    = /^[0-9]{7,15}$/;
-    const regCorreo      = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const regSoloLetras = /^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/;
+    const regEdad = /^(?:[1-9][0-9]?|1[01][0-9]|120)$/;
+    const regTelefono = /^[0-9]{7,15}$/;
+    const regCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // — Validaciones —
-    if (!pacienteId)               return alert("Selecciona un paciente.");
-    if (!regEdad.test(edad))       return alert("Edad inválida (1-120).");
-    if (!genero)                   return alert("Selecciona el género.");
-    if (!regSoloLetras.test(ocupacion))
-      return alert("Ocupación: solo letras y espacios.");
-    if (!regSoloLetras.test(estadoCivil))
-      return alert("Estado civil: solo letras y espacios.");
-    if (!regSoloLetras.test(religion))
-      return alert("Religión: solo letras y espacios.");
-    if (!regTelefono.test(telefono))
-      return alert("Teléfono inválido (7-15 dígitos numéricos).");
-    if (!regCorreo.test(correo))
-      return alert("Correo electrónico inválido.");
+    if (!pacienteId) return alert("Selecciona un paciente.");
+    if (!regEdad.test(edad)) return alert("Edad inválida (1-120).");
+    if (!genero) return alert("Selecciona el género.");
+    if (!regSoloLetras.test(ocupacion)) return alert("Ocupación inválida.");
+    if (!regSoloLetras.test(estadoCivil)) return alert("Estado civil inválido.");
+    if (!regSoloLetras.test(religion)) return alert("Religión inválida.");
+    if (!regTelefono.test(telefono)) return alert("Teléfono inválido (7-15 dígitos).");
+    if (!regCorreo.test(correo)) return alert("Correo electrónico inválido.");
 
-        try {
+    try {
       const fichaRef = doc(db, "identificacion_paciente", pacienteId);
       const fichaSnap = await getDoc(fichaRef);
 
-      // ⚠️ Si ya existe una ficha para este paciente, no crearla de nuevo
       if (fichaSnap.exists()) {
         alert("Este paciente ya tiene una ficha registrada.");
         return;
       }
 
       await setDoc(fichaRef, {
+        nombre: nombrePaciente,
         correo,
         edad,
         estadocivil: estadoCivil,
@@ -318,7 +312,7 @@
         sexo: genero,
         telefono,
         creadaPor: auth.currentUser.uid,
-        creadaEn : new Date()
+        creadaEn: new Date()
       });
 
       alert("Ficha de identificación guardada exitosamente ✅");
@@ -327,7 +321,6 @@
       console.error("❌ Error al guardar ficha:", e.message || e);
       alert("Ocurrió un error al guardar. Revisa la consola para más detalles.");
     }
-
   });
 
   /* ---------- cerrar sesión si tienes #logoutBtn ---------- */
@@ -339,6 +332,7 @@
     });
   }
 </script>
+
 
 </body>
 
