@@ -178,9 +178,9 @@ button:hover{
                          <input type="text" placeholder="Agregar una nota para el paciente"> 
                     </div>                   
                 </div>
-                <a href="Doctor.html">
+              
                   <button type="button" id="btnEnviarNota">Enviar</button>
-                </a>
+                
             </form>
         </div>
     </div>
@@ -195,14 +195,14 @@ button:hover{
     signOut
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    addDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   /* ───── CONFIG FIREBASE ───── */
   const firebaseConfig = {
@@ -220,10 +220,10 @@ button:hover{
   const db   = getFirestore(app);
 
   const selectPacientes = document.getElementById("selectPacientes");
-const notaInput = document.querySelector('input[placeholder="Agregar una nota para el paciente"]');
-const botonEnviar = document.getElementById("btnEnviarNota");
+  const notaInput = document.querySelector('input[placeholder="Agregar una nota para el paciente"]');
+  const botonEnviar = document.getElementById("btnEnviarNota");
 
-let doctorId = "";
+  let doctorId = "";
 
   /* ───── AUTENTICACIÓN Y CARGA DE PACIENTES ───── */
   onAuthStateChanged(auth, async (user) => {
@@ -277,20 +277,25 @@ let doctorId = "";
     }
 
     try {
-      const notaRef = doc(collection(db, "notas"));
-      await setDoc(notaRef, {
-        pacienteId,
-        doctorId,
-        contenido,
-        fecha: serverTimestamp()
-      });
+      // ⬇️ Aquí está la corrección: guardamos en la subcolección del paciente
+      const notaRef = collection(db, "notas", pacienteId, "notas_personales");
+await addDoc(notaRef, {
+  pacienteId,
+  doctorId,
+  contenido,
+  fecha: serverTimestamp()
+});
 
-      alert("✅ Nota guardada correctamente.");
-      notaInput.value = "";
-      selectPacientes.selectedIndex = 0;
+     alert("✅ Nota guardada correctamente.");
+notaInput.value = "";
+selectPacientes.selectedIndex = 0;
+
+// ⬇️ Redirigir después de guardar
+window.location.href = "Doctor.html";
+
     } catch (error) {
       console.error("Error al guardar la nota:", error);
-      alert("❌ Ocurrió un error al guardar la nota.");
+      alert(" Ocurrió un error al guardar la nota.");
     }
   });
 
