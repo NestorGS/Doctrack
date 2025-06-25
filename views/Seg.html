@@ -56,15 +56,14 @@ header {
     justify-content: center;
     align-items: center;
     text-align: center;
-    margin: 0px;
-    padding: 20px ;
+    max-width: 15%;
     border-radius: 10px;
     background-color: #9Cd2d3;
     color: #114c5f;
     border: none;
 }
 .head button h3{
-  font-size: 20px;
+  font-size: 18px;
 }
 .head button:hover{
     cursor: pointer;
@@ -209,7 +208,7 @@ button{
               <a href="Cita.html"><h2>Pedir una cita</h2></a>
               <h2 class="un">Seguimiento</h2>
             </div>
-         <button><h3>Cerrar sesion</h3></button>
+         <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
         </div>
     </header>
     <div class="ps">
@@ -266,6 +265,45 @@ button{
     <button>Marcar como completada</button>
     <a href="EX" class="exp">Consultar Expedientes</a>
 </div>
-        
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "index.html"; // redirige a tu login
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      alert("Error al cerrar sesión.");
+    }
+  });
+
+  // Verifica si hay sesión activa
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "index.html";
+    }
+  });
+</script>
+       
 </body>
 </html>

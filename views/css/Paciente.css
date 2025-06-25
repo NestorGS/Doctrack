@@ -16,16 +16,35 @@ header {
     border-radius: 20px;
 }
 
-.info-field {
-  width: 100%;
-  padding: 15px;
-  font-size: 16px;
-  border-radius: 25px;
-  border: none;
-  background-color: white;
+.sec2 {
+  width: 80%;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo label {
+  font-size: 18px;
+  margin-bottom: 8px;
   color: #114c5f;
-  margin-bottom: 20px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  font-weight: 500;
+}
+
+.info-field {
+  padding: 15px 20px;
+  font-size: 16px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  color: #114c5f;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
 .head {

@@ -165,6 +165,12 @@ button:hover{
             <form action="">
                  <h2>Datos Generales de la cita</h2>
   <div class="s1">
+
+    <div class="sele">
+        <select name="" id="selectPacientes">
+          <option value="" disabled selected>Pacientes</option>
+        </select>
+      </div>
     <div class="nom">
       <h3>1.Nombre del medicamento</h3>
       <input type="text" id="medicamento" placeholder="Escribe el nombre del medicamento">
@@ -227,11 +233,21 @@ button:hover{
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
     getFirestore,
     collection,
-    addDoc
+    addDoc,
+    doc,
+    getDoc,
+    query,
+    where,
+    getDocs
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+  // Configuración Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
     authDomain: "doctrack-46fc2.firebaseapp.com",
@@ -243,14 +259,73 @@ button:hover{
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app); // <-- ¡IMPORTANTE!
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
+  const selectPacientes = document.getElementById("selectPacientes");
+  let doctorID = null;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Debes iniciar sesión primero.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    const docSnap = await getDoc(doc(db, "doctores", user.uid));
+    if (!docSnap.exists()) {
+      alert("No tienes permisos para registrar tratamientos.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    doctorID = user.uid;
+
+    try {
+      const q = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", doctorID)
+      );
+
+      const snap = await getDocs(q);
+
+      // Limpiar el contenido previo y agregar un placeholder válido
+      selectPacientes.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Selecciona un paciente";
+      placeholder.disabled = true;
+      placeholder.selected = true;
+      selectPacientes.appendChild(placeholder);
+
+      if (snap.empty) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.textContent = "Sin pacientes asignados";
+        selectPacientes.appendChild(opt);
+      } else {
+        snap.forEach((pac) => {
+          const p = pac.data();
+          const opt = document.createElement("option");
+          opt.value = pac.id; // Guardar UID del paciente
+          opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
+          selectPacientes.appendChild(opt);
+        });
+      }
+    } catch (err) {
+      console.error("Error al cargar pacientes:", err);
+      alert("Error al cargar pacientes");
+    }
+  });
+
+  // Guardar tratamiento
   document.getElementById("btnGuardar").addEventListener("click", async (e) => {
     e.preventDefault();
 
     const tratamiento = {
       medicamento: document.getElementById("medicamento").value.trim(),
-      paciente: document.getElementById("paciente").value.trim(),
+      paciente: document.getElementById("selectPacientes").value, // aquí está el paciente seleccionado
       forma: document.getElementById("forma").value,
       dosis: document.getElementById("dosis").value.trim(),
       via: document.getElementById("via").value,
@@ -276,6 +351,7 @@ button:hover{
     }
   });
 </script>
+
 
 
 

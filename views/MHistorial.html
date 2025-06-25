@@ -344,59 +344,75 @@
     }
   });
 
-  btnGuardar.addEventListener("click", async () => {
-    const pacienteId = selectPacientes.value;
-    if (!pacienteId) return alert("Selecciona un paciente.");
+btnGuardar.addEventListener("click", async () => {
+  const pacienteId = selectPacientes.value;
+  if (!pacienteId) return alert("Selecciona un paciente.");
 
-    const antecedentes = {};
-    const exploracion = {};
+  // Preparar los objetos de cada colección
+  const identificacion = {};
+  const antecedentes = {};
+  const exploracion = {};
 
-    const camposBooleanos = [
-      "hipertension", "diabetes", "cardiopatias", "asma", "otro",
-      "alcoholismo", "tabaquismo", "aseo_bucal", "aseo_fisico"
-    ];
+  const camposBooleanos = [
+    "hipertension", "diabetes", "cardiopatias", "asma", "otro",
+    "alcoholismo", "tabaquismo", "aseo_bucal", "aseo_fisico"
+  ];
 
-    for (const key of Object.keys(inputs)) {
-      const val = inputs[key].value;
-      if (camposBooleanos.includes(key)) {
-        antecedentes[key] = (val.toLowerCase() === "sí");
-      } else if (["peso", "presion_arterial", "frecuencia_cardiaca", "frecuencia_respiratoria", "observaciones_generales", "estatura"].includes(key)) {
-        exploracion[key] = val;
-      }
+  for (const key of Object.keys(inputs)) {
+    const val = inputs[key].value.trim();
+
+    // Clasificar campos según colección
+    if (["edad", "sexo", "ocupacion", "estadocivil", "religion"].includes(key)) {
+      identificacion[key] = val;
+    } else if (camposBooleanos.includes(key)) {
+      antecedentes[key] = (val.toLowerCase() === "sí");
+    } else if (
+      ["peso", "presion_arterial", "frecuencia_cardiaca", "frecuencia_respiratoria", "observaciones_generales", "estatura"].includes(key)
+    ) {
+      exploracion[key] = val;
+    }
+  }
+
+  // Metadatos comunes
+  const timestamp = new Date();
+  antecedentes.creadaEn = timestamp;
+  antecedentes.pacienteId = pacienteId;
+  antecedentes.creadaPor = doctorId;
+
+  exploracion.pacienteId = pacienteId;
+  exploracion.doctorId = doctorId;
+  exploracion.createdAt = timestamp;
+
+  try {
+    // 1. Guardar ficha de identificación
+    await setDoc(doc(db, "identificacion_paciente", pacienteId), identificacion, { merge: true });
+
+    // 2. Guardar antecedentes heredofamiliares
+    await setDoc(doc(db, "antecedentes_paciente", pacienteId), antecedentes, { merge: true });
+
+    // 3. Guardar exploración física
+    const q = query(
+      collection(db, "exploracion_fisica"),
+      where("pacienteId", "==", pacienteId)
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      await updateDoc(doc(db, "exploracion_fisica", snap.docs[0].id), exploracion);
+    } else {
+      await addDoc(collection(db, "exploracion_fisica"), exploracion);
     }
 
-    antecedentes.creadaEn = new Date();
-    antecedentes.creadaPor = doctorId;
-    antecedentes.pacienteId = pacienteId;
+    alert("Datos guardados correctamente.");
 
-    exploracion.doctorId = doctorId;
-    exploracion.pacienteId = pacienteId;
-    exploracion.createdAt = new Date();
+    // Limpiar campos y reiniciar selección
+    for (const i of Object.values(inputs)) i.value = "";
+    selectPacientes.selectedIndex = 0;
+  } catch (error) {
+    console.error("Error al guardar datos:", error);
+    alert("Ocurrió un error al guardar los datos.");
+  }
+});
 
-    try {
-      await setDoc(doc(db, "antecedentes_paciente", pacienteId), antecedentes, { merge: true });
-
-      const q = query(
-        collection(db, "exploracion_fisica"),
-        where("pacienteId", "==", pacienteId)
-      );
-      const snap = await getDocs(q);
-      if (!snap.empty) {
-        await updateDoc(doc(db, "exploracion_fisica", snap.docs[0].id), exploracion);
-      } else {
-        await setDoc(doc(collection(db, "exploracion_fisica")), exploracion);
-      }
-
-      alert("Datos guardados correctamente.");
-
-      // Limpiar formulario y reiniciar selección
-      for (const i of Object.values(inputs)) i.value = "";
-      selectPacientes.selectedIndex = 0;
-    } catch (e) {
-      console.error("Error guardando datos:", e);
-      alert("Error al guardar los datos.");
-    }
-  });
 </script>
 
 

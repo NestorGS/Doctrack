@@ -23,20 +23,23 @@
     </header>
    <div class="bs">
   <div class="sec1">
-    <a href="" class="chat">Consultar Chat</a>
+    <a href="Chat.html" class="chat">Consultar Chat</a>
   </div>
   <div class="sec2">
-    <div class="sec2-1">
-      <p>Tratamiento</p>
-      <p>Hora de tratamiento</p>
-      <p>Proxima cita</p>
-    </div>
-    <div class="sec2-2">
-      <input type="text" id="tratamientoField" readonly class="info-field" />
-      <input type="text" id="horaField" readonly class="info-field" />
-      <input type="text" id="proximaField" readonly class="info-field" />
-    </div>
+  <div class="campo">
+    <label for="tratamientoField">Tratamiento</label>
+    <input id="tratamientoField" type="text" class="info-field" readonly />
   </div>
+  <div class="campo">
+    <label for="horaField">Hora de tratamiento</label>
+    <input id="horaField" type="text" class="info-field" readonly />
+  </div>
+  <div class="campo">
+    <label for="proximaField">Próxima cita</label>
+    <input id="proximaField" type="text" class="info-field" readonly />
+  </div>
+</div>
+
 </div>
 
    <script type="module">
@@ -51,9 +54,7 @@
     collection,
     query,
     where,
-    getDocs,
-    doc,
-    getDoc
+    getDocs
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -70,63 +71,64 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  const tratamientoInput = document.getElementById("tratamientoField");
-  const horaInput = document.getElementById("horaField");
-  const proximaInput = document.getElementById("proximaField");
+  const tratamientoField = document.getElementById("tratamientoField");
+  const horaField = document.getElementById("horaField");
+  const proximaField = document.getElementById("proximaField");
 
+  // Verifica si el usuario está autenticado
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
+      alert("Debes iniciar sesión como paciente.");
+      window.location.href = "index.html";
+      return;
     }
 
-    const uid = user.uid;
-    const docRef = doc(db, "usuarios", uid);
-    const userDoc = await getDoc(docRef);
+    const pacienteId = user.uid;
 
-    if (!userDoc.exists()) {
-      alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
-    }
+    try {
+      // ───── Buscar la próxima cita ─────
+      const citasRef = collection(db, "citas");
+      const qCitas = query(citasRef, where("pacienteId", "==", pacienteId));
+      const snapshotCitas = await getDocs(qCitas);
 
-    const rol = userDoc.data().rol;
-    const rutaActual = window.location.pathname;
+      if (!snapshotCitas.empty) {
+        let citaProxima = null;
 
-    if (rol === "paciente") {
-      const permitidas = ["/Paciente.html", "/Cita.html", "/Seg.html"];
-      if (!permitidas.some(p => rutaActual.endsWith(p))) {
-        return (window.location.href = "Paciente.html");
-      }
+        snapshotCitas.forEach(doc => {
+          const data = doc.data();
+          if (data.fechaCita.toDate() > new Date()) {
+            if (!citaProxima || data.fechaCita.toDate() < citaProxima.fechaCita.toDate()) {
+              citaProxima = data;
+            }
+          }
+        });
 
-      try {
-        // Buscar tratamiento del paciente
-        const tratamientosRef = collection(db, "tratamientos");
-        const q = query(tratamientosRef, where("pacienteId", "==", uid));
-        const snapshot = await getDocs(q);
-
-        if (!snapshot.empty) {
-          const tratamientoData = snapshot.docs[0].data();
-
-          tratamientoInput.value = tratamientoData.tratamiento || "Sin datos";
-          horaInput.value = tratamientoData.hora || "Sin datos";
-          proximaInput.value = tratamientoData.proxima_cita || "Sin datos";
+        if (citaProxima) {
+          proximaField.value = citaProxima.fechaCita.toDate().toLocaleString("es-MX");
         } else {
-          tratamientoInput.value = "Sin datos";
-          horaInput.value = "Sin datos";
-          proximaInput.value = "Sin datos";
+          proximaField.value = "Sin próximas citas";
         }
-      } catch (error) {
-        console.error("Error al obtener tratamiento:", error);
-        tratamientoInput.value = "Error";
-        horaInput.value = "Error";
-        proximaInput.value = "Error";
+      } else {
+        proximaField.value = "Sin citas";
       }
 
-    } else if (rol === "doctor") {
-      const permitidas = ["/Doctor.html", "/Tratamiento.html", "/Historial.html"];
-      if (!permitidas.some(p => rutaActual.endsWith(p))) {
-        return (window.location.href = "Doctor.html");
+      // ───── Buscar el tratamiento ─────
+      const tratRef = collection(db, "tratamientos");
+      const qTrat = query(tratRef, where("paciente", "==", pacienteId));
+      const snapshotTrat = await getDocs(qTrat);
+
+      if (!snapshotTrat.empty) {
+        const data = snapshotTrat.docs[0].data();
+        tratamientoField.value = data.medicamento || "Sin datos";
+        horaField.value = data.frecuencia || "Sin datos";
+      } else {
+        tratamientoField.value = "Sin datos";
+        horaField.value = "Sin datos";
       }
+
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+      alert("Hubo un error al obtener tus datos.");
     }
   });
 
@@ -139,11 +141,13 @@
         window.location.href = "index.html";
       } catch (error) {
         console.error("Error al cerrar sesión:", error);
-        alert("Error al cerrar sesión.");
+        alert("Error al cerrar sesión: " + error.message);
       }
     });
   }
 </script>
+
+
 
 
 
