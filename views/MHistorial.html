@@ -155,7 +155,6 @@
     <div class="field"><label>Edad:</label><textarea id="edad"></textarea></div>
     <div class="field"><label>Religión:</label><textarea id="religion"></textarea></div>
     <div class="field"><label>Ocupación:</label><textarea id="ocupacion"></textarea></div>
-    <div class="field"><label>Descripción General:</label><textarea id="descripcion"></textarea></div>
 
     <span class="section-title">Antecedentes Heredofamiliares y No Patológicos</span>
     <div class="field"><label>Hipertensión:</label><textarea id="hipertension"></textarea></div>
@@ -222,7 +221,6 @@
     ocupacion: "ocupacion",
     estadocivil: "estadocivil",
     religion: "religion",
-    descripcion: "descripcion",
 
     hipertension: "hipertension",
     diabetes: "diabetes",
@@ -290,7 +288,6 @@
         inputs.ocupacion.value = d.ocupacion || "";
         inputs.estadocivil.value = d.estadocivil || "";
         inputs.religion.value = d.religion || "";
-        inputs.descripcion.value = d.descripcion || "";
       }
     } catch (e) {
       console.error("Error cargando identificación:", e);
@@ -335,6 +332,70 @@
       console.error("Error cargando exploración física:", e);
     }
   });
+</script>
+<script type="module">
+import {
+  doc,
+  setDoc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+document.querySelector(".button").addEventListener("click", async () => {
+  const pacienteId = selectPacientes.value;
+  if (!pacienteId) {
+    alert("Selecciona un paciente primero.");
+    return;
+  }
+
+  try {
+    // GUARDAR ANTECEDENTES
+    const antecedentesRef = doc(db, "antecedentes_paciente", pacienteId);
+    await setDoc(antecedentesRef, {
+      pacienteId: pacienteId,
+      hipertension: inputs.hipertension.value === "true",
+      diabetes: inputs.diabetes.value === "true",
+      cardiopatias: inputs.cardiopatias.value === "true",
+      asma: inputs.asma.value === "true",
+      otro: inputs.otro.value === "true",
+      tabaquismo: inputs.tabaquismo.value === "true",
+      alcoholismo: inputs.alcoholismo.value === "true",
+      aseo_bucal: inputs.aseo_bucal.value === "true",
+      aseo_fisico: inputs.aseo_fisico.value === "true",
+      creadaPor: doctorID,
+      creadaEn: serverTimestamp()
+    }, { merge: true });
+
+    // GUARDAR EXPLORACIÓN FÍSICA
+    const q = query(collection(db, "exploracion_fisica"), where("pacienteId", "==", pacienteId));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      const docId = snap.docs[0].id;
+      const exploraRef = doc(db, "exploracion_fisica", docId);
+      await updateDoc(exploraRef, {
+        peso: inputs.peso.value,
+        estatura: inputs.estatura.value,
+        presion_arterial: inputs.presion_arterial.value,
+        frecuencia_cardiaca: inputs.frecuencia_cardiaca.value,
+        frecuencia_respiratoria: inputs.frecuencia_respiratoria.value,
+        observaciones_generales: inputs.observaciones_generales.value
+      });
+    }
+
+    alert("Datos actualizados correctamente.");
+
+    // LIMPIAR CAMPOS
+    for (const key in inputs) {
+      inputs[key].value = "";
+    }
+
+    selectPacientes.selectedIndex = 0;
+
+  } catch (error) {
+    console.error("Error al guardar:", error);
+    alert("Ocurrió un error al guardar los datos.");
+  }
+});
 </script>
 
 
