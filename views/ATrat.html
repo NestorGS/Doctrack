@@ -30,22 +30,25 @@
         font-size: 50px;
         margin: 40px;
     }
-.fondo{
-    display: flex;
+.fondo {
+  display: flex;
   justify-content: center;
   align-items: center;
   background-color: #114c5f;
-  width: 50%;
-  margin-left: 25%;
-  height: 700px;
+  width: 90%;
+  margin: 30px auto;
   border-radius: 39px;
+  padding: 30px 0;
 }
-.form-container{
-    background-color: white;
-    width: 96%;
-    height: 660px;
-    border-radius: 39px;
+
+.form-container {
+  background-color: white;
+  width: 95%;
+  border-radius: 39px;
+  padding: 30px 20px;
+  box-sizing: border-box;
 }
+
 h2{
     width: 100%;
     height: 50px;
@@ -175,14 +178,10 @@ button:hover{
       <h3>1.Nombre del medicamento</h3>
       <input type="text" id="medicamento" placeholder="Escribe el nombre del medicamento">
     </div>
-    <div class="med">
-      <h3>2.Nombre del paciente</h3>
-      <input type="text" id="paciente" placeholder="Escribe el nombre del paciente">
-    </div>
   </div>
   <div class="s1">
     <div class="nom">
-      <h3>3.Forma farmacéutica</h3>
+      <h3>2.Forma farmacéutica</h3>
       <select id="forma">
         <option value="">Selecciona la forma</option>
         <option value="Pomada">Pomada</option>
@@ -192,13 +191,13 @@ button:hover{
       </select>
     </div>
     <div class="med">
-      <h3>4.Dosis</h3>
+      <h3>3.Dosis</h3>
       <input type="text" id="dosis" placeholder="Escribe la dosis">
     </div>
   </div>
   <div class="s1">
     <div class="nom">
-      <h3>5.Vía de administración</h3>
+      <h3>4.Vía de administración</h3>
       <select id="via">
         <option value="">Selecciona la forma</option>
         <option value="Orales">Orales</option>
@@ -208,17 +207,17 @@ button:hover{
       </select>
     </div>
     <div class="med">
-      <h3>6.Frecuencia</h3>
+      <h3>5.Frecuencia</h3>
       <input type="text" id="frecuencia" placeholder="Escribe la frecuencia">
     </div>
   </div>
   <div class="s1">
     <div class="nom">
-      <h3>7.Concentración</h3>
+      <h3>6.Concentración</h3>
       <input type="text" id="concentracion" placeholder="Escribe la concentración">
     </div>
     <div class="med">
-      <h3>8.Días de aplicación</h3>
+      <h3>7.Días de aplicación</h3>
       <input type="text" id="dias" placeholder="Escribe los días de aplicación">
     </div>
   </div>

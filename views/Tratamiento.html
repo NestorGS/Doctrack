@@ -325,14 +325,19 @@ select{
           <div class="table-container">
             <table>
                 <thead>
-  <tr>
+  <tr>  
     <th>Nombre del paciente</th>
-    <th>Tratamiento</th>
-    <th>Hora de la cita</th>
-    <th>Alergias</th>
-    <th>Motivo</th>
-    <th>Eliminar</th>     <!-- ✅ NUEVO -->
-    <th>Modificar</th>    <!-- ✅ NUEVO -->
+   <th>Nombre del medicamento</th>
+    <th>Forma Forma farmacéutica</th>
+    <th>Dosis</th>
+    <th>Vía de administración</th>
+    <th>Frecuencia</th>
+    <th>Concentración</th>
+    <th>Días de aplicación</th> 
+    <th>Eliminar</th> 
+    <th>Modificar</th> 
+  
+  
   </tr>
 </thead>
 
@@ -355,127 +360,154 @@ select{
 
 <script src="js/tratamiento.js"></script>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-  import {
-    getFirestore,
-    collection,
-    query,
-    where,
-    getDocs,
-    addDoc,
-    Timestamp
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-    authDomain: "doctrack-46fc2.firebaseapp.com",
-    projectId: "doctrack-46fc2",
-    storageBucket: "doctrack-46fc2.appspot.com",
-    messagingSenderId: "865552814891",
-    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-    measurementId: "G-XQPNKXK08Y"
-  };
+// Configuración Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+  authDomain: "doctrack-46fc2.firebaseapp.com",
+  projectId: "doctrack-46fc2",
+  storageBucket: "doctrack-46fc2.appspot.com",
+  messagingSenderId: "865552814891",
+  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const select = document.getElementById("selectPacientes");
+const selectPacientes = document.getElementById("selectPacientes");
+const tablaTratamientos = document.getElementById("tabla-citas"); // usa el mismo ID para mantener consistencia
 
-    if (!select) {
-      console.warn("No se encontró el select de pacientes.");
-      return;
-    }
+let tratamientos = [];
+let pacientes = {};
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        alert("Debes iniciar sesión primero.");
-        window.location.href = "index.html";
-        return;
-      }
+function pintarTabla(pacienteId) {
+  tablaTratamientos.innerHTML = "";
+  const filtrados = tratamientos.filter(t => t.data.paciente === pacienteId);
 
-      const doctorId = user.uid;
-      try {
-        const q = query(
-          collection(db, "usuarios"),
-          where("rol", "==", "paciente"),
-          where("assignedDoctor", "==", doctorId)
-        );
-        const snap = await getDocs(q);
-        select.innerHTML = `<option disabled selected>Pacientes</option>`;
-        if (snap.empty) {
-          const opt = document.createElement("option");
-          opt.disabled = true;
-          opt.textContent = "Sin pacientes asignados";
-          select.appendChild(opt);
-        } else {
-          snap.forEach(doc => {
-            const p = doc.data();
-            const opt = document.createElement("option");
-            opt.value = doc.id;
-            opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
-            select.appendChild(opt);
-          });
-        }
-      } catch (error) {
-        console.error("Error al cargar pacientes:", error);
-      }
+  if (filtrados.length === 0) {
+    const fila = document.createElement("tr");
+    const celda = document.createElement("td");
+    celda.colSpan = 10;
+    celda.textContent = "Este paciente no tiene tratamientos registrados.";
+    celda.style.textAlign = "center";
+    fila.appendChild(celda);
+    tablaTratamientos.appendChild(fila);
+    return;
+  }
 
-      const logoutBtn = document.getElementById("logoutBtn");
-      if (logoutBtn) {
-        logoutBtn.addEventListener("click", async () => {
-          try {
-            await signOut(auth);
-            window.location.href = "index.html";
-          } catch (error) {
-            console.error("Error al cerrar sesión:", error);
-            alert("No se pudo cerrar la sesión.");
-          }
-        });
+  filtrados.forEach(({ id, data }) => {
+    const row = document.createElement("tr");
+    row.style.fontFamily = "Sora, sans-serif";
+
+    row.innerHTML = `
+      <td>${pacientes[data.paciente] || "Desconocido"}</td>
+      <td>${data.medicamento}</td>
+      <td>${data.forma}</td>
+      <td>${data.dosis}</td>
+      <td>${data.via}</td>
+      <td>${data.frecuencia}</td>
+      <td>${data.concentracion}</td>
+      <td>${data.dias}</td>
+    `;
+
+    const tdEliminar = document.createElement("td");
+    const btnEliminar = document.createElement("button");
+    btnEliminar.textContent = "❌";
+    btnEliminar.title = "Eliminar tratamiento";
+    btnEliminar.style.cssText = `
+      background:#ff4d4d;
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:16px;
+    `;
+    btnEliminar.addEventListener("click", async () => {
+      if (confirm("¿Seguro que deseas eliminar este tratamiento?")) {
+        await deleteDoc(doc(db, "tratamientos", id));
+        alert("Tratamiento eliminado.");
+        location.reload();
       }
     });
+    tdEliminar.appendChild(btnEliminar);
+    row.appendChild(tdEliminar);
+
+    const tdEditar = document.createElement("td");
+    const btnEditar = document.createElement("button");
+    btnEditar.textContent = "✏️";
+    btnEditar.title = "Editar tratamiento";
+    btnEditar.style.cssText = `
+      background:#ffd966;
+      color:black;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:16px;
+    `;
+    btnEditar.addEventListener("click", () => {
+      window.location.href = `editarTratamiento.html?id=${id}`;
+    });
+    tdEditar.appendChild(btnEditar);
+    row.appendChild(tdEditar);
+
+    tablaTratamientos.appendChild(row);
+  });
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return window.location.href = "index.html";
+
+  const doctorId = user.uid;
+
+  // Obtener pacientes
+  const pacientesSnap = await getDocs(query(
+    collection(db, "usuarios"),
+    where("rol", "==", "paciente"),
+    where("assignedDoctor", "==", doctorId)
+  ));
+
+  selectPacientes.innerHTML = `<option value="" selected disabled>Pacientes</option>`;
+  pacientesSnap.forEach(p => {
+    const d = p.data();
+    pacientes[p.id] = `${d.nombre} ${d.paterno} ${d.materno}`;
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = pacientes[p.id];
+    selectPacientes.appendChild(opt);
   });
 
-  // GUARDAR TRATAMIENTO
-  document.addEventListener("submit", async (e) => {
-    if (!e.target.matches("#formTratamiento")) return;
-    e.preventDefault();
+  // Obtener tratamientos
+  const snapTratamientos = await getDocs(collection(db, "tratamientos"));
+  tratamientos = snapTratamientos.docs.map(doc => ({ id: doc.id, data: doc.data() }));
 
-    const pacienteId = document.getElementById("selectPacientes").value;
-    const medicamento = document.getElementById("medicamento").value;
-    const dosis = document.getElementById("dosis").value;
-    const frecuencia = document.getElementById("frecuencia").value;
-    const dias = document.getElementById("dias").value;
-    const forma = document.getElementById("forma").value;
-    const via = document.getElementById("via").value;
-    const concentracion = document.getElementById("concentracion").value;
+  // Mostrar por defecto el primer paciente
+  if (selectPacientes.options.length > 1) {
+    const primerPaciente = selectPacientes.options[1].value;
+    selectPacientes.value = primerPaciente;
+    pintarTabla(primerPaciente);
+  }
 
-    if (!pacienteId || !medicamento || !dosis) {
-      alert("Completa todos los campos obligatorios.");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "tratamientos"), {
-        paciente: pacienteId,
-        medicamento,
-        dosis,
-        frecuencia,
-        dias,
-        forma,
-        via,
-        concentracion,
-        creado: Timestamp.now()
-      });
-      alert("Tratamiento guardado correctamente.");
-      e.target.reset();
-    } catch (error) {
-      console.error("Error al guardar tratamiento:", error);
-      alert("Error al guardar el tratamiento.");
-    }
+  selectPacientes.addEventListener("change", () => {
+    const seleccionado = selectPacientes.value;
+    pintarTabla(seleccionado);
   });
+});
 </script>
+
 </body>
 </html>
