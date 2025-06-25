@@ -18,7 +18,7 @@
                 <a href="Cita.html"><h2 class="hov">Pedir una Cita</h2></a>
                 <a href="Seg.html"><h2>Seguimiento</h2></a>
             </div>
-             <button><h3>Cerrar sesion</h3></button>
+             <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
         </div>
     </header>
     <div class="bs">
@@ -40,7 +40,7 @@
             </div>
         </div>
     </div>
-    <script type="module">
+   <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
     getAuth,
@@ -61,54 +61,58 @@
     messagingSenderId: "865552814891",
     appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
     measurementId: "G-XQPNKXK08Y"
-};
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
   onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    alert("Debes iniciar sesión primero.");
-    return (window.location.href = "index.html");
-  }
-
-  const uid = user.uid;
-  const docRef = doc(db, "usuarios", uid);
-  const userDoc = await getDoc(docRef);
-
-  if (!userDoc.exists()) {
-    alert("Usuario no registrado.");
-    return (window.location.href = "index.html");
-  }
-
-  const rol = userDoc.data().rol;
-  const rutaActual = window.location.pathname;
-
-  if (rol === "paciente") {
-    const paginasPermitidas = [
-      "/Paciente.html",
-      "/Cita.html",
-      "/Seg.html"
-    ];
-    if (!paginasPermitidas.some(p => rutaActual.endsWith(p))) {
-      return (window.location.href = "Paciente.html");
+    if (!user) {
+      alert("Debes iniciar sesión primero.");
+      return (window.location.href = "index.html");
     }
-  }
 
-  if (rol === "doctor") {
-    const paginasPermitidas = [
-      "/Doctor.html",
-      "/Tratamiento.html",
-      "/Historial.html"
-    ];
-    if (!paginasPermitidas.some(p => rutaActual.endsWith(p))) {
-      return (window.location.href = "Doctor.html");
+    const uid = user.uid;
+    const docRef = doc(db, "usuarios", uid);
+    const userDoc = await getDoc(docRef);
+
+    if (!userDoc.exists()) {
+      alert("Usuario no registrado.");
+      return (window.location.href = "index.html");
     }
+
+    const rol = userDoc.data().rol;
+    const rutaActual = window.location.pathname;
+
+    if (rol === "paciente") {
+      const permitidas = ["/Paciente.html", "/Cita.html", "/Seg.html"];
+      if (!permitidas.some(p => rutaActual.endsWith(p))) {
+        return (window.location.href = "Paciente.html");
+      }
+    }
+
+    if (rol === "doctor") {
+      const permitidas = ["/Doctor.html", "/Tratamiento.html", "/Historial.html"];
+      if (!permitidas.some(p => rutaActual.endsWith(p))) {
+        return (window.location.href = "Doctor.html");
+      }
+    }
+  });
+
+  // ✅ Lógica de cierre de sesión
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "index.html";
+      } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+        alert("Error al cerrar sesión.");
+      }
+    });
   }
-});
-
-
 </script>
 
 </body>

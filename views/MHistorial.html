@@ -108,10 +108,33 @@
     background: #9cd2d3;
     color: #114c5f;
   }
+  .regreso{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+.Reg{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 60px;
+  background-color: #114c5f;
+  width: 15%;
+  color: white;
+  border-radius: 15px;
+}
+.Reg:hover{
+  color: #114c5f;
+  background-color: #9cd2d3;
+}
 </style>
 </head>
 <body>
-  <div class="header">
+<div class="header">
     <div class="logo">
       <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="DocTrack logo">
     </div>
@@ -124,49 +147,44 @@
         <select name="" id="selectPacientes">
           <option value="" disabled selected>Pacientes</option>
         </select>
-      </div>
+    </div>
 
     <span class="section-title">Ficha de Identificación</span>
     <div class="field"><label>Estado Civil:</label><textarea id="estadocivil"></textarea></div>
     <div class="field"><label>Sexo:</label><textarea id="sexo"></textarea></div>
     <div class="field"><label>Edad:</label><textarea id="edad"></textarea></div>
-    <div class="field"><label>Escolaridad:</label><textarea id="escolaridad" disabled></textarea></div>
     <div class="field"><label>Religión:</label><textarea id="religion"></textarea></div>
-    <div class="field"><label>Descripción General:</label><textarea id="descripcion_id"></textarea></div>
     <div class="field"><label>Ocupación:</label><textarea id="ocupacion"></textarea></div>
-    <div class="field"><label>Interrogatorio:</label><textarea id="interrogatorio" disabled></textarea></div>
+    <div class="field"><label>Descripción General:</label><textarea id="descripcion"></textarea></div>
 
-    <span class="section-title">Antecedentes Heredofamiliares</span>
+    <span class="section-title">Antecedentes Heredofamiliares y No Patológicos</span>
     <div class="field"><label>Hipertensión:</label><textarea id="hipertension"></textarea></div>
     <div class="field"><label>Diabetes:</label><textarea id="diabetes"></textarea></div>
-    <div class="field"><label>Cardiopatía:</label><textarea id="cardiopatias"></textarea></div>
+    <div class="field"><label>Cardiopatías:</label><textarea id="cardiopatias"></textarea></div>
     <div class="field"><label>Asma:</label><textarea id="asma"></textarea></div>
     <div class="field"><label>Otros:</label><textarea id="otro"></textarea></div>
-    <div class="field"><label>Descripción General:</label><textarea id="descripcion_ant"></textarea></div>
     <div class="field"><label>Alcoholismo:</label><textarea id="alcoholismo"></textarea></div>
     <div class="field"><label>Tabaquismo:</label><textarea id="tabaquismo"></textarea></div>
     <div class="field"><label>Aseo Bucal:</label><textarea id="aseo_bucal"></textarea></div>
     <div class="field"><label>Baño Diario:</label><textarea id="aseo_fisico"></textarea></div>
 
     <span class="section-title">Exploración Física</span>
-    <div class="field"><label>Temperatura:</label><textarea id="temperatura" disabled></textarea></div>
     <div class="field"><label>Peso:</label><textarea id="peso"></textarea></div>
-    <div class="field"><label>Tensión Arterial:</label><textarea id="presion_arterial"></textarea></div>
+    <div class="field"><label>Presión Arterial:</label><textarea id="presion_arterial"></textarea></div>
     <div class="field"><label>Frecuencia Cardíaca:</label><textarea id="frecuencia_cardiaca"></textarea></div>
     <div class="field"><label>Frecuencia Respiratoria:</label><textarea id="frecuencia_respiratoria"></textarea></div>
-    <div class="field"><label>Descripción del Examen:</label><textarea id="observaciones_generales"></textarea></div>
-    <div class="field"><label>Talla:</label><textarea id="estatura"></textarea></div>
-
-    <div class="adjunto-container">
-      <button class="button-small">Agregar Archivo Adjunto</button>
-    </div>
+    <div class="field"><label>Observaciones:</label><textarea id="observaciones_generales"></textarea></div>
+    <div class="field"><label>Estatura:</label><textarea id="estatura"></textarea></div>
 
     <button class="button">Guardar</button>
   </div>
-  <a href="Historial.html">Salir</a>
+
+    <div class="regreso">
+    <a class="Reg" href="Historial.html">Regresar</a>
+    </div>
   <script src="js/Mhistorial.js"></script>
 
-  <script type="module">
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
     getAuth,
@@ -175,16 +193,13 @@
   import {
     getFirestore,
     collection,
-    addDoc,
     doc,
     getDoc,
-    query,
-    where,
     getDocs,
-    Timestamp
+    query,
+    where
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  /* ───────── Config Firebase ───────── */
   const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
     authDomain: "doctrack-46fc2.firebaseapp.com",
@@ -195,68 +210,133 @@
     measurementId: "G-XQPNKXK08Y"
   };
 
-  const app  = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db   = getFirestore(app);
+  const db = getFirestore(app);
 
   const selectPacientes = document.getElementById("selectPacientes");
-  const formCita        = document.getElementById("formCita");
 
-  let doctorID = null;
+  const campos = {
+    edad: "edad",
+    sexo: "sexo",
+    ocupacion: "ocupacion",
+    estadocivil: "estadocivil",
+    religion: "religion",
+    descripcion: "descripcion",
 
-  /* ───────── Autenticación y carga de pacientes ───────── */
+    hipertension: "hipertension",
+    diabetes: "diabetes",
+    cardiopatias: "cardiopatias",
+    asma: "asma",
+    otro: "otro",
+    alcoholismo: "alcoholismo",
+    tabaquismo: "tabaquismo",
+    aseo_bucal: "aseo_bucal",
+    aseo_fisico: "aseo_fisico",
+
+    peso: "peso",
+    presion_arterial: "presion_arterial",
+    frecuencia_cardiaca: "frecuencia_cardiaca",
+    frecuencia_respiratoria: "frecuencia_respiratoria",
+    observaciones_generales: "observaciones_generales",
+    estatura: "estatura"
+  };
+
+  const inputs = {};
+  for (const key in campos) {
+    inputs[key] = document.getElementById(campos[key]);
+  }
+
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      alert("Debes iniciar sesión primero.");
+      alert("Debes iniciar sesión.");
       window.location.href = "index.html";
       return;
     }
 
-    // Verifica que sea un doctor registrado
-    const docSnap = await getDoc(doc(db, "doctores", user.uid));
-    if (!docSnap.exists()) {
-      alert("No tienes permisos para registrar citas.");
+    const doctorSnap = await getDoc(doc(db, "doctores", user.uid));
+    if (!doctorSnap.exists()) {
+      alert("No tienes permisos.");
       window.location.href = "index.html";
       return;
     }
 
-    doctorID = user.uid;
-
-    /* ▼ Cargar pacientes asignados ▼ */
-    try {
-      const q = query(
-        collection(db, "usuarios"),
-        where("rol", "==", "paciente"),
-        where("assignedDoctor", "==", doctorID)
-      );
-
-      const snap = await getDocs(q);
-
-      // Limpiar y placeholder
-      selectPacientes.innerHTML =
-        `<option value="" disabled selected>Pacientes</option>`;
-
-      if (snap.empty) {
-        const opt = document.createElement("option");
-        opt.disabled = true;
-        opt.textContent = "Sin pacientes asignados";
-        selectPacientes.appendChild(opt);
-      } else {
-        snap.forEach((pac) => {
-          const p = pac.data();
-          const opt = document.createElement("option");
-          opt.value = pac.id;  // podemos guardar el UID del paciente
-          opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
-          selectPacientes.appendChild(opt);
-        });
-      }
-    } catch (err) {
-      console.error("Error al cargar pacientes:", err);
-      alert("Error al cargar pacientes");
-    }
+    const q = query(
+      collection(db, "usuarios"),
+      where("rol", "==", "paciente"),
+      where("assignedDoctor", "==", user.uid)
+    );
+    const snap = await getDocs(q);
+    selectPacientes.innerHTML = `<option disabled selected>Pacientes</option>`;
+    snap.forEach(pac => {
+      const d = pac.data();
+      const opt = document.createElement("option");
+      opt.value = pac.id;
+      opt.textContent = `${d.nombre} ${d.paterno ?? ''} ${d.materno ?? ''}`;
+      selectPacientes.appendChild(opt);
+    });
   });
 
+  selectPacientes.addEventListener("change", async () => {
+    const pacienteId = selectPacientes.value;
+
+    // Identificación
+    try {
+      const snap = await getDoc(doc(db, "identificacion_paciente", pacienteId));
+      if (snap.exists()) {
+        const d = snap.data();
+        inputs.edad.value = d.edad || "";
+        inputs.sexo.value = d.sexo || "";
+        inputs.ocupacion.value = d.ocupacion || "";
+        inputs.estadocivil.value = d.estadocivil || "";
+        inputs.religion.value = d.religion || "";
+        inputs.descripcion.value = d.descripcion || "";
+      }
+    } catch (e) {
+      console.error("Error cargando identificación:", e);
+    }
+
+    // Antecedentes
+    try {
+      const snap = await getDoc(doc(db, "antecedentes_paciente", pacienteId));
+      if (snap.exists()) {
+        const d = snap.data();
+        inputs.hipertension.value = d.hipertension ? "Sí" : "No";
+        inputs.diabetes.value = d.diabetes ? "Sí" : "No";
+        inputs.cardiopatias.value = d.cardiopatias ? "Sí" : "No";
+        inputs.asma.value = d.asma ? "Sí" : "No";
+        inputs.otro.value = d.otro ? "Sí" : "No";
+        inputs.alcoholismo.value = d.alcoholismo ? "Sí" : "No";
+        inputs.tabaquismo.value = d.tabaquismo ? "Sí" : "No";
+        inputs.aseo_bucal.value = d.aseo_bucal ? "Sí" : "No";
+        inputs.aseo_fisico.value = d.aseo_fisico ? "Sí" : "No";
+      }
+    } catch (e) {
+      console.error("Error cargando antecedentes:", e);
+    }
+
+    // Exploración física
+    try {
+      const q = query(
+        collection(db, "exploracion_fisica"),
+        where("pacienteId", "==", pacienteId)
+      );
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        const d = snap.docs[0].data();
+        inputs.peso.value = d.peso || "";
+        inputs.presion_arterial.value = d.presion_arterial || "";
+        inputs.frecuencia_cardiaca.value = d.frecuencia_cardiaca || "";
+        inputs.frecuencia_respiratoria.value = d.frecuencia_respiratoria || "";
+        inputs.observaciones_generales.value = d.observaciones_generales || "";
+        inputs.estatura.value = d.estatura || "";
+      }
+    } catch (e) {
+      console.error("Error cargando exploración física:", e);
+    }
+  });
 </script>
+
 
 
 </body>

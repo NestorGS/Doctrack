@@ -308,7 +308,7 @@ select{
               <h2 class="un">Tratamiento del Paciente</h2>
                 <a href="Historial.html"><h2>Historial</h2></a>
             </div>
-            <button><h3>Cerrar sesion</h3></button>
+            <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
         </div>
     </header>
     <div class="bbs">
@@ -365,7 +365,7 @@ select{
 <script src="js/tratamiento.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
   getFirestore,
   collection,
@@ -400,11 +400,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Verificar si el usuario está autenticado
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      console.warn("Usuario no autenticado.");
-      return;
-    }
+ onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    alert("Debes iniciar sesión primero.");
+    window.location.href = "index.html";
+    return;
+  }
+
 //=================================================== agregar a los pacientes a la barra desplegable==========================================
     const doctorId = user.uid;
     console.log(doctorId)
@@ -439,6 +441,19 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error al cargar pacientes:", error);
     }
+    const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "index.html";
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      alert("No se pudo cerrar la sesión.");
+    }
+  });
+}
+
 //=====================================================================================================================================
   });
 });

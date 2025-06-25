@@ -316,7 +316,7 @@ select{
                 <a href="Tratamiento.html"><h2 class="hov">Tratamiento-Paciente</h2></a>
                 <a href="Historial.html"><h2>Historial</h2></a>
             </div>
-            <button><h3>Cerrar sesion</h3></button>
+            <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
         </div>
     </header>
     <div class="bbs">
@@ -645,13 +645,19 @@ select{
   });
 
   /* ───────── CERRAR SESIÓN (si tu HTML tiene #logoutBtn) ───────── */
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
       await signOut(auth);
       window.location.href = "index.html";
-    });
-  }
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      alert("Hubo un problema al cerrar sesión.");
+    }
+  });
+}
+
 </script>
 
 

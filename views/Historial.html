@@ -236,7 +236,7 @@ a {
               <a href="Tratamiento.html"><h2>Tratamiento del Paciente</h2></a>
               <h2 class="un">Historial</h2>
             </div>
-            <button><h3>Cerrar sesion</h3></button>
+            <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
         </div>
     </header>
     <h1>¿Qué quieres hacer hoy?</h1>
@@ -278,7 +278,7 @@ a {
     messagingSenderId: "865552814891",
     appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
     measurementId: "G-XQPNKXK08Y"
-};
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -287,7 +287,8 @@ a {
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
+      window.location.href = "index.html";
+      return;
     }
 
     const uid = user.uid;
@@ -296,26 +297,33 @@ a {
 
     if (!userDoc.exists()) {
       alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
+      window.location.href = "index.html";
+      return;
     }
 
     const rol = userDoc.data().rol;
     const pagina = window.location.pathname;
 
     if (rol === "paciente" && !pagina.includes("Paciente.html")) {
-      return (window.location.href = "Paciente.html");
+      window.location.href = "Paciente.html";
     }
-
   });
 
+  // ✅ Cierre de sesión al presionar botón
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
+      try {
+        await signOut(auth);
+        window.location.href = "index.html";
+      } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+        alert("No se pudo cerrar la sesión.");
+      }
     });
   }
 </script>
+
 
     </body>
 </html>
