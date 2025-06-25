@@ -178,14 +178,14 @@ button:hover{
                          <input type="text" placeholder="Agregar una nota para el paciente"> 
                     </div>                   
                 </div>
-                <a href="Tratamiento.html">
-                  <button type="button">Enviar</button>
+                <a href="Doctor.html">
+                  <button type="button" id="btnEnviarNota">Enviar</button>
                 </a>
             </form>
         </div>
     </div>
     
-    <a href="Tratamiento.html">Mientras se programa</a>
+    <a href="Doctor.html">Mientras se programa</a>
     <script src="js/nota.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
@@ -195,12 +195,14 @@ button:hover{
     signOut
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
   import {
-    getFirestore,
-    collection,
-    query,
-    where,
-    getDocs
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   /* ───── CONFIG FIREBASE ───── */
   const firebaseConfig = {
@@ -218,6 +220,10 @@ button:hover{
   const db   = getFirestore(app);
 
   const selectPacientes = document.getElementById("selectPacientes");
+const notaInput = document.querySelector('input[placeholder="Agregar una nota para el paciente"]');
+const botonEnviar = document.getElementById("btnEnviarNota");
+
+let doctorId = "";
 
   /* ───── AUTENTICACIÓN Y CARGA DE PACIENTES ───── */
   onAuthStateChanged(auth, async (user) => {
@@ -227,10 +233,9 @@ button:hover{
       return;
     }
 
-    const doctorId = user.uid;
+    doctorId = user.uid;
 
     try {
-      // 1. Traer pacientes cuyo assignedDoctor sea este doctor
       const q = query(
         collection(db, "usuarios"),
         where("rol", "==", "paciente"),
@@ -238,7 +243,6 @@ button:hover{
       );
       const snap = await getDocs(q);
 
-      // 2. Limpiar y colocar placeholder
       selectPacientes.innerHTML =
         `<option value="" disabled selected>Pacientes</option>`;
 
@@ -251,7 +255,7 @@ button:hover{
         snap.forEach((p) => {
           const d   = p.data();
           const opt = document.createElement("option");
-          opt.value = p.id;   // UID del paciente
+          opt.value = p.id;
           opt.textContent = `${d.nombre} ${d.paterno} ${d.materno}`;
           selectPacientes.appendChild(opt);
         });
@@ -259,6 +263,34 @@ button:hover{
     } catch (err) {
       console.error("Error al cargar pacientes:", err);
       alert("Ocurrió un error al cargar la lista de pacientes.");
+    }
+  });
+
+  /* ───── BOTÓN ENVIAR NOTA ───── */
+  botonEnviar.addEventListener("click", async () => {
+    const pacienteId = selectPacientes.value;
+    const contenido = notaInput.value.trim();
+
+    if (!pacienteId || !contenido) {
+      alert("Selecciona un paciente y escribe una nota.");
+      return;
+    }
+
+    try {
+      const notaRef = doc(collection(db, "notas"));
+      await setDoc(notaRef, {
+        pacienteId,
+        doctorId,
+        contenido,
+        fecha: serverTimestamp()
+      });
+
+      alert("✅ Nota guardada correctamente.");
+      notaInput.value = "";
+      selectPacientes.selectedIndex = 0;
+    } catch (error) {
+      console.error("Error al guardar la nota:", error);
+      alert("❌ Ocurrió un error al guardar la nota.");
     }
   });
 
@@ -271,6 +303,7 @@ button:hover{
     });
   }
 </script>
+
 
 
 </body>

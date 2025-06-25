@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paciente-Principal</title>
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paciente-Principal</title>
     <style>
-        
 * {
     margin: 0;
     padding: 0;
@@ -27,173 +30,164 @@ header {
     display: flex;
     align-items: center;
     padding: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .head img {
     width: 80px;
     height: auto;
-    margin-left: 40px;
+    margin-left: 20px;
 }
-.head h1{
-  color: white;
+.head h1 {
+    color: white;
     font-size: 25px;
-    margin: 0 40px;
+    margin: 0 20px;
     transition: color 0.3s ease;
-
 }
 .head h2 {
     color: white;
     font-size: 20px;
-    margin: 0 40px;
+    margin: 0 20px;
     transition: color 0.3s ease;
-
 }
-.head h2:hover{
+.head h2:hover {
     color: #91CBD6;
 }
-.head button{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    max-width: 15%;
+.head button {
+    padding: 10px 20px;
     border-radius: 10px;
     background-color: #9Cd2d3;
     color: #114c5f;
     border: none;
-}
-.head button h3{
-  font-size: 18px;
-}
-.head button:hover{
     cursor: pointer;
+}
+.head button h3 {
+    font-size: 18px;
+}
+.head button:hover {
     color: red;
 }
+
 .tex {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 }
 a {
     text-decoration: none;
 }
-.bs{
+
+.bs {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-around;
-    align-items: center;
+    gap: 30px;
+    padding: 20px;
 }
-.tab1{
- width: 50%;
- text-align: center;
-}
-.tab2{
-    width: 50%;
+
+.tab1, .tab2 {
+    flex: 1 1 450px;
+    max-width: 100%;
     text-align: center;
 }
- h3{
+
+h3 {
     color: #114c5f;
-    font-size: 30px;
-    margin: 10px;
-}
-.tabla {
-  background-color: #f5ecd9; /* Color de fondo beige claro */
-  padding: 20px;
-  border-radius: 10px;
-  width: fit-content;
-  margin: 20px auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    font-size: 24px;
+    margin: 10px 0;
 }
 
 .table-container {
-  overflow-x: auto;
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 table {
-  border-collapse: collapse;
-  width: 100%;
-  min-width: 800px;
-  background-color: white;
-  border-radius: 10px;
-  overflow: hidden;
+    border-collapse: collapse;
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: 700px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 thead {
-  background-color: #a3cdd1; /* Azul verdoso suave */
-  color: #1b2b33;
+    background-color: #a3cdd1;
+    color: #1b2b33;
 }
 
-thead th {
-  padding: 12px 16px;
-  text-align: left;
-  font-weight: 600;
+thead th, tbody td {
+    padding: 10px;
+    font-size: 14px;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    word-break: break-word;
 }
 
-tbody td {
-  padding: 12px 16px;
-  border-top: 1px solid #ddd;
-  color: #333;
-}
-
-button{
+button {
     border: none;
     background-color: #114c5f;
     color: white;
     width: 20%;
     height: 40px;
-    margin: 20px;
+    margin: 20px auto;
     border-radius: 20px;
+    cursor: pointer;
 }
-.bs2{
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-.exp{
+
+.exp {
     width: 250px;
-    display: flex;
     text-align: center;
-    align-items: center;
-    justify-content: center;
     height: 50px;
     background-color: #114c5f;
     border-radius: 20px;
-  }
-  .exp {
     color: white;
-  }
-.salir{
-    width: 20%;
+    line-height: 50px;
+    margin: 20px auto;
+    display: inline-block;
+}
+
+.salir {
+    width: 200px;
     height: 50px;
-    display: flex;
-    margin: 20px;
-    margin-left: 40%;
-    justify-content: center;
-    align-items: center;
+    margin: 20px auto;
     background-color: #114c5f;
     border-radius: 20px;
-  }
-  .salir {
     color: white;
-  }
-  .salir:hover{
+    text-align: center;
+    line-height: 50px;
+}
+
+.salir:hover {
     background-color: #9cd2d3;
-  } 
-  .ps{
+}
+
+.ps {
     width: 100%;
     text-align: center;
     margin: 20px;
-  }
-  @media screen and (max-width: 900px) {
-  .head {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .tex {
-    flex-direction: column;
-    align-items: center;
-  }
 }
 
+.selected {
+    background-color: #d1f7d1 !important;
+}
+
+@media screen and (max-width: 900px) {
+    .head {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .tex {
+        flex-direction: column;
+        align-items: center;
+    }
+    table {
+        min-width: 100%;
+    }
+}
     </style>
 </head>
 <body>
@@ -216,12 +210,13 @@ button{
 </div>
     <div class="bs">
         <div class="tab1">
+            <div>
             <h3>Tratamientos en Progreso</h3>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Id</th>
+                            
                             <th>Nombre del medicamento</th>
                             <th>Forma farmaceutica</th>
                             <th>Concentración</th>
@@ -229,12 +224,16 @@ button{
                             <th>Via de administración</th>
                             <th>Frecuencia</th>
                             <th>Dias de aplicación</th>
+                            <th>Marcar como completado</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-citas">
+                    </div>
+                    <div>
+                    <tbody id="tabla-progreso"></tbody> <!-- Tratamientos en progreso -->
                         <!-- Las citas se llenarán dinámicamente -->
                     </tbody>
                 </table>
+                
             </div>
         </div>
         <div class="tab2">
@@ -243,7 +242,7 @@ button{
                 <table>
                     <thead>
                         <tr>
-                            <th>Id</th>
+                            
                             <th>Nombre del medicamento</th>
                             <th>Forma farmaceutica</th>
                             <th>Concentración</th>
@@ -251,9 +250,10 @@ button{
                             <th>Via de administración</th>
                             <th>Frecuencia</th>
                             <th>Dias de aplicación</th>
+                             <th>Marcar como incompleto</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-citas">
+                    <tbody id="tabla-completados"></tbody> <!-- Tratamientos completados -->
                         <!-- Las citas se llenarán dinámicamente -->
                     </tbody>
                 </table>
@@ -262,47 +262,127 @@ button{
 
 </div>
 <div class="bs2">
-    <button>Marcar como completada</button>
-    <a href="EX" class="exp">Consultar Expedientes</a>
+    
+   
 </div>
  <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  where,
+  updateDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-    authDomain: "doctrack-46fc2.firebaseapp.com",
-    projectId: "doctrack-46fc2",
-    storageBucket: "doctrack-46fc2.appspot.com",
-    messagingSenderId: "865552814891",
-    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-    measurementId: "G-XQPNKXK08Y"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+  authDomain: "doctrack-46fc2.firebaseapp.com",
+  projectId: "doctrack-46fc2",
+  storageBucket: "doctrack-46fc2.appspot.com",
+  messagingSenderId: "865552814891",
+  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+  measurementId: "G-XQPNKXK08Y"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  const logoutBtn = document.getElementById("logoutBtn");
-  logoutBtn.addEventListener("click", async () => {
-    try {
-      await signOut(auth);
-      window.location.href = "index.html"; // redirige a tu login
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-      alert("Error al cerrar sesión.");
+// Logout
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    window.location.href = "index.html";
+  } catch (err) {
+    console.error("Error al cerrar sesión", err);
+  }
+});
+
+const tablaProgreso = document.getElementById("tabla-progreso");
+const tablaCompletados = document.getElementById("tabla-completados");
+
+let usuarioId = null;
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) return window.location.href = "index.html";
+  usuarioId = user.uid;
+  await cargarTratamientos();
+});
+
+async function cargarTratamientos() {
+  const snap = await getDocs(query(
+    collection(db, "tratamientos"),
+    where("paciente", "==", usuarioId)
+  ));
+  const tratamientos = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+  renderTablas(tratamientos);
+}
+
+function renderTablas(tratamientos) {
+  tablaProgreso.innerHTML = "";
+  tablaCompletados.innerHTML = "";
+
+  tratamientos.forEach(t => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${t.medicamento}</td>
+      <td>${t.forma}</td>
+      <td>${t.concentracion}</td>
+      <td>${t.dosis}</td>
+      <td>${t.via}</td>
+      <td>${t.frecuencia}</td>
+      <td>${t.dias}</td>
+    `;
+
+    const btnTd = document.createElement("td");
+    const btn = document.createElement("button");
+
+    if (t.completado) {
+      btn.textContent = "🔴";
+      btn.title = "Marcar como incompleto";
+      btn.style.backgroundColor = "#ffc107"; // amarillo
+      btn.addEventListener("click", async () => {
+        await updateDoc(doc(db, "tratamientos", t.id), {
+          completado: false
+        });
+        await cargarTratamientos();
+      });
+      btnTd.appendChild(btn);
+      fila.appendChild(btnTd);
+      tablaCompletados.appendChild(fila);
+    } else {
+      btn.textContent = "🟢";
+      btn.title = "Marcar como completado";
+      btn.style.backgroundColor = "#28a745"; // verde
+      btn.addEventListener("click", async () => {
+        await updateDoc(doc(db, "tratamientos", t.id), {
+          completado: true
+        });
+        await cargarTratamientos();
+      });
+      btnTd.appendChild(btn);
+      fila.appendChild(btnTd);
+      tablaProgreso.appendChild(fila);
     }
-  });
 
-  // Verifica si hay sesión activa
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = "index.html";
-    }
+    btn.style.color = "white";
+    btn.style.borderRadius = "10px";
+    btn.style.cursor = "pointer";
+    btn.style.padding = "5px 10px";
   });
+}
+
+
+
 </script>
        
 </body>
