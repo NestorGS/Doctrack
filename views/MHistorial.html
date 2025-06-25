@@ -3,180 +3,261 @@
 <head>
   <meta charset="UTF-8">
   <title>Editar Historial</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
-      color: #fff;
-      padding: 20px;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-    }
-
-    .logo img {
-      height: 80px;
-      margin-right: 10px;
-    }
-
-    .logo span {
-      color: white;
-      font-size: 24px;
-      font-weight: 600;
-    }
-    .container {
-      background: white;
-      color: black;
-      border-radius: 10px;
-      padding: 20px;
-      max-width: 700px;
-      margin: auto;
-    }
-
-    h2 {
-        background: #9cd2d3;
-      height: 40px;
-      border-radius: 10px;
-      text-align: center;
-      width: 100%;
-      margin: 0px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .section-title {
-      background: #9cd2d3;
-      padding: 5px 10px;
-      border-radius: 10px;
-      margin: 20px auto 10px;
-      text-align: center;
-      display: block;
-      width: fit-content;
-    }
-
-    .field {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .field label {
-      width: 200px;
-      font-weight: bold;
-    }
-
-    textarea {
-      flex: 1;
-      border: 1px solid #114c5f;
-      padding: 5px 10px;
-      border-radius: 5px;
-      resize: vertical;
-      font-family: Arial, sans-serif;
-    }
-
-    .button {
-      background: #114c5f;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      display: block;
-      margin: 20px auto 0;
-    }
-
-    .button:hover {
-      background: #114c5f;
-    }
-
-    .adjunto-container {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 10px;
-    }
-
-    .button-small {
-      background: #114c5f;
-      color: white;
-      padding: 8px 15px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .button-small:hover {
-      background: #114c5f;
-    }
-  </style>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
+    color: #fff;
+    padding: 20px;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  .logo img {
+    height: 80px;
+    margin-right: 10px;
+  }
+  .logo span {
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  .container {
+    background: white;
+    color: black;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+  }
+  h2 {
+    background: #9cd2d3;
+    height: 40px;
+    border-radius: 10px;
+    text-align: center;
+    width: 100%;
+    margin: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .section-title {
+    background: #9cd2d3;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin: 20px auto 10px;
+    text-align: center;
+    display: block;
+    width: fit-content;
+  }
+  .field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .field label {
+    width: 200px;
+    font-weight: bold;
+  }
+  .field textarea,
+  .input-field select {
+    flex: 1;
+    border: 1px solid #114c5f;
+    padding: 5px 10px;
+    border-radius: 5px;
+    resize: vertical;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+  }
+  .button {
+    background: #114c5f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto 0;
+  }
+  .button:hover {
+    background: #9cd2d3;
+    color: #114c5f;
+  }
+  .adjunto-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  .button-small {
+    background: #114c5f;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .button-small:hover {
+    background: #9cd2d3;
+    color: #114c5f;
+  }
+</style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">
-          <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="DocTrack logo">
-        </div>
-        <div class="consultar"><h1>Editar Historiales</h1></div>
-      </div>
+  <div class="header">
+    <div class="logo">
+      <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="DocTrack logo">
+    </div>
+    <div class="consultar"><h1>Editar Historiales</h1></div>
+  </div>
+
   <div class="container">
     <h2>Historial del Paciente</h2>
+    <div class="sele">
+        <select name="" id="selectPacientes">
+          <option value="" disabled selected>Pacientes</option>
+        </select>
+      </div>
 
     <span class="section-title">Ficha de Identificación</span>
-    <div class="field"><label>Estado Civil:</label><textarea></textarea></div>
-    <div class="field"><label>Sexo:</label><textarea></textarea></div>
-    <div class="field"><label>Edad:</label><textarea></textarea></div>
-    <div class="field"><label>Escolaridad:</label><textarea></textarea></div>
-    <div class="field"><label>Religión:</label><textarea></textarea></div>
-    <div class="field"><label>Descripción General:</label><textarea></textarea></div>
-    <div class="field"><label>Ocupación:</label><textarea></textarea></div>
-    <div class="field"><label>Interrogatorio:</label><textarea></textarea></div>
+    <div class="field"><label>Estado Civil:</label><textarea id="estadocivil"></textarea></div>
+    <div class="field"><label>Sexo:</label><textarea id="sexo"></textarea></div>
+    <div class="field"><label>Edad:</label><textarea id="edad"></textarea></div>
+    <div class="field"><label>Escolaridad:</label><textarea id="escolaridad" disabled></textarea></div>
+    <div class="field"><label>Religión:</label><textarea id="religion"></textarea></div>
+    <div class="field"><label>Descripción General:</label><textarea id="descripcion_id"></textarea></div>
+    <div class="field"><label>Ocupación:</label><textarea id="ocupacion"></textarea></div>
+    <div class="field"><label>Interrogatorio:</label><textarea id="interrogatorio" disabled></textarea></div>
 
     <span class="section-title">Antecedentes Heredofamiliares</span>
-    <div class="field"><label>Cáncer:</label><textarea></textarea></div>
-    <div class="field"><label>Nefropatías:</label><textarea></textarea></div>
-    <div class="field"><label>Enfermedades Mentales:</label><textarea></textarea></div>
-    <div class="field"><label>Neurológicas:</label><textarea></textarea></div>
-    <div class="field"><label>Hipertensión:</label><textarea></textarea></div>
-    <div class="field"><label>Descripción General:</label><textarea></textarea></div>
-    <div class="field"><label>Cardiopatía:</label><textarea></textarea></div>
-    <div class="field"><label>Convulsiones:</label><textarea></textarea></div>
-    <div class="field"><label>Dislipidemias:</label><textarea></textarea></div>
-    <div class="field"><label>Patología Tiroidea:</label><textarea></textarea></div>
-
-    <span class="section-title">Antecedentes Personales No Patológicos</span>
-    <div class="field"><label>Baño Diario:</label><textarea></textarea></div>
-    <div class="field"><label>Situación Familiar:</label><textarea></textarea></div>
-    <div class="field"><label>Situación Laboral:</label><textarea></textarea></div>
-    <div class="field"><label>Aseo Bucal:</label><textarea></textarea></div>
-    <div class="field"><label>Tabaquismo:</label><textarea></textarea></div>
-    <div class="field"><label>Alcoholismo:</label><textarea></textarea></div>
-    <div class="field"><label>Fecha De Registro:</label><textarea></textarea></div>
+    <div class="field"><label>Hipertensión:</label><textarea id="hipertension"></textarea></div>
+    <div class="field"><label>Diabetes:</label><textarea id="diabetes"></textarea></div>
+    <div class="field"><label>Cardiopatía:</label><textarea id="cardiopatias"></textarea></div>
+    <div class="field"><label>Asma:</label><textarea id="asma"></textarea></div>
+    <div class="field"><label>Otros:</label><textarea id="otro"></textarea></div>
+    <div class="field"><label>Descripción General:</label><textarea id="descripcion_ant"></textarea></div>
+    <div class="field"><label>Alcoholismo:</label><textarea id="alcoholismo"></textarea></div>
+    <div class="field"><label>Tabaquismo:</label><textarea id="tabaquismo"></textarea></div>
+    <div class="field"><label>Aseo Bucal:</label><textarea id="aseo_bucal"></textarea></div>
+    <div class="field"><label>Baño Diario:</label><textarea id="aseo_fisico"></textarea></div>
 
     <span class="section-title">Exploración Física</span>
-    <div class="field"><label>Temperatura:</label><textarea></textarea></div>
-    <div class="field"><label>Peso:</label><textarea></textarea></div>
-    <div class="field"><label>Tensión Arterial:</label><textarea></textarea></div>
-    <div class="field"><label>Frecuencia Cardíaca:</label><textarea></textarea></div>
-    <div class="field"><label>Frecuencia Respiratoria:</label><textarea></textarea></div>
-    <div class="field"><label>Descripción del Examen:</label><textarea></textarea></div>
-    <div class="field"><label>Talla:</label><textarea></textarea></div>
+    <div class="field"><label>Temperatura:</label><textarea id="temperatura" disabled></textarea></div>
+    <div class="field"><label>Peso:</label><textarea id="peso"></textarea></div>
+    <div class="field"><label>Tensión Arterial:</label><textarea id="presion_arterial"></textarea></div>
+    <div class="field"><label>Frecuencia Cardíaca:</label><textarea id="frecuencia_cardiaca"></textarea></div>
+    <div class="field"><label>Frecuencia Respiratoria:</label><textarea id="frecuencia_respiratoria"></textarea></div>
+    <div class="field"><label>Descripción del Examen:</label><textarea id="observaciones_generales"></textarea></div>
+    <div class="field"><label>Talla:</label><textarea id="estatura"></textarea></div>
 
     <div class="adjunto-container">
-      <button class="button-small">Archivo Adjunto</button>
+      <button class="button-small">Agregar Archivo Adjunto</button>
     </div>
 
     <button class="button">Guardar</button>
   </div>
   <a href="Historial.html">Salir</a>
   <script src="js/Mhistorial.js"></script>
+
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    doc,
+    getDoc,
+    query,
+    where,
+    getDocs,
+    Timestamp
+  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  /* ───────── Config Firebase ───────── */
+  const firebaseConfig = {
+    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+    authDomain: "doctrack-46fc2.firebaseapp.com",
+    projectId: "doctrack-46fc2",
+    storageBucket: "doctrack-46fc2.appspot.com",
+    messagingSenderId: "865552814891",
+    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+    measurementId: "G-XQPNKXK08Y"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  const selectPacientes = document.getElementById("selectPacientes");
+  const formCita        = document.getElementById("formCita");
+
+  let doctorID = null;
+
+  /* ───────── Autenticación y carga de pacientes ───────── */
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Debes iniciar sesión primero.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    // Verifica que sea un doctor registrado
+    const docSnap = await getDoc(doc(db, "doctores", user.uid));
+    if (!docSnap.exists()) {
+      alert("No tienes permisos para registrar citas.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    doctorID = user.uid;
+
+    /* ▼ Cargar pacientes asignados ▼ */
+    try {
+      const q = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", doctorID)
+      );
+
+      const snap = await getDocs(q);
+
+      // Limpiar y placeholder
+      selectPacientes.innerHTML =
+        `<option value="" disabled selected>Pacientes</option>`;
+
+      if (snap.empty) {
+        const opt = document.createElement("option");
+        opt.disabled = true;
+        opt.textContent = "Sin pacientes asignados";
+        selectPacientes.appendChild(opt);
+      } else {
+        snap.forEach((pac) => {
+          const p = pac.data();
+          const opt = document.createElement("option");
+          opt.value = pac.id;  // podemos guardar el UID del paciente
+          opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
+          selectPacientes.appendChild(opt);
+        });
+      }
+    } catch (err) {
+      console.error("Error al cargar pacientes:", err);
+      alert("Error al cargar pacientes");
+    }
+  });
+
+</script>
+
 
 </body>
 </html>
