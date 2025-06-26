@@ -76,15 +76,18 @@ header {
     color: #91CBD6;
 }
 .head button{
-    margin: 0px;
-    padding: 20px ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    max-width: 15%;
     border-radius: 10px;
     background-color: #9Cd2d3;
     color: #114c5f;
     border: none;
 }
 .head button h3{
-  font-size: small;
+  font-size: 18px;
 }
 .head button:hover{
     cursor: pointer;
