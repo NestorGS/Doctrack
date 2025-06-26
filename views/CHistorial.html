@@ -5,145 +5,180 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Buscar Paciente</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    html, body {
-      height: 100%;
-      font-family: "Sora", sans-serif;
-    }
+  html, body {
+    height: 100%;
+    font-family: "Sora", sans-serif;
+  }
 
-    body {
-      background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
-      background-repeat: no-repeat;
-      background-size: cover;
-      color: #114c5f;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-    }
+  body {
+    background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #114c5f;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
 
-    .logo {
-      display: flex;
-      align-items: center;
-    }
+  .logo {
+    display: flex;
+    align-items: center;
+  }
 
-    .logo img {
-      height: 60px;
-      margin-right: 10px;
-    }
+  .logo img {
+    height: 60px;
+    margin-right: 10px;
+  }
 
-    .logo span {
-      color: white;
-      font-size: 24px;
-      font-weight: 600;
-    }
+  .logo span {
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+  }
 
-    .consultar {
-      color: white;
-      font-size: 16px;
-      margin-right: 20px;
-      cursor: pointer;
-    }
+  .consultar {
+    color: white;
+    font-size: 16px;
+    margin-right: 20px;
+    cursor: pointer;
+  }
 
-    .search-bar {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      background-color: white;
-      border-radius: 30px;
-      padding: 10px 20px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 30px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
 
-    .search-bar textarea {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      font-family: "Sora", sans-serif;
-      resize: none;
-      overflow: hidden;
-    }
+  .search-bar textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-family: "Sora", sans-serif;
+    resize: none;
+    overflow: hidden;
+  }
 
-    .search-bar img {
-      width: 20px;
-      height: 20px;
-      margin-left: 10px;
-      cursor: pointer;
-    }
+  .search-bar img {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
 
-    .table-container {
-      background-color: white;
-      border-radius: 20px;
-      padding: 10px;
-      overflow-x: auto;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      flex: 1;
-    }
+  .table-container {
+    background-color: white;
+    border-radius: 20px;
+    padding: 10px;
+    overflow-x: auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    flex: 1;
+  }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
 
-    thead {
-      background-color: #9cd2d3;
-    }
+  thead {
+    background-color: #9cd2d3;
+  }
 
-    th, td {
-      text-align: center;
-      padding: 12px 8px;
-      font-size: 16px;
-      border-bottom: 1px solid #ccc;
-    }
+  th, td {
+    text-align: center;
+    padding: 12px 8px;
+    font-size: 16px;
+    border-bottom: 1px solid #ccc;
+  }
 
-    tbody tr:hover {
-      background-color: #f0f0f0;
-    }
-.button {
-      background: #0c5167;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      display: block;
-      margin: 20px auto 0;
-    }
+  tbody tr:hover {
+    background-color: #f0f0f0;
+  }
 
-    .exit-btn {
-      display: block;
-      margin: 30px auto 0;
-      background-color: #114c5f;
-      color: white;
-      text-align: center;
-      padding: 10px 30px;
-      border-radius: 25px;
-      text-decoration: none;
-      font-size: 16px;
-      transition: all 0.3s ease;
-    }
+  .button {
+    background: #0c5167;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto 0;
+  }
 
-    .exit-btn:hover {
-      background-color: #9cd2d3;
-      color: #114c5f;
-    }
-  </style>
+  .exit-btn {
+    display: block;
+    margin: 30px auto 0;
+    background-color: #114c5f;
+    color: white;
+    text-align: center;
+    padding: 10px 30px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .exit-btn:hover {
+    background-color: #9cd2d3;
+    color: #114c5f;
+  }
+
+  /* 🔷 ESTILO NUEVO PARA LA BARRA DESPLEGABLE */
+  label {
+    color: white;
+    font-size: 18px;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 500;
+  }
+
+  #pacienteSelect {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    margin-bottom: 20px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    appearance: none;
+    color: #114c5f;
+  }
+
+  #pacienteSelect:hover {
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+  }
+
+  #pacienteSelect:focus {
+    outline: 2px solid #9cd2d3;
+  }
+</style>
+
 </head>
-<body>
 
+<body>
   <div class="header">
     <div class="logo">
       <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="DocTrack logo">
@@ -152,94 +187,185 @@
   </div>
 
   <label for="pacienteSelect">Nombre:</label>
-      <select id="pacienteSelect">
-        <option disabled selected>Selecciona un paciente</option>
-      </select>
-    </div>
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          
-          <th>Edad</th>
-          <th>Sexo</th>
-          <th>Descripción General</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Aquí se cargarían los datos dinámicamente -->
-      </tbody>
-    </table>
-  </div>
+  <select id="pacienteSelect">
+    <option disabled selected>Selecciona un paciente</option>
+  </select>
+
+  <div class="table-container" id="tablaDatos">
+  <!-- Aquí se cargará la tabla -->
 </div>
 
-    <a class="button" href="NotaSub.html">AGREGAR NOTA SUBSECUENTE</a>
-    <button class="button">Guardar</button>
- 
+
+  <a class="button" href="NotaSub.html">AGREGAR NOTA SUBSECUENTE</a>
   <a href="Historial.html" class="exit-btn">Salir</a>
-  
-  
+
   <script src="js/Chistorial.js"></script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-  import {
-    getFirestore,
-    doc,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-    authDomain: "doctrack-46fc2.firebaseapp.com",
-    projectId: "doctrack-46fc2",
-    storageBucket: "doctrack-46fc2.appspot.com",
-    messagingSenderId: "865552814891",
-    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-    measurementId: "G-XQPNKXK08Y"
-};
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      query,
+      where
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+      authDomain: "doctrack-46fc2.firebaseapp.com",
+      projectId: "doctrack-46fc2",
+      storageBucket: "doctrack-46fc2.appspot.com",
+      messagingSenderId: "865552814891",
+      appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+      measurementId: "G-XQPNKXK08Y"
+    };
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Debes iniciar sesión primero.");
-      return (window.location.href = "index.html");
-    }
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const pacienteSelect = document.getElementById("pacienteSelect");
+    const tablaContenedor = document.getElementById("tablaDatos");
 
-    const uid = user.uid;
-    const docRef = doc(db, "doctores", uid);
-    const userDoc = await getDoc(docRef);
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        alert("Debes iniciar sesión.");
+        window.location.href = "index.html";
+        return;
+      }
 
-    if (!userDoc.exists()) {
-      alert("Usuario no registrado.");
-      return (window.location.href = "index.html");
-    }
+      const doctorId = user.uid;
+      const q = query(
+        collection(db, "usuarios"),
+        where("rol", "==", "paciente"),
+        where("assignedDoctor", "==", doctorId)
+      );
 
-    const rol = userDoc.data().rol;
-    const pagina = window.location.pathname;
+      try {
+        const querySnapshot = await getDocs(q);
+        pacienteSelect.innerHTML = '<option disabled selected>Selecciona un paciente</option>';
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          const option = document.createElement("option");
+          option.value = doc.id;
+          option.textContent = `${data.nombre} ${data.paterno ?? ""} ${data.materno ?? ""}`;
+          pacienteSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error("Error cargando pacientes:", error);
+        alert("No se pudieron cargar los pacientes.");
+      }
+    });
 
-    if (rol === "paciente" && !pagina.includes("Paciente.html")) {
-      return (window.location.href = "Paciente.html");
-    }
+    pacienteSelect.addEventListener("change", async () => {
+      const pacienteId = pacienteSelect.value;
+      tablaContenedor.innerHTML = "<p class='loading-message'>Cargando datos...</p>";
 
-   
+      try {
+        const datos = [];
+
+        const colecciones = [
+          { nombre: "antecedentes_paciente", campo: "pacienteId" },
+          { nombre: "exploracion_fisica", campo: "pacienteId" },
+          { nombre: "tratamientos", campo: "paciente" },
+          { nombre: "notas_subsecuentes", campo: "pacienteId" }
+        ];
+
+        for (const { nombre, campo } of colecciones) {
+          const q = query(collection(db, nombre), where(campo, "==", pacienteId));
+          const snap = await getDocs(q);
+          snap.forEach(doc => {
+            datos.push({ tipo: nombre.replaceAll("_", " ").toUpperCase(), ...doc.data() });
+          });
+        }
+
+        renderizarTabla(datos);
+      } catch (err) {
+        console.error(err);
+        tablaContenedor.innerHTML = "<p class='loading-message'>Error al cargar los datos.</p>";
+      }
+    });
+function formatoCampo(campo) {
+  return campo
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function esURLArchivo(valor) {
+  return typeof valor === "string" && (
+    valor.startsWith("http://") || valor.startsWith("https://")
+  ) && (
+    valor.endsWith(".jpg") || valor.endsWith(".jpeg") || valor.endsWith(".png") ||
+    valor.endsWith(".pdf") || valor.endsWith(".doc") || valor.endsWith(".docx")
+  );
+}
+
+function renderizarTabla(registros) {
+  if (registros.length === 0) {
+    tablaContenedor.innerHTML = "<p class='loading-message'>No se encontraron datos para este paciente.</p>";
+    return;
+  }
+
+  // Agrupar registros por tipo
+  const registrosPorTipo = {};
+  registros.forEach(reg => {
+    const tipo = reg.tipo;
+    if (!registrosPorTipo[tipo]) registrosPorTipo[tipo] = [];
+    registrosPorTipo[tipo].push(reg);
   });
 
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "index.html";
-    });
-  }
-</script>
+  let html = "";
 
+  for (const tipo in registrosPorTipo) {
+    html += `<h2 style="margin: 20px 0 10px; font-size: 20px; color: #0c5167;">${tipo}</h2>`;
+    html += `
+      <table>
+        <thead>
+          <tr>
+            <th>Campo</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    registrosPorTipo[tipo].forEach(reg => {
+      Object.entries(reg).forEach(([k, v]) => {
+        if (!["tipo", "pacienteId", "paciente", "doctorId", "creadaEn", "creadaPor"].includes(k)) {
+
+          let valor = v;
+
+          // Mostrar botón si es URL de archivo
+          if (esURLArchivo(valor)) {
+            valor = `<button onclick="window.open('${valor}', '_blank')" style="padding:5px 10px; background:#0c5167; color:white; border:none; border-radius:5px; cursor:pointer;">Ver Archivo</button>`;
+          } else if (typeof valor === "boolean") {
+            valor = valor ? "Sí" : "No";
+          } else if (typeof valor === "object" && valor !== null) {
+            return; // omitir objetos
+          }
+
+          html += `
+            <tr>
+              <td>${formatoCampo(k)}</td>
+              <td>${valor}</td>
+            </tr>`;
+        }
+      });
+    });
+
+    html += "</tbody></table><div style='height: 40px;'></div>";
+
+  }
+
+  tablaContenedor.innerHTML = html;
+}
+
+
+  </script>
 </body>
+
 </html>
