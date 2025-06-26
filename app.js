@@ -14,6 +14,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
 // Verifica que las variables de entorno estén cargadas correctamente
 console.log("🟢 Cargando configuración de base de datos...");
 console.log("Host:", process.env.MYSQLHOST);
@@ -27,6 +28,12 @@ app.use(express.static('views')); // Sirve los archivos HTML, CSS, JS
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
+// Configurar Cloudinary con variables de entorno
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const upload = multer({ dest: "temp/" }); // almacenamiento temporal local
 
