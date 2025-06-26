@@ -112,6 +112,16 @@
     tbody tr:hover {
       background-color: #f0f0f0;
     }
+.button {
+      background: #0c5167;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto 0;
+    }
 
     .exit-btn {
       display: block;
@@ -141,16 +151,16 @@
     <div class="consultar">Consultar Historiales</div>
   </div>
 
-  <div class="search-bar">
-    <textarea rows="1" placeholder="Escriba el nombre del paciente"></textarea>
-    
-  </div>
-
+  <label for="pacienteSelect">Nombre:</label>
+      <select id="pacienteSelect">
+        <option disabled selected>Selecciona un paciente</option>
+      </select>
+    </div>
   <div class="table-container">
     <table>
       <thead>
         <tr>
-          <th>Nombre</th>
+          
           <th>Edad</th>
           <th>Sexo</th>
           <th>Descripción General</th>
@@ -161,9 +171,14 @@
       </tbody>
     </table>
   </div>
+</div>
 
+    <a class="button" href="NotaSub.html">AGREGAR NOTA SUBSECUENTE</a>
+    <button class="button">Guardar</button>
+ 
   <a href="Historial.html" class="exit-btn">Salir</a>
-  <a href="CoHistorial.html">ve a la sig</a>
+  
+  
   <script src="js/Chistorial.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";

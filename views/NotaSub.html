@@ -194,12 +194,6 @@
     where,
     addDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-  import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
@@ -214,7 +208,6 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  const storage = getStorage(app);
 
   const pacienteSelect = document.getElementById("pacienteSelect");
   const btnGuardar = document.getElementById("btnGuardar");
@@ -267,11 +260,11 @@
     }
 
     const archivo = archivoInput.files[0];
+    let archivoAdjuntoURL = "";
 
-    // Validar tipo y tamaño si hay archivo
     if (archivo) {
       const tiposPermitidos = ["application/pdf", "image/jpeg", "image/png"];
-      const maxSizeBytes = 5 * 1024 * 1024; // 5MB
+      const maxSizeBytes = 5 * 1024 * 1024;
 
       if (!tiposPermitidos.includes(archivo.type)) {
         alert("❌ Solo se permiten archivos PDF o imágenes (JPG, PNG).");
@@ -280,6 +273,24 @@
 
       if (archivo.size > maxSizeBytes) {
         alert("❌ El archivo no debe superar los 5 MB.");
+        return;
+      }
+
+      // Subir a tu endpoint en Railway
+      const formData = new FormData();
+      formData.append("archivo", archivo);
+      formData.append("pacienteId", pacienteId);
+
+      try {
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        archivoAdjuntoURL = data.url;
+      } catch (err) {
+        console.error("Error al subir archivo:", err);
+        alert("❌ Error al subir archivo adjunto.");
         return;
       }
     }
@@ -295,16 +306,10 @@
       peso: campos.peso.value.trim(),
       tension_arterial: campos.tension_arterial.value.trim(),
       notas: campos.notas.value.trim(),
+      archivoAdjuntoURL
     };
 
     try {
-      if (archivo) {
-        const archivoRef = ref(storage, `notas_subsecuentes/${pacienteId}/${Date.now()}_${archivo.name}`);
-        await uploadBytes(archivoRef, archivo);
-        const url = await getDownloadURL(archivoRef);
-        nuevaNota.archivoAdjunto = url;
-      }
-
       await addDoc(collection(db, "notas_subsecuentes"), nuevaNota);
       alert("✅ Nota guardada correctamente.");
 
@@ -318,6 +323,8 @@
     }
   });
 </script>
+
+
 
 
 
