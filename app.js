@@ -39,10 +39,12 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "notas_subsecuentes",
+    resource_type: "auto", // 👈 IMPORTANTE para permitir PDF correctamente
     allowed_formats: ["jpg", "png", "pdf"],
     public_id: (req, file) => Date.now() + "_" + file.originalname,
   },
 });
+
 
 const upload = multer({ storage });
 

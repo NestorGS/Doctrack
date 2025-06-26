@@ -340,9 +340,16 @@ function renderizarTabla(registros) {
           let valor = v;
 
           // Mostrar botón si es URL de archivo
-          if (esURLArchivo(valor)) {
-            valor = `<button onclick="window.open('${valor}', '_blank')" style="padding:5px 10px; background:#0c5167; color:white; border:none; border-radius:5px; cursor:pointer;">Ver Archivo</button>`;
-          } else if (typeof valor === "boolean") {
+         if (typeof valor === "string" && valor.startsWith("http")) {
+  if (valor.match(/\.(pdf)$/i)) {
+    valor = `<button onclick="window.open('${valor}', '_blank')" style="padding:5px 10px; background:#0c5167; color:white; border:none; border-radius:5px; cursor:pointer;">Ver PDF</button>`;
+  } else if (valor.match(/\.(jpg|jpeg|png|webp)$/i)) {
+    valor = `<img src="${valor}" alt="Imagen" style="max-width:200px; border-radius:8px;">`;
+  } else {
+    valor = `<a href="${valor}" target="_blank" style="color:#0c5167;">Ver Archivo</a>`;
+  }
+}
+ else if (typeof valor === "boolean") {
             valor = valor ? "Sí" : "No";
           } else if (typeof valor === "object" && valor !== null) {
             return; // omitir objetos
