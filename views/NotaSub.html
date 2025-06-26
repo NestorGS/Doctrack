@@ -195,6 +195,7 @@
     addDoc
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+  // Configuración de Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
     authDomain: "doctrack-46fc2.firebaseapp.com",
@@ -225,6 +226,7 @@
 
   let doctorId = null;
 
+  // Cargar pacientes asignados
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("Debes iniciar sesión primero.");
@@ -251,6 +253,7 @@
     });
   });
 
+  // Guardar nota
   btnGuardar.addEventListener("click", async () => {
     const pacienteId = pacienteSelect.value;
 
@@ -276,16 +279,20 @@
         return;
       }
 
-      // Subir a tu endpoint en Railway
+      // Subida al backend de Railway para delegar a Cloudinary
       const formData = new FormData();
       formData.append("archivo", archivo);
-      formData.append("pacienteId", pacienteId);
 
       try {
         const res = await fetch("/api/upload", {
           method: "POST",
           body: formData
         });
+
+        if (!res.ok) {
+          throw new Error("Fallo en el servidor al subir el archivo.");
+        }
+
         const data = await res.json();
         archivoAdjuntoURL = data.url;
       } catch (err) {
@@ -323,6 +330,7 @@
     }
   });
 </script>
+
 
 
 
