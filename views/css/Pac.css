@@ -67,13 +67,16 @@ button {
     margin-top: 10px;
 }
 .btn {
-    background: #0c3d4a;
+    background: #114c5f;
     color: white;
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
-    width: 48%;
+    width: 28%;
+}
+.btn:hover{
+    background-color: #A7D0D2;
 }
 .reg:hover{
     background-color: #A7D0D2;
