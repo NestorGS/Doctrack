@@ -54,110 +54,104 @@
     </script>
     <script src="js/pac.js"></script>
 <script type="module">
-  import { initializeApp, getApps, initializeApp as initApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-  import {
-    getFirestore,
-    doc,
-    setDoc,
-    updateDoc
-  } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { initializeApp, getApps, initializeApp as initApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  // Configuración de Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-    authDomain: "doctrack-46fc2.firebaseapp.com",
-    projectId: "doctrack-46fc2",
-    storageBucket: "doctrack-46fc2.firebasestorage.app",
-    messagingSenderId: "865552814891",
-    appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-    measurementId: "G-XQPNKXK08Y"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+  authDomain: "doctrack-46fc2.firebaseapp.com",
+  projectId: "doctrack-46fc2",
+  storageBucket: "doctrack-46fc2.firebasestorage.app",
+  messagingSenderId: "865552814891",
+  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+  measurementId: "G-XQPNKXK08Y"
+};
 
-  // Inicializar apps
-  const mainApp = initializeApp(firebaseConfig);
-  const mainAuth = getAuth(mainApp); // Sesión del doctor
-  const db = getFirestore(mainApp);
+const mainApp = initializeApp(firebaseConfig);
+const db = getFirestore(mainApp);
+const mainAuth = getAuth(mainApp);
 
-  // App secundaria para registrar pacientes
-  const secondApp = getApps().find(app => app.name === "Secondary") || initApp(firebaseConfig, "Secondary");
-  const secondaryAuth = getAuth(secondApp);
+// App secundaria para registrar paciente
+const secondApp = getApps().find(app => app.name === "Secondary") || initApp(firebaseConfig, "Secondary");
+const secondaryAuth = getAuth(secondApp);
 
-  // Función para asignar paciente al doctor
-  async function asignarPacienteADoctor(idDoctor, idPaciente) {
-    const doctorRef = doc(db, "doctores", idDoctor);
-    await updateDoc(doctorRef, {
-      [`pacientes.${idPaciente}`]: true
-    });
-    console.log("✅ Paciente asignado al doctor.");
+// Asignar paciente al doctor
+async function asignarPacienteADoctor(doctorId, pacienteId) {
+  const doctorRef = doc(db, "doctores", doctorId);
+  await updateDoc(doctorRef, {
+    [`pacientes.${pacienteId}`]: true
+  });
+  console.log(`✅ Paciente ${pacienteId} asignado al doctor ${doctorId}`);
+}
+
+// Evento registrar
+document.getElementById("registrarBtn").addEventListener("click", async () => {
+  const nombre = document.getElementById("nombre").value.trim();
+  const paterno = document.getElementById("paterno").value.trim();
+  const materno = document.getElementById("materno").value.trim();
+  const correo = document.getElementById("correo").value.trim();
+  const curp = document.getElementById("curp")?.value.trim() || "sin-curp";
+  const nacimiento = document.getElementById("nacimiento")?.value || "2000-01-01";
+  const password = document.getElementById("password").value;
+  const confirmar = document.getElementById("confirmar").value;
+
+  if (!nombre || !paterno || !materno || !correo || !password || !confirmar) {
+    return alert("⚠️ Todos los campos son obligatorios.");
   }
 
-  // Evento al hacer clic en "Registrarse"
-  document.getElementById("registrarBtn").addEventListener("click", async () => {
-    const nombre = document.getElementById("nombre").value.trim();
-    const paterno = document.getElementById("paterno").value.trim();
-    const materno = document.getElementById("materno").value.trim();
-    const correo = document.getElementById("correo").value.trim();
-    const curp = document.getElementById("curp")?.value.trim() || "sin-curp";
-    const nacimiento = document.getElementById("nacimiento")?.value || "2000-01-01";
-    const password = document.getElementById("password").value;
-    const confirmar = document.getElementById("confirmar").value;
+  if (password !== confirmar) {
+    return alert("⚠️ Las contraseñas no coinciden.");
+  }
 
-    if (!nombre || !paterno || !materno || !correo || !password || !confirmar) {
-      alert("⚠️ Todos los campos son obligatorios.");
-      return;
-    }
+  if (!mainAuth.currentUser) {
+    return alert("⚠️ No hay un doctor autenticado.");
+  }
 
-    if (password !== confirmar) {
-      alert("⚠️ Las contraseñas no coinciden.");
-      return;
-    }
+  try {
+    const doctorId = mainAuth.currentUser.uid;
 
-    try {
-      const doctorId = mainAuth.currentUser?.uid;
+    // Crear usuario paciente (auth secundaria)
+    const cred = await createUserWithEmailAndPassword(secondaryAuth, correo, password);
+    const pacienteId = cred.user.uid;
 
-      if (!doctorId) {
-        alert("❌ No hay sesión activa del doctor.");
-        return;
-      }
+    // Crear documento del paciente en Firestore
+    await setDoc(doc(db, "usuarios", pacienteId), {
+      nombre,
+      paterno,
+      materno,
+      correo,
+      curp,
+      nacimiento,
+      password,
+      rol: "paciente",
+      assignedDoctor: doctorId
+    });
 
-      // 1. Crear el paciente con secondaryAuth
-      const cred = await createUserWithEmailAndPassword(secondaryAuth, correo, password);
-      const pacienteId = cred.user.uid;
+    // Asignar al doctor
+    await asignarPacienteADoctor(doctorId, pacienteId);
 
-      // 2. Cerrar sesión del paciente para que el doctor quede como request.auth
-      await signOut(secondaryAuth);
+    // Cerrar sesión secundaria
+    await signOut(secondaryAuth);
 
-      // 3. Guardar documento del paciente desde la sesión del doctor
-      await setDoc(doc(db, "usuarios", pacienteId), {
-        nombre,
-        paterno,
-        materno,
-        correo,
-        curp,
-        nacimiento,
-        password,
-        rol: "paciente",
-        assignedDoctor: doctorId
-      });
+    alert("✅ Paciente registrado y asignado correctamente.");
+    window.location.href = "Paciente.html";
 
-      // 4. Asignar paciente en el documento del doctor
-      await asignarPacienteADoctor(doctorId, pacienteId);
-
-      alert("✅ Paciente registrado y asignado correctamente.");
-      window.location.href = "Paciente.html";
-      
-    } catch (error) {
-      console.error("❌ Error al registrar paciente:", error);
-      alert("❌ Error al registrar paciente: " + error.message);
-    }
-  });
+  } catch (error) {
+    console.error("❌ Error al registrar paciente:", error);
+    alert("❌ Error al registrar paciente: " + error.message);
+  }
+});
 </script>
-
 
 
 </body>
