@@ -23,39 +23,34 @@ console.log("Puerto:", process.env.MYSQLPORT);
 
 app.use(express.static('views')); // Sirve los archivos HTML, CSS, JS
 
+
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const fs = require("fs");
 
-// Configurar Cloudinary con variables de entorno
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:    process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
+const upload = multer({ dest: "temp/" }); // almacenamiento temporal local
 
-// Configurar almacenamiento con multer
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: "notas_subsecuentes",
-    resource_type: "auto", // 👈 IMPORTANTE para permitir PDF correctamente
-    allowed_formats: ["jpg", "png", "pdf"],
-    public_id: (req, file) => Date.now() + "_" + file.originalname,
-  },
-});
-
-
-const upload = multer({ storage });
-
-// Ruta para subir archivos
-app.post("/api/upload", upload.single("archivo"), (req, res) => {
-  if (!req.file || !req.file.path) {
+app.post("/api/upload", upload.single("archivo"), async (req, res) => {
+  if (!req.file) {
     return res.status(400).json({ error: "No se subió ningún archivo." });
   }
-  res.status(200).json({ url: req.file.path });
-});
 
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: "auto", // ⬅️ ¡Esto sí funciona aquí!
+      folder: "notas_subsecuentes",
+      public_id: Date.now() + "_" + req.file.originalname,
+    });
+
+    // Elimina el archivo temporal
+    fs.unlinkSync(req.file.path);
+
+    res.status(200).json({ url: result.secure_url });
+  } catch (err) {
+    console.error("❌ Error al subir a Cloudinary:", err);
+    res.status(500).json({ error: "Error al subir a Cloudinary." });
+  }
+});
 
 
 // Iniciar servidor
