@@ -28,41 +28,42 @@ app.use(helmet());
 // 🎯 Política CSP personalizada
 app.use(
   helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: [
-        "'self'",
-        "https://www.gstatic.com",
-        "https://www.googleapis.com",
-        "https://cdn.jsdelivr.net",
-        "https://res.cloudinary.com"
-      ],
-      styleSrc: [
-        "'self'",
-        "'unsafe-inline'",
-        "https://fonts.googleapis.com",
-        "https://cdn.jsdelivr.net"
-      ],
-      imgSrc: [
-        "'self'",
-        "data:",
-        "https://res.cloudinary.com"
-      ],
-      connectSrc: [
-        "'self'",
-        "https://firestore.googleapis.com",
-        "https://cloudinary.com",
-        "https://identitytoolkit.googleapis.com"
-      ],
-      fontSrc: [
-        "'self'",
-        "https://fonts.gstatic.com"
-      ],
-      frameAncestors: ["'none'"],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: [],
-    },
-  })
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: [
+      "'self'",
+      "https://www.gstatic.com",
+      "https://www.googleapis.com",
+      "https://cdn.jsdelivr.net",
+      "https://res.cloudinary.com"
+    ],
+    styleSrc: [
+      "'self'",
+      "'unsafe-inline'",
+      "https://fonts.googleapis.com",
+      "https://cdn.jsdelivr.net"
+    ],
+    imgSrc: [
+      "'self'",
+      "data:",
+      "https://res.cloudinary.com"
+    ],
+    connectSrc: [
+      "'self'",
+      "https://firestore.googleapis.com",
+      "https://cloudinary.com",
+      "https://identitytoolkit.googleapis.com",
+      "https://cdn.jsdelivr.net" // ✅ ← agregado aquí
+    ],
+    fontSrc: [
+      "'self'",
+      "https://fonts.gstatic.com"
+    ],
+    frameAncestors: ["'none'"],
+    objectSrc: ["'none'"],
+    upgradeInsecureRequests: [],
+  },
+})
 );
 
 // 🔍 Política Referrer-Policy

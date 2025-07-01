@@ -78,53 +78,6 @@ h1{
 a {
     text-decoration: none;
 }
-.bs{
-  width: 100%;
-  display: flex;
-    justify-content: space-evenly;
-}
-.bs a{
-  text-decoration: none;
-  color: #114c5f;
-  font-size: 30px;
-}
-.section2{
-  width: 250px;
-  text-align: center;
-  height: 230px;
-  background-color: #9cd2d3;
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.fondo{
-  background: linear-gradient(to bottom, #114c5f 0%, #254B5E 38%, #1b7693 100%);
-  width: 280px;
-  height: 250px;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  border-radius: 20px;  
-}
-
-.salir{
-  width: 20%;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 5%;
-  margin-left: 40%;
-  background-color: #114c5f;
-  border-radius: 20px;
-}
-.salir a{
-  color: white;
-}
-.salir:hover{
-  background-color: #9cd2d3;
-}
 @media (max-width: 1024px) {
   .head {
     flex-direction: column;
@@ -239,24 +192,57 @@ a {
             <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
         </div>
     </header>
-    <h1>¿Qué quieres hacer hoy?</h1>
-    <div class="bs">
-                  <div class="fondo">
-                    <a href="AHistorial.html" class="section2">
-                    <p>Añadir Historial</p>
-                    </a>
-                   </div>
-                  <div class="fondo">
-                   <a href="MHistorial.html"class="section2">
-                    <p>Modificar Historial</p>    
-                    </a>
-              </div>
-              <div class="fondo">
-                <a href="CHistorial.html"class="section2">
-                  <p>Consultar Historial</p>
-                </a>
-          </div>
-        </div>
+      <h1 style="color: #114c5f; text-align: center; margin: 40px 20px;">¿Qué quieres hacer hoy?</h1>
+
+<div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; padding: 20px;">
+    
+    <a href="AHistorial.html" style="
+        background-color: #9cd2d3;
+        color: #114c5f;
+        padding: 30px 50px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        width: 220px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        ">
+        Añadir Historial
+    </a>
+
+    <a href="MHistorial.html" style="
+        background-color: #9cd2d3;
+        color: #114c5f;
+        padding: 30px 50px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        width: 220px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        ">
+        Modificar Historial
+    </a>
+
+    <a href="CHistorial.html" style="
+        background-color: #9cd2d3;
+        color: #114c5f;
+        padding: 30px 50px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        width: 220px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        ">
+        Consultar Historial
+    </a>
+
+</div>
+
         <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
   import {
