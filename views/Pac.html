@@ -1,158 +1,163 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DocTrack</title>
-    <link rel="stylesheet" href="css/Pac.css">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocTrack</title>
+  <link rel="stylesheet" href="css/Pac.css">
 </head>
 <body>
-        <header><img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt=""></header>
+  <header>
+    <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="">
+  </header>
 
-    <div class="container">
-        <h2>Bienvenidos A DocTrack</h2>
-        <div class="bs">
-        <div class="formu">
+  <div class="container">
+    <h2>Bienvenidos A DocTrack</h2>
+    <div class="bs">
+      <div class="formu">
         <button class="info-button" onclick="toggleForm()">Información Personal</button>
         <div class="form-container" id="formPersonal">
-           <input type="text" id="nombre" placeholder="Nombre(s)">
-<input type="text" id="paterno" placeholder="Apellido Paterno">
-<input type="text" id="materno" placeholder="Apellido Materno">
-<input type="text" id="curp" placeholder="CURP">
-<input type="date" id="nacimiento" placeholder="Fecha de Nacimiento">
-<input type="email" id="correo" placeholder="Correo Electrónico">
-<input type="password" id="password" placeholder="Contraseña">
-<input type="password" id="confirmar" placeholder="Confirmar Contraseña">
+          <input type="text" id="nombre" placeholder="Nombre(s)">
+          <input type="text" id="paterno" placeholder="Apellido Paterno">
+          <input type="text" id="materno" placeholder="Apellido Materno">
+          <input type="text" id="curp" placeholder="CURP">
+          <input type="date" id="nacimiento" placeholder="Fecha de Nacimiento">
+          <input type="email" id="correo" placeholder="Correo Electrónico">
+          <input type="password" id="password" placeholder="Contraseña">
+          <input type="password" id="confirmar" placeholder="Confirmar Contraseña">
+        </div>
 
+        <!-- Botón de registro con reCAPTCHA -->
+        <button
+          id="registrarBtn"
+          class="g-recaptcha btn"
+          data-sitekey="6Ld6tXMrAAAAAIx70U-AI9qIRiICO7fSO1Zuqzkg"
+          data-callback="onSubmit"
+          data-action="submit">Registrarse</button>
+
+        <a href="index.html">
+          <div class="reg">
+            <h3>Regresar</h3>
+          </div>
+        </a>
+      </div>
     </div>
-<button id="registrarBtn" class="btn">Registrarse</button>
+  </div>
 
-    <a href="index.html">
-    <div class="reg">
-    <h3>Regresar</h3>
-</div>
-</a>
-</div>
+  <script>
+    function toggleForm() {
+      const form = document.getElementById("formPersonal");
+      if (form.style.display === "none" || form.style.display === "") {
+        form.style.display = "block";
+        setTimeout(() => {
+          form.style.opacity = "1";
+          form.style.maxHeight = "500px";
+        }, 10);
+      } else {
+        form.style.opacity = "0";
+        form.style.maxHeight = "0";
+        setTimeout(() => {
+          form.style.display = "none";
+        }, 500);
+      }
+    }
 
-    <script>
-        function toggleForm() {
-            var form = document.getElementById("formPersonal");
-            if (form.style.display === "none" || form.style.display === "") {
-                form.style.display = "block";
-                setTimeout(() => {
-                    form.style.opacity = "1";
-                    form.style.maxHeight = "500px";
-                }, 10);
-            } else {
-                form.style.opacity = "0";
-                form.style.maxHeight = "0";
-                setTimeout(() => {
-                    form.style.display = "none";
-                }, 500);
-            }
-        }
-    </script>
-    <script src="js/pac.js"></script>
-<script type="module">
-import { initializeApp, getApps, initializeApp as initApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    // Esta función será llamada por reCAPTCHA
+    function onSubmit(token) {
+      registrarPaciente();
+    }
+  </script>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
-  authDomain: "doctrack-46fc2.firebaseapp.com",
-  projectId: "doctrack-46fc2",
-  storageBucket: "doctrack-46fc2.firebasestorage.app",
-  messagingSenderId: "865552814891",
-  appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-  measurementId: "G-XQPNKXK08Y"
-};
+  <script type="module">
+    import { initializeApp, getApps, initializeApp as initApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-const mainApp = initializeApp(firebaseConfig);
-const db = getFirestore(mainApp);
-const mainAuth = getAuth(mainApp);
+    const firebaseConfig = {
+      apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+      authDomain: "doctrack-46fc2.firebaseapp.com",
+      projectId: "doctrack-46fc2",
+      storageBucket: "doctrack-46fc2.firebasestorage.app",
+      messagingSenderId: "865552814891",
+      appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+      measurementId: "G-XQPNKXK08Y"
+    };
 
-// App secundaria para registrar paciente
-const secondApp = getApps().find(app => app.name === "Secondary") || initApp(firebaseConfig, "Secondary");
-const secondaryAuth = getAuth(secondApp);
+    const mainApp = initializeApp(firebaseConfig);
+    const db = getFirestore(mainApp);
+    const mainAuth = getAuth(mainApp);
 
-// Asignar paciente al doctor
-async function asignarPacienteADoctor(doctorId, pacienteId) {
-  const doctorRef = doc(db, "doctores", doctorId);
-  await updateDoc(doctorRef, {
-    [`pacientes.${pacienteId}`]: true
-  });
-  console.log(`✅ Paciente ${pacienteId} asignado al doctor ${doctorId}`);
-}
+    const secondApp = getApps().find(app => app.name === "Secondary") || initApp(firebaseConfig, "Secondary");
+    const secondaryAuth = getAuth(secondApp);
 
-// Evento registrar
-document.getElementById("registrarBtn").addEventListener("click", async () => {
-  const nombre = document.getElementById("nombre").value.trim();
-  const paterno = document.getElementById("paterno").value.trim();
-  const materno = document.getElementById("materno").value.trim();
-  const correo = document.getElementById("correo").value.trim();
-  const curp = document.getElementById("curp")?.value.trim() || "sin-curp";
-  const nacimiento = document.getElementById("nacimiento")?.value || "2000-01-01";
-  const password = document.getElementById("password").value;
-  const confirmar = document.getElementById("confirmar").value;
+    async function asignarPacienteADoctor(doctorId, pacienteId) {
+      const doctorRef = doc(db, "doctores", doctorId);
+      await updateDoc(doctorRef, {
+        [`pacientes.${pacienteId}`]: true
+      });
+    }
 
-  if (!nombre || !paterno || !materno || !correo || !password || !confirmar) {
-    return alert("⚠️ Todos los campos son obligatorios.");
-  }
+    // ✅ Función separada para registrar al paciente
+    window.registrarPaciente = async function () {
+      const nombre = document.getElementById("nombre").value.trim();
+      const paterno = document.getElementById("paterno").value.trim();
+      const materno = document.getElementById("materno").value.trim();
+      const correo = document.getElementById("correo").value.trim();
+      const curp = document.getElementById("curp")?.value.trim() || "sin-curp";
+      const nacimiento = document.getElementById("nacimiento")?.value || "2000-01-01";
+      const password = document.getElementById("password").value;
+      const confirmar = document.getElementById("confirmar").value;
 
-  if (password !== confirmar) {
-    return alert("⚠️ Las contraseñas no coinciden.");
-  }
+      if (!nombre || !paterno || !materno || !correo || !password || !confirmar) {
+        return alert("⚠️ Todos los campos son obligatorios.");
+      }
 
-  if (!mainAuth.currentUser) {
-    return alert("⚠️ No hay un doctor autenticado.");
-  }
+      if (password !== confirmar) {
+        return alert("⚠️ Las contraseñas no coinciden.");
+      }
 
-  try {
-    const doctorId = mainAuth.currentUser.uid;
+      if (!mainAuth.currentUser) {
+        return alert("⚠️ No hay un doctor autenticado.");
+      }
 
-    // Crear usuario paciente (auth secundaria)
-    const cred = await createUserWithEmailAndPassword(secondaryAuth, correo, password);
-    const pacienteId = cred.user.uid;
+      try {
+        const doctorId = mainAuth.currentUser.uid;
 
-    // Crear documento del paciente en Firestore
-    await setDoc(doc(db, "usuarios", pacienteId), {
-      nombre,
-      paterno,
-      materno,
-      correo,
-      curp,
-      nacimiento,
-      password,
-      rol: "paciente",
-      assignedDoctor: doctorId
-    });
+        const cred = await createUserWithEmailAndPassword(secondaryAuth, correo, password);
+        const pacienteId = cred.user.uid;
 
-    // Asignar al doctor
-    await asignarPacienteADoctor(doctorId, pacienteId);
+        await setDoc(doc(db, "usuarios", pacienteId), {
+          nombre,
+          paterno,
+          materno,
+          correo,
+          curp,
+          nacimiento,
+          rol: "paciente",
+          assignedDoctor: doctorId
+        });
 
-    // Cerrar sesión secundaria
-    await signOut(secondaryAuth);
+        await asignarPacienteADoctor(doctorId, pacienteId);
+        await signOut(secondaryAuth);
 
-    alert("✅ Paciente registrado y asignado correctamente.");
-    window.location.href = "Paciente.html";
+        alert("✅ Paciente registrado correctamente.");
+        window.location.href = "Paciente.html";
 
-  } catch (error) {
-    console.error("❌ Error al registrar paciente:", error);
-    alert("❌ Error al registrar paciente: " + error.message);
-  }
-});
-</script>
-
-
+      } catch (error) {
+        console.error("❌ Error al registrar paciente:", error);
+        alert("❌ Error al registrar paciente: " + error.message);
+      }
+    };
+  </script>
 </body>
 </html>
