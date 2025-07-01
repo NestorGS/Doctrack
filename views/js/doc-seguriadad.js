@@ -24,6 +24,20 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/fireba
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("toggleBtn");
+  if (btn) {
+    btn.addEventListener("click", toggleForm);
+  }
+});
+
+function toggleForm() {
+  const form = document.getElementById("formPersonal");
+  if (form) {
+    form.style.display = (form.style.display === "none") ? "block" : "none";
+  }
+}
+
   document.getElementById("registrarBtn")?.addEventListener("click", async () => {
     const nombre = document.getElementById("nombre").value.trim();
     const paterno = document.getElementById("paterno").value.trim();

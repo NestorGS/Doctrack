@@ -15,7 +15,7 @@
         <h2>Bienvenidos A DocTrack</h2>
         <div class="bs">
         <div class="formu">
-        <button class="info-button" onclick="toggleForm()">Información Personal</button>
+        <button id="toggleBtn">Mostrar</button>
         
         <div class="form-container" id="formPersonal">
             <input id="nombre" type="text" placeholder="Nombre(s)">
@@ -83,25 +83,6 @@
 </div>
 </a>
 </div>
-
-    <script>
-        function toggleForm() {
-            var form = document.getElementById("formPersonal");
-            if (form.style.display === "none" || form.style.display === "") {
-                form.style.display = "block";
-                setTimeout(() => {
-                    form.style.opacity = "1";
-                    form.style.maxHeight = "500px";
-                }, 10);
-            } else {
-                form.style.opacity = "0";
-                form.style.maxHeight = "0";
-                setTimeout(() => {
-                    form.style.display = "none";
-                }, 500);
-            }
-        }
-    </script>
     <script src="js/doc.js"></script>
 <script type="module" src="js/doc-seguriadad.js"></script>>
 
