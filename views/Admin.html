@@ -1,152 +1,151 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet">
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inicio de Sesión</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet">
+<style>
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Sora', sans-serif;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Sora', sans-serif;
     }
-
     body {
-      background-color: #F2E6CF;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-    }
-
-    h1 {
-      margin-top: 30px;
-      font-size: 40px;
-      color: #114c5f;
-      height: 30%;
-    }
-    form{
-        width: 50%;
+        background-color: #f2e6cf;
+        min-height: 100vh;
         display: flex;
-        justify-content: center;
         align-items: center;
-        flex-direction: column;
+        justify-content: center;
+        position: relative;
+    }
+    .fondo {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+    .dot {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-color: rgba(0,0,0,0.15);
+        border-radius: 50%;
     }
     .login-container {
-      margin-top: 30px;
-      background-color: #114c5f;
-      width: 100%;
-      height: 577px;
-      border-top-left-radius: 950px;
-      border-top-right-radius: 950px;
-      padding: 60px 30px 40px;
-      color: white;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+        background-color: #114c5f;
+        padding: 40px 30px;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
-
-    .logo {
-      text-align: center;
-      margin-bottom: 60px;
-    }
-
     .logo img {
-      width: 350px;
-      margin-bottom: 20px;
+        width: 200px;
+        margin-bottom: 20px;
     }
-
-
+    h2 {
+        margin-bottom: 20px;
+        color: #f2e6cf;
+        text-align: center;
+    }
+    form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
     label {
-      font-size: 20px;
-      margin: 10px 0 5px;
-      color: #ffffff;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-size: 14px;
     }
-
     input[type="text"],
     input[type="password"] {
-      width: 100%;
-      background: none;
-      border: none;
-      border-bottom: 2px solid white;
-      color: white;
-      padding: 5px 0;
-      margin-bottom: 20px;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        background-color: rgba(255,255,255,0.2);
+        color: white;
     }
-
     input::placeholder {
-      color: #ffffffaa;
+        color: rgba(255,255,255,0.6);
     }
-
     .btn-container {
-      text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
-
     button {
-      background-color: #F2E6CF;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      color: #114c5f;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 15px;
+        background-color: #f2e6cf;
+        color: #114c5f;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 10px;
     }
-
+    button:hover {
+        background-color: #9cd2d3;
+        color: #114c5f;
+    }
     .back-btn {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
+        margin-top: 15px;
+        background-color: transparent;
+        border: 1px solid #f2e6cf;
+        color: #f2e6cf;
     }
-
-    @media screen and (max-width: 480px) {
-      .login-container {
-        padding: 40px 20px 30px;
-        border-top-left-radius: 150px;
-        border-top-right-radius: 150px;
-      }
-
-      h1 {
-        font-size: 22px;
-      }
-
-      .logo h2 {
-        font-size: 20px;
-      }
+    .back-btn:hover {
+        background-color: #f2e6cf;
+        color: #114c5f;
     }
-  </style>
+</style>
 </head>
 <body>
 
-  <h1>Bienvenido Administrador</h1>
+<div class="fondo" id="fondo-bolitas"></div>
 
-  <div class="login-container">
+<div class="login-container">
     <div class="logo">
-      <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="Logo DocTrack">
+        <img src="Imagenes/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="Logo DocTrack">
     </div>
+    <h2>Bienvenido Administrador</h2>
 
     <form>
-      <label for="usuario">Escribe Tu Usuario:</label>
-      <input type="text" id="usuario" placeholder="">
+        <label for="usuario">Usuario</label>
+        <input type="text" id="usuario" placeholder="Escribe tu usuario">
 
-      <label for="password">Escribe Tu Contraseña:</label>
-      <input type="password" id="password" placeholder="">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" placeholder="Escribe tu contraseña">
 
-      <div class="btn-container">
-        <button type="submit">Aceptar</button>
-        <a href="Escoger.html">aqui ve a la sig</a>
-      </div>
+        <div class="btn-container">
+            <button type="submit">Aceptar</button>
+
+            <button type="button" class="back-btn" onclick="location.href='index.html'">Regresar</button>
+        </div>
     </form>
-
-    <button class="back-btn" onclick="location.href='index.html'">Regresar</button>
-
 </div>
-<script src="js/Admin.js"></script>
+
+<script>
+    const fondo = document.getElementById('fondo-bolitas');
+    const cantidad = 15;
+    for (let i = 0; i < cantidad; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        dot.style.left = `${Math.random() * 100}%`;
+        dot.style.top = `${Math.random() * 100}%`;
+        fondo.appendChild(dot);
+    }
+</script>
 
 </body>
 </html>

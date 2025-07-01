@@ -26,6 +26,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/fireba
   const auth = getAuth(app);
   const db = getFirestore(app);
 
+  
+
   document.addEventListener("DOMContentLoaded", () => {
     const emailInput = document.querySelector("#email");
     const passwordInput = document.querySelector("#password");
