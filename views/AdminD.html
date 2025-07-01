@@ -179,39 +179,62 @@
     <canvas id="graficaDoctores"></canvas>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const fondo = document.getElementById('fondo-bolitas');
-    const cantidad = 15;
-    for (let i = 0; i < cantidad; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'dot';
-        dot.style.left = `${Math.random() * 100}%`;
-        dot.style.top = `${Math.random() * 100}%`;
-        fondo.appendChild(dot);
-    }
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    // Gráfica lista para que el back la rellene dinámicamente
-    const ctx = document.getElementById('graficaDoctores').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Ejemplo'],
-            datasets: [{
-                label: 'Número de Pacientes',
-                data: [0],
-                backgroundColor: '#9cd2d3',
-                borderColor: '#114c5f',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
+    const firebaseConfig = {
+      apiKey: "...", authDomain: "...", projectId: "...", storageBucket: "...",
+      messagingSenderId: "...", appId: "..."
+    };
+    initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
+
+    const tabla = document.getElementById("tabla-doctores");
+    const ctx = document.getElementById("graficaDoctores").getContext("2d");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    onAuthStateChanged(auth, async user => {
+      if(!user) return location.href="index.html";
+
+      // Carga doctores
+      const snap = await getDocs(collection(db,"doctores"));
+      const labels = [];
+      const data   = [];
+      tabla.innerHTML = "";
+
+      snap.forEach(docSnap => {
+        const d = docSnap.data();
+        const pacientes = d.pacientes ? Object.keys(d.pacientes).length : 0;
+        // Rellenar tabla
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${d.especialidad}</td>
+          <td>${d.nombre} ${d.ap_paterno} ${d.ap_materno}</td>
+          <td>${pacientes}</td>
+        `;
+        tabla.appendChild(tr);
+
+        // Datos para gráfica
+        labels.push(`${d.nombre} ${d.ap_paterno}`);
+        data.push(pacientes);
+      });
+
+      // Crear gráfica
+      new Chart(ctx, {
+        type: "bar",
+        data: { labels, datasets:[{ label:"Pacientes", data, backgroundColor:"#9cd2d3", borderColor:"#114c5f", borderWidth:1 }]},
+        options:{ scales:{ y:{ beginAtZero:true } } }
+      });
     });
-</script>
 
+    logoutBtn.addEventListener("click", async()=>{
+      await signOut(auth);
+      location.href="index.html";
+    });
+  </script>
 </body>
 </html>
