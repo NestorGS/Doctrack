@@ -68,10 +68,27 @@
         min-width: 120px;
         text-align: center;
     }
-    .bs a:hover {
-        background-color: #114c5f;
-        color: white;
+     .bs a:hover {
+        background-color: white;
+  color: #114c5f;
     }
+    button{
+        background-color: #9cd2d3;
+        color: #114c5f;
+        text-decoration: none;
+        padding: 15px 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        font-size: .8rem;
+        min-width: 120px;
+        text-align: center;
+        border: none;
+ }
+ button:hover{
+  background-color: white;
+  color: red;
+ }
     .s2 {
         text-align: center;
         margin: 40px 20px;
@@ -127,7 +144,7 @@
     <div class="bs">
         <a href="AdminP.html">Paciente</a>
         <a href="AdminD.html">Doctor</a>
-        <a href="NotasT.html">Notas Totales</a>
+             <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
     </div>
 </header>
 
