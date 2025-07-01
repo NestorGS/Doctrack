@@ -22,8 +22,11 @@
                     <input type="password" placeholder="Escriba su contraseña" id="password">
                 </div>
                 <button class="button">Iniciar Sesion</button><br>
+                <button id="reenviarVerificacion" style="display: none;">Reenviar correo de verificación</button>
                 <p><a href="recuperar.html">¿Olvidaste tu contraseña?</a></p><br>
-                  
+                <button type="button" id="reenviarVerificacion" style="display: none; background-color: #ffc107; border: none; padding: 10px; border-radius: 5px; color: #000; cursor: pointer;">
+  Reenviar correo de verificación
+</button>  
             </form>
         </div>
         <div class="container-form">
@@ -99,12 +102,19 @@
         const credentials = await signInWithEmailAndPassword(auth, email, password);
         const user = credentials.user;
 
-        if (!user.emailVerified) {
-          alert("Debes verificar tu correo antes de iniciar sesión.");
-          resendButton.style.display = "inline-block";
-          await signOut(auth);
-          return;
-        }
+        const reenviar = confirm("⚠️ Debes verificar tu correo antes de iniciar sesión.\n\n¿Quieres que lo reenviemos ahora?");
+if (reenviar) {
+  try {
+    await sendEmailVerification(user);
+    alert("📩 Correo de verificación reenviado. Revisa tu bandeja de entrada.");
+  } catch (err) {
+    alert("❌ Error al reenviar el correo: " + err.message);
+  }
+}
+
+await signOut(auth);
+return;
+
 
         const uid = user.uid;
         const usuarioSnap = await getDoc(doc(db, "usuarios", uid));
@@ -137,22 +147,29 @@
     });
 
     // Validación de sesión activa
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const usuarioSnap = await getDoc(doc(db, "usuarios", user.uid));
-          const doctorSnap = await getDoc(doc(db, "doctores", user.uid));
+   onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await user.reload(); // 🔄 actualiza el estado del correo verificado
 
-          if (!usuarioSnap.exists() && !doctorSnap.exists()) {
-            alert("Usuario no registrado");
-            await signOut(auth);
-          }
-        } catch (err) {
-          console.error("Error comprobando sesión:", err);
-          await signOut(auth);
-        }
-      }
-    });
+    if (!user.emailVerified) {
+      alert("Tu correo aún no ha sido verificado.");
+      return await signOut(auth);
+    }
+
+    const usuarioSnap = await getDoc(doc(db, "usuarios", user.uid));
+    const doctorSnap = await getDoc(doc(db, "doctores", user.uid));
+
+    if (usuarioSnap.exists()) {
+      window.location.href = "Paciente.html";
+    } else if (doctorSnap.exists()) {
+      window.location.href = "Doctor.html";
+    } else {
+      alert("Usuario no registrado");
+      await signOut(auth);
+    }
+  }
+});
+
   });
 </script>
 

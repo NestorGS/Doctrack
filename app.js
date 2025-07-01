@@ -1,42 +1,49 @@
 // app.js
 require('dotenv').config(); // Cargar variables de entorno
 require("./keep-alive");
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require('bcryptjs');
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// 🛡️ Middleware para forzar HTTPS en Railway
+app.use((req, res, next) => {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect('https://' + req.headers.host + req.url);
+  }
+  next();
+});
+
+// 🧱 Middlewares generales
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('views')); // Servir archivos estáticos (HTML, CSS, JS)
 
-
-// Verifica que las variables de entorno estén cargadas correctamente
+// 📦 Verificar que las variables de entorno estén cargadas
 console.log("🟢 Cargando configuración de base de datos...");
 console.log("Host:", process.env.MYSQLHOST);
 console.log("Usuario:", process.env.MYSQLUSER);
 console.log("Base de datos:", process.env.MYSQLDATABASE);
 console.log("Puerto:", process.env.MYSQLPORT);
 
-app.use(express.static('views')); // Sirve los archivos HTML, CSS, JS
-
-
-const multer = require("multer");
-const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
-// Configurar Cloudinary con variables de entorno
+// ☁️ Configurar Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key:    process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const upload = multer({ dest: "temp/" }); // almacenamiento temporal local
+const upload = multer({ dest: "temp/" }); // Almacenamiento temporal
 
+// 📤 Ruta para subir archivos a Cloudinary
 app.post("/api/upload", upload.single("archivo"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No se subió ningún archivo." });
@@ -44,13 +51,12 @@ app.post("/api/upload", upload.single("archivo"), async (req, res) => {
 
   try {
     const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: "auto", // ⬅️ ¡Esto sí funciona aquí!
+      resource_type: "auto",
       folder: "notas_subsecuentes",
       public_id: Date.now() + "_" + req.file.originalname,
     });
 
-    // Elimina el archivo temporal
-    fs.unlinkSync(req.file.path);
+    fs.unlinkSync(req.file.path); // Eliminar archivo temporal
 
     res.status(200).json({ url: result.secure_url });
   } catch (err) {
@@ -59,9 +65,7 @@ app.post("/api/upload", upload.single("archivo"), async (req, res) => {
   }
 });
 
-
-// Iniciar servidor
+// 🚀 Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en https://doctrack-production.up.railway.app`);
 });
-

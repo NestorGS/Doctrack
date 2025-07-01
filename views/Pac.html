@@ -63,9 +63,10 @@
       }
     }
 
-    // Esta función será llamada por reCAPTCHA
     function onSubmit(token) {
-      registrarPaciente();
+      if (typeof registrarPaciente === 'function') {
+        registrarPaciente();
+      }
     }
   </script>
 
@@ -74,6 +75,8 @@
     import {
       getAuth,
       createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendEmailVerification,
       signOut
     } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
     import {
@@ -107,8 +110,7 @@
       });
     }
 
-    // ✅ Función separada para registrar al paciente
-    window.registrarPaciente = async function () {
+    async function registrarPaciente() {
       const nombre = document.getElementById("nombre").value.trim();
       const paterno = document.getElementById("paterno").value.trim();
       const materno = document.getElementById("materno").value.trim();
@@ -136,6 +138,8 @@
         const cred = await createUserWithEmailAndPassword(secondaryAuth, correo, password);
         const pacienteId = cred.user.uid;
 
+        await sendEmailVerification(cred.user);
+
         await setDoc(doc(db, "usuarios", pacienteId), {
           nombre,
           paterno,
@@ -150,14 +154,64 @@
         await asignarPacienteADoctor(doctorId, pacienteId);
         await signOut(secondaryAuth);
 
-        alert("✅ Paciente registrado correctamente.");
-        window.location.href = "Paciente.html";
+        // Guardar datos para reenviar
+        localStorage.setItem("correoPendiente", correo);
+        localStorage.setItem("claveTemporal", password);
+
+        // Mostrar modal
+        const popup = document.createElement("div");
+        popup.style.position = "fixed";
+        popup.style.top = "0";
+        popup.style.left = "0";
+        popup.style.width = "100%";
+        popup.style.height = "100%";
+        popup.style.background = "rgba(0,0,0,0.8)";
+        popup.style.display = "flex";
+        popup.style.flexDirection = "column";
+        popup.style.justifyContent = "center";
+        popup.style.alignItems = "center";
+        popup.style.zIndex = "9999";
+
+        const msg = document.createElement("div");
+        msg.style.background = "#fff";
+        msg.style.padding = "30px";
+        msg.style.borderRadius = "10px";
+        msg.style.textAlign = "center";
+        msg.style.maxWidth = "400px";
+        msg.innerHTML = `
+          <h2>Verifica tu correo electrónico</h2>
+          <p>Hemos enviado un enlace de verificación a <strong>${correo}</strong>.</p>
+          <p>Una vez confirmado, podrás iniciar sesión en DocTrack.</p>
+          <button id="btnReenviarCorreo" style="margin-top: 20px; padding: 10px 20px; background: #114c5f; color: white; border: none; border-radius: 8px; cursor: pointer;">📩 Reenviar correo</button>
+        `;
+
+        popup.appendChild(msg);
+        document.body.appendChild(popup);
+
+        // Función del botón de reenvío
+        document.getElementById("btnReenviarCorreo").addEventListener("click", async () => {
+          const email = localStorage.getItem("correoPendiente");
+          const clave = localStorage.getItem("claveTemporal");
+
+          if (!email || !clave) return alert("❌ No se pudo reenviar: datos incompletos.");
+
+          try {
+            const credTemp = await signInWithEmailAndPassword(secondaryAuth, email, clave);
+            await sendEmailVerification(credTemp.user);
+            await signOut(secondaryAuth);
+            alert("📩 Correo reenviado. Revisa tu bandeja de entrada.");
+          } catch (err) {
+            alert("❌ No se pudo reenviar: " + err.message);
+          }
+        });
 
       } catch (error) {
         console.error("❌ Error al registrar paciente:", error);
-        alert("❌ Error al registrar paciente: " + error.message);
+        alert("❌ Registro fallido. Intenta nuevamente.");
       }
-    };
+    }
+
+    window.registrarPaciente = registrarPaciente;
   </script>
 </body>
 </html>
