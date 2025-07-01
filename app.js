@@ -5,6 +5,7 @@ require("./keep-alive");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const helmet = require("helmet");
 const bcrypt = require('bcryptjs');
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
@@ -13,11 +14,66 @@ const fs = require("fs");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🛡️ Middleware para forzar HTTPS en Railway
+// 🛡️ Forzar HTTPS en Railway
 app.use((req, res, next) => {
   if (req.headers['x-forwarded-proto'] !== 'https') {
     return res.redirect('https://' + req.headers.host + req.url);
   }
+  next();
+});
+
+// 🛡️ Encabezados de seguridad con Helmet
+app.use(helmet());
+
+// 🎯 Política CSP personalizada
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "https://www.gstatic.com",
+        "https://www.googleapis.com",
+        "https://cdn.jsdelivr.net",
+        "https://res.cloudinary.com"
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://fonts.googleapis.com",
+        "https://cdn.jsdelivr.net"
+      ],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://res.cloudinary.com"
+      ],
+      connectSrc: [
+        "'self'",
+        "https://firestore.googleapis.com",
+        "https://cloudinary.com",
+        "https://identitytoolkit.googleapis.com"
+      ],
+      fontSrc: [
+        "'self'",
+        "https://fonts.gstatic.com"
+      ],
+      frameAncestors: ["'none'"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
+
+// 🔍 Política Referrer-Policy
+app.use(helmet.referrerPolicy({ policy: 'strict-origin-when-cross-origin' }));
+
+// 🚫 Permissions-Policy para limitar acceso a APIs sensibles del navegador
+app.use((req, res, next) => {
+  res.setHeader(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+  );
   next();
 });
 
@@ -27,7 +83,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('views')); // Servir archivos estáticos (HTML, CSS, JS)
 
-// 📦 Verificar que las variables de entorno estén cargadas
+// 📦 Verificar variables de entorno
 console.log("🟢 Cargando configuración de base de datos...");
 console.log("Host:", process.env.MYSQLHOST);
 console.log("Usuario:", process.env.MYSQLUSER);
@@ -43,7 +99,7 @@ cloudinary.config({
 
 const upload = multer({ dest: "temp/" }); // Almacenamiento temporal
 
-// 📤 Ruta para subir archivos a Cloudinary
+// 📤 Subida de archivos a Cloudinary
 app.post("/api/upload", upload.single("archivo"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No se subió ningún archivo." });
@@ -56,8 +112,7 @@ app.post("/api/upload", upload.single("archivo"), async (req, res) => {
       public_id: Date.now() + "_" + req.file.originalname,
     });
 
-    fs.unlinkSync(req.file.path); // Eliminar archivo temporal
-
+    fs.unlinkSync(req.file.path);
     res.status(200).json({ url: result.secure_url });
   } catch (err) {
     console.error("❌ Error al subir a Cloudinary:", err);

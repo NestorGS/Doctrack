@@ -1,101 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body{
-            margin: 0px;
-            padding: 0px;
-            box-sizing: border-box;
-            font-family: 'Sora', sans-serif;
-            background-color: #F2E6CF;
-        }
-        header{
-            display: flex;
-        }
-        .s1{
-            border-top-right-radius: 50px;
-            border-bottom-right-radius: 50px;
-            width: 50%;
-            background-color: #114c5f;
-            display: flex;
-            margin-top: 10px;
-            justify-content: space-around;
-            align-items: center;
-        }
-        .s1 h1{
-            color: white;
-            font-size: 40px;
-        }
-        .s2{
-           display: flex;
-           justify-content: center;
-           align-items: center;
-           color: #114c5f;
-           font-size: 25px;
-           margin: 20px; 
-        }
-        .bs{
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: fit-content;
-            margin-top: 40px;
-        }
-        .bs a{
-            width: 450px;
-            height: 400px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inicio</title>
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Sora', sans-serif;
+    }
+    body {
+        background-color: #f2e6cf; /* Janna */
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* Contenedor del fondo */
+    .fondo {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+    .dot {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-color: rgba(0,0,0,0.15);
+        border-radius: 50%;
+    }
+
+    header {
+        background-color: #114c5f; /* Eden */
+        color: white;
+        padding: 20px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom-left-radius: 40px;
+        border-bottom-right-radius: 40px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    header img {
+        height: 60px;
+    }
+    header h1 {
+        font-size: 2rem;
+        margin-left: 20px;
+    }
+    .s2 {
+        text-align: center;
+        margin: 50px 20px 30px;
+        color: #114c5f;
+        font-size: 1.8rem;
+    }
+    .bs {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        padding: 20px;
+    }
+    .bs a {
+        background-color: #9cd2d3; /* Sinbad */
+        color: #114c5f;
+        text-decoration: none;
+        padding: 30px 50px;
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+        min-width: 220px;
+        text-align: center;
+    }
+    .bs a:hover {
+        background-color: #114c5f;
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 768px) {
+        header {
+            flex-direction: column;
             text-align: center;
-            font-size: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            border-radius: 20px;
         }
-        .Pac{
-            background-color: #9cd2d3;
-            color: #114c5f;
+        header h1 {
+            margin-top: 10px;
         }
-        .Pac:hover{
-            background-color: #114c5f;
-            color: white;
-        }
-        .Doc{
-            background-color: #114c5f;
-            color: white;
-        }
-        .Doc:hover{
-            background-color: #9cd2d3;
-            color: #114c5f;
-        }
-        @media(max-width:1300px){
-            header{
-                flex-direction: column;
-            }
-            .bs{
-                flex-direction: column;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
-    <header>
-        <div class="s1">
-        <img src="img/Solo-Logo.png" alt="">
-        <h1>Bienvenido</h1>
+<div class="fondo" id="fondo-bolitas"></div>
+<header>
+    <div style="display: flex; align-items: center;">
+        <img src="Imagenes/Solo-Logo.png" alt="Logo">
+        <h1>Bienvenido Administrador</h1>
     </div>
-    <div class="s2">
-        <h2>¿Qué quieres hacer hoy?</h2>
-    </div>
-    </header>
-    <div class="bs">
-        <a href="AdminP.html" class="Doc">Paciente</a>
-        <a href="AdminD.html" class="Pac">Doctor</a>
-        <a href="NotasT.html" class="Doc">Notas Totales</a>
-    </div>
+</header>
+
+<div class="s2">
+    <h4>En este apartado podras consultar la informacion general de pacientes y doctores</h4>
+</div>
+
+<div class="bs">
+    <a href="AdminP.html">Paciente</a>
+    <a href="AdminD.html">Doctor</a>
+    <a href="NotasT.html">Notas Totales</a>
+</div>
+
+<script>
+    const fondo = document.getElementById('fondo-bolitas');
+    const cantidad = 15;
+    for (let i = 0; i < cantidad; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        dot.style.left = `${Math.random() * 100}%`;
+        dot.style.top = `${Math.random() * 100}%`;
+        fondo.appendChild(dot);
+    }
+</script>
+
 </body>
 </html>

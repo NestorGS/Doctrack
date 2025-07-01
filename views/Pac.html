@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DocTrack</title>
-  <link rel="stylesheet" href="css/Pac.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Paciente - DocTrack</title>
+  <link rel="stylesheet" href="css/Pac.css" />
 </head>
 <body>
   <header>
-    <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="">
+    <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="DocTrack Logo">
   </header>
 
   <div class="container">
@@ -18,31 +17,24 @@
       <div class="formu">
         <button class="info-button" onclick="toggleForm()">Información Personal</button>
         <div class="form-container" id="formPersonal">
-          <input type="text" id="nombre" placeholder="Nombre(s)">
-          <input type="text" id="paterno" placeholder="Apellido Paterno">
-          <input type="text" id="materno" placeholder="Apellido Materno">
-          <input type="text" id="curp" placeholder="CURP">
-          <input type="date" id="nacimiento" placeholder="Fecha de Nacimiento">
-          <input type="email" id="correo" placeholder="Correo Electrónico">
-          <input type="password" id="password" placeholder="Contraseña">
-          <input type="password" id="confirmar" placeholder="Confirmar Contraseña">
+          <input id="nombre" type="text" placeholder="Nombre(s)">
+          <input id="paterno" type="text" placeholder="Apellido Paterno">
+          <input id="materno" type="text" placeholder="Apellido Materno">
+          <input id="curp" type="text" placeholder="CURP">
+          <input id="nacimiento" type="date" placeholder="Fecha de nacimiento">
+          <input id="correo" type="email" placeholder="Correo electrónico">   
+          <input id="password" type="password" placeholder="Contraseña">
+          <input id="confirmar" type="password" placeholder="Confirmar contraseña">
+          <button id="registrarBtn" class="btn">Registrarse</button><br>
         </div>
-
-        <!-- Botón de registro con reCAPTCHA -->
-        <button
-          id="registrarBtn"
-          class="g-recaptcha btn"
-          data-sitekey="6Ld6tXMrAAAAAIx70U-AI9qIRiICO7fSO1Zuqzkg"
-          data-callback="onSubmit"
-          data-action="submit">Registrarse</button>
-
-        <a href="index.html">
-          <div class="reg">
-            <h3>Regresar</h3>
-          </div>
-        </a>
       </div>
     </div>
+
+    <a href="index.html">
+      <div class="reg">
+        <h3>Regresar</h3>
+      </div>
+    </a>
   </div>
 
   <script>
@@ -60,12 +52,6 @@
         setTimeout(() => {
           form.style.display = "none";
         }, 500);
-      }
-    }
-
-    function onSubmit(token) {
-      if (typeof registrarPaciente === 'function') {
-        registrarPaciente();
       }
     }
   </script>
@@ -90,75 +76,55 @@
       apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
       authDomain: "doctrack-46fc2.firebaseapp.com",
       projectId: "doctrack-46fc2",
-      storageBucket: "doctrack-46fc2.firebasestorage.app",
+      storageBucket: "doctrack-46fc2.firebaseapp.com",
       messagingSenderId: "865552814891",
-      appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
-      measurementId: "G-XQPNKXK08Y"
+      appId: "1:865552814891:web:cf8e79d5ffd847067bab6e"
     };
 
-    const mainApp = initializeApp(firebaseConfig);
-    const db = getFirestore(mainApp);
-    const mainAuth = getAuth(mainApp);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-    const secondApp = getApps().find(app => app.name === "Secondary") || initApp(firebaseConfig, "Secondary");
-    const secondaryAuth = getAuth(secondApp);
-
-    async function asignarPacienteADoctor(doctorId, pacienteId) {
-      const doctorRef = doc(db, "doctores", doctorId);
-      await updateDoc(doctorRef, {
-        [`pacientes.${pacienteId}`]: true
-      });
-    }
-
-    async function registrarPaciente() {
+    document.getElementById("registrarBtn")?.addEventListener("click", async () => {
       const nombre = document.getElementById("nombre").value.trim();
       const paterno = document.getElementById("paterno").value.trim();
       const materno = document.getElementById("materno").value.trim();
+      const curp = document.getElementById("curp").value.trim();
+      const nacimiento = document.getElementById("nacimiento").value;
       const correo = document.getElementById("correo").value.trim();
-      const curp = document.getElementById("curp")?.value.trim() || "sin-curp";
-      const nacimiento = document.getElementById("nacimiento")?.value || "2000-01-01";
       const password = document.getElementById("password").value;
       const confirmar = document.getElementById("confirmar").value;
 
-      if (!nombre || !paterno || !materno || !correo || !password || !confirmar) {
-        return alert("⚠️ Todos los campos son obligatorios.");
+      if (!nombre || !paterno || !materno || !correo || !password || !confirmar || !curp || !nacimiento) {
+        return alert("Todos los campos son obligatorios.");
       }
 
       if (password !== confirmar) {
-        return alert("⚠️ Las contraseñas no coinciden.");
+        return alert("Las contraseñas no coinciden.");
       }
 
-      if (!mainAuth.currentUser) {
-        return alert("⚠️ No hay un doctor autenticado.");
+      if (password.length < 8 || !/\d/.test(password) || !/[a-zA-Z]/.test(password)) {
+        return alert("La contraseña debe tener al menos 8 caracteres, incluir letras y números.");
       }
 
       try {
-        const doctorId = mainAuth.currentUser.uid;
+        const cred = await createUserWithEmailAndPassword(auth, correo, password);
+        const uid = cred.user.uid;
 
-        const cred = await createUserWithEmailAndPassword(secondaryAuth, correo, password);
-        const pacienteId = cred.user.uid;
-
-        await sendEmailVerification(cred.user);
-
-        await setDoc(doc(db, "usuarios", pacienteId), {
+        await setDoc(doc(db, "usuarios", uid), {
           nombre,
           paterno,
           materno,
           correo,
           curp,
           nacimiento,
-          rol: "paciente",
-          assignedDoctor: doctorId
+          rol: "paciente"
         });
 
-        await asignarPacienteADoctor(doctorId, pacienteId);
-        await signOut(secondaryAuth);
-
-        // Guardar datos para reenviar
+        await sendEmailVerification(cred.user);
         localStorage.setItem("correoPendiente", correo);
         localStorage.setItem("claveTemporal", password);
 
-        // Mostrar modal
         const popup = document.createElement("div");
         popup.style.position = "fixed";
         popup.style.top = "0";
@@ -188,17 +154,16 @@
         popup.appendChild(msg);
         document.body.appendChild(popup);
 
-        // Función del botón de reenvío
         document.getElementById("btnReenviarCorreo").addEventListener("click", async () => {
           const email = localStorage.getItem("correoPendiente");
           const clave = localStorage.getItem("claveTemporal");
 
-          if (!email || !clave) return alert("❌ No se pudo reenviar: datos incompletos.");
+          if (!email || !clave) return alert("No se pudo reenviar: datos incompletos.");
 
           try {
-            const credTemp = await signInWithEmailAndPassword(secondaryAuth, email, clave);
+            const credTemp = await signInWithEmailAndPassword(auth, email, clave);
             await sendEmailVerification(credTemp.user);
-            await signOut(secondaryAuth);
+            await signOut(auth);
             alert("📩 Correo reenviado. Revisa tu bandeja de entrada.");
           } catch (err) {
             alert("❌ No se pudo reenviar: " + err.message);
@@ -206,12 +171,15 @@
         });
 
       } catch (error) {
-        console.error("❌ Error al registrar paciente:", error);
-        alert("❌ Registro fallido. Intenta nuevamente.");
+        if (error.code === "auth/email-already-in-use") {
+          alert("El correo ya está registrado.");
+        } else if (error.code === "auth/weak-password") {
+          alert("La contraseña es débil.");
+        } else {
+          alert("Error al registrar: " + error.message);
+        }
       }
-    }
-
-    window.registrarPaciente = registrarPaciente;
+    });
   </script>
 </body>
 </html>
