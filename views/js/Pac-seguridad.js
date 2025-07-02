@@ -58,7 +58,7 @@ document.getElementById("registrarBtn")?.addEventListener("click", async () => {
     const cred = await createUserWithEmailAndPassword(auth, correo, password);
     const uid = cred.user.uid;
 
-    // 1. Asignar doctor con lógica round-robin
+    // 🔄 Obtener lista de doctores ordenada
     const doctorsQuery = query(collection(db, "doctores"), orderBy("cedula"));
     const doctorsSnap = await getDocs(doctorsQuery);
     const doctors = doctorsSnap.docs;
@@ -73,7 +73,7 @@ document.getElementById("registrarBtn")?.addEventListener("click", async () => {
     const nextIndex = (lastIndex + 1) % doctors.length;
     const chosenDoctor = doctors[nextIndex];
 
-    // 2. Crear paciente con doctor asignado
+    // 🩺 Guardar al nuevo paciente con el doctor asignado
     await setDoc(doc(db, "usuarios", uid), {
       nombre,
       paterno,
@@ -86,20 +86,24 @@ document.getElementById("registrarBtn")?.addEventListener("click", async () => {
       creadoEn: new Date()
     });
 
-    // 3. Agregar referencia a subcolección del doctor
+    // 🔗 Relación en subcolección del doctor
     await setDoc(doc(db, `doctores/${chosenDoctor.id}/pacientes`, uid), {
       linkedAt: new Date()
     });
 
-    // 4. Actualizar índice del round robin
+    // 🔁 Actualizar índice de round-robin
     await setDoc(cfgRef, { lastIndex: nextIndex }, { merge: true });
 
-    // 5. Continuar con verificación
-    await sendEmailVerification(cred.user);
-    localStorage.setItem("correoPendiente", correo);
-    localStorage.setItem("claveTemporal", password);
+    // 📧 Enviar verificación de correo
+    try {
+      await sendEmailVerification(cred.user);
+      localStorage.setItem("correoPendiente", correo);
+      localStorage.setItem("claveTemporal", password);
+    } catch (err) {
+      console.warn("No se pudo enviar verificación automáticamente:", err);
+    }
 
-    // 6. Popup de confirmación
+    // ✅ Popup para reenviar correo
     const popup = document.createElement("div");
     popup.style = `
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;

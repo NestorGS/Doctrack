@@ -5,24 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pacientes</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Estilo básico que ya tienes */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sora', sans-serif; }
     body { background-color: #f2e6cf; min-height: 100vh; position: relative; overflow-x: hidden; }
     .fondo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
     .dot { position: absolute; width: 12px; height: 12px; background-color: rgba(0,0,0,0.15); border-radius: 50%; }
-    header { background-color: #114c5f; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    
+    header {
+      background-color: #114c5f; color: white; padding: 20px 40px;
+      display: flex; justify-content: space-between; align-items: center; 
+      flex-wrap: wrap; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
     header img { height: 60px; }
     header h1 { font-size: 2rem; margin-left: 20px; }
+
     .bs { display: flex; gap: 10px; flex-wrap: wrap; }
-    .bs a, .bs button { background-color: #9cd2d3; color: #114c5f; padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; font-size: 1rem; min-width: 120px; text-align: center; border: none; }
+    .bs a, .bs button {
+      background-color: #9cd2d3; color: #114c5f; text-decoration: none;
+      padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease; font-size: 1rem; min-width: 120px; text-align: center; border: none;
+    }
     .bs a:hover, .bs button:hover { background-color: white; color: #114c5f; }
     .bs button:hover { color: red; }
+
     .s2 { text-align: center; margin: 40px 20px; color: #114c5f; font-size: 1.5rem; }
-    .tabla-container, .grafica-container { width: 90%; max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+    /* Tabla */
+    .tabla-container, .grafica-container {
+      width: 90%; max-width: 900px; margin: 20px auto; background: white; padding: 20px;
+      border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+      overflow-x: auto;
+    }
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; font-size: 1rem; }
     th { background-color: #9cd2d3; color: #114c5f; }
+
+    /* Gráfica */
+    canvas { width: 100%; height: 400px; margin-top: 30px; }
   </style>
 </head>
 <body>
@@ -71,7 +92,6 @@
     <canvas id="graficaEdad"></canvas>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     // Dibuja las bolitas de fondo
     const fondo = document.getElementById('fondo-bolitas');
@@ -121,7 +141,6 @@
       const tbody = document.getElementById("pacientesBody");
       tbody.innerHTML = "";
       datos.forEach(p => {
-        // Calcular edad
         const nacDate = new Date(p.nacimiento);
         const diffMs = Date.now() - nacDate.getTime();
         const edad = Math.floor(new Date(diffMs).getUTCFullYear() - 1970);

@@ -6,7 +6,6 @@
   <title>Doctores</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet">
   <style>
-    /* --- tu CSS existente --- */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sora', sans-serif; }
     body { background-color: #f2e6cf; min-height: 100vh; position: relative; overflow-x: hidden; }
     .fondo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
@@ -23,14 +22,10 @@
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
     th { background-color: #9cd2d3; color: #114c5f; }
-    @media (max-width: 768px) {
-      header { flex-direction: column; text-align: center; }
-      header h1 { margin: 10px 0; }
-      .bs { justify-content: center; }
-    }
   </style>
 </head>
 <body>
+
   <!-- Fondo animado -->
   <div class="fondo" id="fondo-bolitas"></div>
 
@@ -46,7 +41,9 @@
     </div>
   </header>
 
-  <div class="s2"><h2>Información de Doctores</h2></div>
+  <div class="s2">
+    <h2>Información de Doctores</h2>
+  </div>
 
   <!-- Tabla de doctores -->
   <div class="tabla-container">
@@ -70,12 +67,43 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script type="module">
-    // Cargar doctores y pacientes
+    import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAnalytics }            from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+      authDomain: "doctrack-46fc2.firebaseapp.com",
+      projectId: "doctrack-46fc2",
+      storageBucket: "doctrack-46fc2.firebasestorage.app",
+      messagingSenderId: "865552814891",
+      appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+      measurementId: "G-XQPNKXK08Y"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    // 1) Protección de acceso
+    if (!sessionStorage.getItem("adminUID")) {
+      window.location.href = "Admin.html";
+    }
+
+    // 2) Cerrar sesión
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      sessionStorage.removeItem("adminUID");
+      window.location.href = "Admin.html";
+    });
+
+    // 3) Cargar doctores
     async function loadDoctores() {
       const snap = await getDocs(collection(db, "doctores"));
       const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
+      // Tabla
       const tbody = document.getElementById("doctoresBody");
       tbody.innerHTML = "";
       docs.forEach(d => {
@@ -84,11 +112,11 @@
         tr.innerHTML = `
           <td>${d.especialidad || "-"}</td>
           <td>${[d.nombre, d.ap_paterno, d.ap_materno].filter(Boolean).join(" ")}</td>
-          <td>${numPac}</td>
-        `;
+          <td>${numPac}</td>`;
         tbody.appendChild(tr);
       });
 
+      // Gráfica de pacientes por doctor
       const labels = docs.map(d => d.nombre || d.id);
       const values = docs.map(d => d.pacientes ? Object.keys(d.pacientes).length : 0);
 
