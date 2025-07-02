@@ -12,7 +12,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/fireba
   getDocs,        // o onSnapshot si usas escucha en tiempo real
   deleteDoc,
   updateDoc,      // ✅ AGREGADO
-  doc,
+  doc, 
   Timestamp       // ✅ AGREGADO
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 

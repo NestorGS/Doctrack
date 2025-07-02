@@ -1,191 +1,117 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-     <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Ionicons desde CDN PERMITIDO por tu CSP -->
-  <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-<title>Doctores</title>
-<style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: 'Sora', sans-serif;
-    }
-    body {
-        background-color: #f2e6cf;
-        min-height: 100vh;
-        position: relative;
-        overflow-x: hidden;
-    }
-    .fondo {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-    }
-    .dot {
-        position: absolute;
-        width: 12px;
-        height: 12px;
-        background-color: rgba(0,0,0,0.15);
-        border-radius: 50%;
-    }
-    header {
-        background-color: #114c5f;
-        color: white;
-        padding: 20px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        border-bottom-left-radius: 40px;
-        border-bottom-right-radius: 40px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    header img {
-        height: 60px;
-    }
-    header h1 {
-        font-size: 2rem;
-        margin-left: 20px;
-    }
-    .bs {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-    .bs a {
-        background-color: #9cd2d3;
-        color: #114c5f;
-        text-decoration: none;
-        padding: 15px 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        font-size: 1rem;
-        min-width: 120px;
-        text-align: center;
-    }
-        .bs a:hover {
-        background-color: white;
-  color: #114c5f;
-    }
-    button{
-        background-color: #9cd2d3;
-        color: #114c5f;
-        text-decoration: none;
-        padding: 15px 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        font-size: .8rem;
-        min-width: 120px;
-        text-align: center;
-        border: none;
- }
- button:hover{
-  background-color: white;
-  color: red;
- }
-    .s2 {
-        text-align: center;
-        margin: 40px 20px;
-        color: #114c5f;
-        font-size: 1.5rem;
-    }
-    .tabla-container, .grafica-container {
-        width: 90%;
-        max-width: 900px;
-        margin: 20px auto;
-        background: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    th, td {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: center;
-    }
-    th {
-        background-color: #9cd2d3;
-        color: #114c5f;
-    }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doctores</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet">
+  <style>
+    /* --- tu CSS existente --- */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sora', sans-serif; }
+    body { background-color: #f2e6cf; min-height: 100vh; position: relative; overflow-x: hidden; }
+    .fondo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+    .dot { position: absolute; width: 12px; height: 12px; background-color: rgba(0,0,0,0.15); border-radius: 50%; }
+    header { background-color: #114c5f; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    header img { height: 60px; }
+    header h1 { font-size: 2rem; margin-left: 20px; }
+    .bs { display: flex; gap: 10px; flex-wrap: wrap; }
+    .bs a, .bs button { background-color: #9cd2d3; color: #114c5f; padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; font-size: 1rem; min-width: 120px; text-align: center; border: none; }
+    .bs a:hover, .bs button:hover { background-color: white; color: #114c5f; }
+    .bs button:hover { color: red; }
+    .s2 { text-align: center; margin: 40px 20px; color: #114c5f; font-size: 1.5rem; }
+    .tabla-container, .grafica-container { width: 90%; max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background-color: #9cd2d3; color: #114c5f; }
     @media (max-width: 768px) {
-        header {
-            flex-direction: column;
-            text-align: center;
-        }
-        header h1 {
-            margin: 10px 0;
-        }
-        .bs {
-            justify-content: center;
-        }
+      header { flex-direction: column; text-align: center; }
+      header h1 { margin: 10px 0; }
+      .bs { justify-content: center; }
     }
-</style>
+  </style>
 </head>
 <body>
+  <!-- Fondo animado -->
+  <div class="fondo" id="fondo-bolitas"></div>
 
-<div class="fondo" id="fondo-bolitas"></div>
-
-<header>
+  <header>
     <div style="display: flex; align-items: center;">
-        <img src="img/Solo-Logo.png" alt="Logo">
-        <h1>Doctores</h1>
+      <img src="img/Solo-Logo.png" alt="Logo">
+      <h1>Doctores</h1>
     </div>
     <div class="bs">
-        <a href="AdminP.html">Paciente</a>
-        <a href="AdminD.html">Doctor</a>
-             <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
+      <a href="AdminP.html">Paciente</a>
+      <a href="AdminD.html">Doctor</a>
+      <button id="logoutBtn" type="button">Cerrar sesión</button>
     </div>
-</header>
+  </header>
 
-<div class="s2">
-    <h2>Información de Doctores</h2>
-</div>
+  <div class="s2"><h2>Información de Doctores</h2></div>
 
-<!-- Tabla de doctores -->
-<div class="tabla-container">
+  <!-- Tabla de doctores -->
+  <div class="tabla-container">
     <h3>Listado de Doctores</h3>
     <table>
-        <thead>
-            <tr>
-                <th>Especialidad</th>
-                <th>Nombre</th>
-                <th>Número de Pacientes</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Ejemplo</td>
-                <td>Ejemplo</td>
-                <td>0</td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th>Especialidad</th>
+          <th>Nombre Completo</th>
+          <th># Pacientes Asignados</th>
+        </tr>
+      </thead>
+      <tbody id="doctoresBody"></tbody>
     </table>
-</div>
+  </div>
 
-<!-- Contenedor para gráfica -->
-<div class="grafica-container">
+  <!-- Gráfica de pacientes por doctor -->
+  <div class="grafica-container">
     <h3>Gráfica de Pacientes por Doctor</h3>
     <canvas id="graficaDoctores"></canvas>
-</div>
+  </div>
 
- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="module" src="js/AdminD-seguridad.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module">
+    // Cargar doctores y pacientes
+    async function loadDoctores() {
+      const snap = await getDocs(collection(db, "doctores"));
+      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      const tbody = document.getElementById("doctoresBody");
+      tbody.innerHTML = "";
+      docs.forEach(d => {
+        const numPac = d.pacientes ? Object.keys(d.pacientes).length : 0;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${d.especialidad || "-"}</td>
+          <td>${[d.nombre, d.ap_paterno, d.ap_materno].filter(Boolean).join(" ")}</td>
+          <td>${numPac}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const labels = docs.map(d => d.nombre || d.id);
+      const values = docs.map(d => d.pacientes ? Object.keys(d.pacientes).length : 0);
+
+      const ctx = document.getElementById("graficaDoctores").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            label: "# Pacientes",
+            data: values,
+            backgroundColor: "#9cd2d3",
+            borderColor: "#114c5f",
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: { y: { beginAtZero: true } }
+        }
+      });
+    }
+
+    loadDoctores();
   </script>
 </body>
 </html>

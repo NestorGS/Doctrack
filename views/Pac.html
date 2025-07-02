@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Registro de Paciente - DocTrack</title>
   <link rel="stylesheet" href="css/Pac.css" />
+    <!-- Ionicons desde CDN PERMITIDO por tu CSP -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
 <body>
   <header>
@@ -15,7 +18,7 @@
     <h2>Bienvenidos A DocTrack</h2>
     <div class="bs">
       <div class="formu">
-        <button class="info-button" onclick="toggleForm()">Información Personal</button>
+        <button class="info-button" id="toggleBtn">Información Personal</button>
         <div class="form-container" id="formPersonal">
           <input id="nombre" type="text" placeholder="Nombre(s)">
           <input id="paterno" type="text" placeholder="Apellido Paterno">
@@ -38,6 +41,7 @@
   </div>
 
   <script type="module" src="js/Pac-seguridad.js"></script>
+  <script src="js/pac.js"></script>
  
 </body>
 </html>

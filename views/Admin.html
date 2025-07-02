@@ -5,7 +5,7 @@
   <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inicio de Sesión</title>
+<title>Inicio de Sesión Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet">
 <style>
     * {
@@ -116,38 +116,30 @@
 
 <div class="fondo" id="fondo-bolitas"></div>
 
-<div class="login-container">
+<div class="fondo" id="fondo-bolitas"></div>
+
+  <div class="login-container">
     <div class="logo">
-        <img src="Imagenes/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="Logo DocTrack">
+      
     </div>
     <h2>Bienvenido Administrador</h2>
+    
 
-    <form>
-        <label for="usuario">Usuario</label>
-        <input type="text" id="usuario" placeholder="Escribe tu usuario">
-
-        <label for="password">Contraseña</label>
-        <input type="password" id="password" placeholder="Escribe tu contraseña">
-        <a href="Escoger.html">Mientras se programa</a>
-        <div class="btn-container">
-            <button type="submit">Aceptar</button>
-
-            <button type="button" class="back-btn" onclick="location.href='index.html'">Regresar</button>
-        </div>
+  <form id="loginForm">
+      <input id="usuario" type="text" placeholder="Usuario" required>
+      <input id="password" type="password" placeholder="Contraseña" required>
+      <button type="submit">Iniciar sesión</button>
     </form>
-</div>
 
-<script>
-    const fondo = document.getElementById('fondo-bolitas');
-    const cantidad = 15;
-    for (let i = 0; i < cantidad; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'dot';
-        dot.style.left = `${Math.random() * 100}%`;
-        dot.style.top = `${Math.random() * 100}%`;
-        fondo.appendChild(dot);
-    }
-</script>
+    <button class="back-btn" onclick="location.href='index.html'">← Volver</button>
+  </div>
+
+  <script type="module" src="js/Admin-seguridad.js"></script>
+    
+  </script>
+</body>
+</html>
+
 
 </body>
 </html>

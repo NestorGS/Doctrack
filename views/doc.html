@@ -7,87 +7,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DocTrack</title>
     <link rel="stylesheet" href="css/doc.css">
+      <!-- Ionicons desde CDN PERMITIDO por tu CSP -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </head>
 <body>
-        <header><img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt=""></header>
+      <header>
+    <img src="img/Captura_de_pantalla_2024-10-15_010848-removebg-preview.png" alt="">
+  </header>
 
-    <div class="container">
-        <h2>Bienvenidos A DocTrack</h2>
-        <div class="bs">
-        <div class="formu">
-        <button id="toggleBtn">Mostrar</button>
-        
+  <div class="container">
+    <h2>Bienvenidos A DocTrack</h2>
+    <div class="bs">
+      <div class="formu">
+        <!-- ✅ Se quitó el onclick y se agregó id -->
+        <button class="info-button" id="toggleBtn">Información Personal</button>
+
         <div class="form-container" id="formPersonal">
-            <input id="nombre" type="text" placeholder="Nombre(s)">
-            <input id="paterno" type="text" placeholder="Apellido Paterno">
-            <input id="materno" type="text" placeholder="Apellido Materno">
-            <input id="correo" type="email" placeholder="Correo electronico">
-            <input id="cedula" type="text" placeholder="Cedula o Matricula">
-            <select id="especialidad" name="especialidad" class="esp">
-                <option value="ninguna">Ninguna</option>
-                <option value="medicina_interna">Medicina Interna</option>
-                <option value="pediatria">Pediatría</option>
-                <option value="ginecologia_obstetricia">Ginecología y Obstetricia</option>
-                <option value="cardiologia">Cardiología</option>
-                <option value="neurologia">Neurología</option>
-                <option value="dermatologia">Dermatología</option>
-                <option value="oftalmologia">Oftalmología</option>
-                <option value="otorrinolaringologia">Otorrinolaringología</option>
-                <option value="psiquiatria">Psiquiatría</option>
-                <option value="geriatria">Geriatría</option>
-                <option value="cirugia_general">Cirugía General</option>
-                <option value="neurocirugia">Neurocirugía</option>
-                <option value="cirugia_cardiovascular">Cirugía Cardiovascular</option>
-                <option value="cirugia_toracica">Cirugía Torácica</option>
-                <option value="cirugia_plastica_reconstructiva">Cirugía Plástica y Reconstructiva</option>
-                <option value="cirugia_ortopedica">Cirugía Ortopédica</option>
-                <option value="cirugia_pediatrica">Cirugía Pediátrica</option>
-                <option value="cirugia_oncologica">Cirugía Oncológica</option>
-                <option value="endocrinologia">Endocrinología</option>
-                <option value="nefrologia">Nefrología</option>
-                <option value="gastroenterologia">Gastroenterología</option>
-                <option value="hematologia">Hematología</option>
-                <option value="infectologia">Infectología</option>
-                <option value="oncologia">Oncología</option>
-                <option value="alergologia_inmunologia">Alergología e Inmunología</option>
-                <option value="reumatologia">Reumatología</option>
-                <option value="neumologia">Neumología</option>
-                <option value="medicina_fisica_rehabilitacion">Medicina Física y Rehabilitación</option>
-                <option value="medicina_familiar">Medicina Familiar</option>
-                <option value="medicina_preventiva">Medicina Preventiva</option>
-                <option value="medicina_del_deporte">Medicina del Deporte</option>
-                <option value="medicina_del_trabajo">Medicina del Trabajo</option>
-                <option value="cuidados_paliativos">Cuidados Paliativos</option>
-                <option value="genetica_medica">Genética Médica</option>
-                <option value="medicina_urgencias">Medicina de Urgencias</option>
-                <option value="anestesiologia">Anestesiología</option>
-                <option value="radiologia">Radiología</option>
-                <option value="patologia">Patología</option>
-                <option value="medicina_nuclear">Medicina Nuclear</option>
-                <option value="psicologia_clinica">Psicología Clínica</option>
-                <option value="psicoanalisis">Psicoanálisis</option>
-                <option value="neuropsicologia">Neuropsicología</option>
-                <option value="terapia_ocupacional">Terapia Ocupacional</option>
-            </select>        
+          <input id="nombre" type="text" placeholder="Nombre(s)">
+          <input id="paterno" type="text" placeholder="Apellido Paterno">
+          <input id="materno" type="text" placeholder="Apellido Materno">
+          <input id="correo" type="email" placeholder="Correo electrónico">
+          <input id="cedula" type="text" placeholder="Cédula o Matrícula">
+
+          <select id="especialidad" name="especialidad" class="esp">
+            <option value="ninguna">Ninguna</option>
+            <option value="medicina_interna">Medicina Interna</option>
+            <option value="pediatria">Pediatría</option>
+            <option value="ginecologia_obstetricia">Ginecología y Obstetricia</option>
+            <option value="cardiologia">Cardiología</option>
+            <option value="neurologia">Neurología</option>
+            <option value="dermatologia">Dermatología</option>
+            <option value="oftalmologia">Oftalmología</option>
+            <option value="otorrinolaringologia">Otorrinolaringología</option>
+            <option value="psiquiatria">Psiquiatría</option>
+            <option value="geriatria">Geriatría</option>
+            <option value="cirugia_general">Cirugía General</option>
+            <option value="neurocirugia">Neurocirugía</option>
+            <option value="cirugia_cardiovascular">Cirugía Cardiovascular</option>
+            <option value="cirugia_toracica">Cirugía Torácica</option>
+            <option value="cirugia_plastica_reconstructiva">Cirugía Plástica y Reconstructiva</option>
+            <option value="cirugia_ortopedica">Cirugía Ortopédica</option>
+            <option value="cirugia_pediatrica">Cirugía Pediátrica</option>
+            <option value="cirugia_oncologica">Cirugía Oncológica</option>
+            <option value="endocrinologia">Endocrinología</option>
+            <option value="nefrologia">Nefrología</option>
+            <option value="gastroenterologia">Gastroenterología</option>
+            <option value="hematologia">Hematología</option>
+            <option value="infectologia">Infectología</option>
+            <option value="oncologia">Oncología</option>
+            <option value="alergologia_inmunologia">Alergología e Inmunología</option>
+            <option value="reumatologia">Reumatología</option>
+            <option value="neumologia">Neumología</option>
+            <option value="medicina_fisica_rehabilitacion">Medicina Física y Rehabilitación</option>
+            <option value="medicina_familiar">Medicina Familiar</option>
+            <option value="medicina_preventiva">Medicina Preventiva</option>
+            <option value="medicina_del_deporte">Medicina del Deporte</option>
+            <option value="medicina_del_trabajo">Medicina del Trabajo</option>
+            <option value="cuidados_paliativos">Cuidados Paliativos</option>
+            <option value="genetica_medica">Genética Médica</option>
+            <option value="medicina_urgencias">Medicina de Urgencias</option>
+            <option value="anestesiologia">Anestesiología</option>
+            <option value="radiologia">Radiología</option>
+            <option value="patologia">Patología</option>
+            <option value="medicina_nuclear">Medicina Nuclear</option>
+            <option value="psicologia_clinica">Psicología Clínica</option>
+            <option value="psicoanalisis">Psicoanálisis</option>
+            <option value="neuropsicologia">Neuropsicología</option>
+            <option value="terapia_ocupacional">Terapia Ocupacional</option>
+          </select>
         </div>
-    </div>
-    <div class="cont">
+      </div>
+
+      <div class="cont">
         <input id="password" type="password" placeholder="Contraseña">
-        <input id="confirmar"type="password" placeholder="Confirmar Contraseña">
+        <input id="confirmar" type="password" placeholder="Confirmar Contraseña">
         <button id="registrarBtn" class="btn">Registrarse</button><br>
+      </div>
     </div>
-    </div>
+
     <a href="index.html">
-    <div class="reg">
-    <h3>Regresar</h3>
-</div>
-</a>
-</div>
-    <script src="js/doc.js"></script>
-<script type="module" src="js/doc-seguriadad.js"></script>>
+      <div class="reg">
+        <h3>Regresar</h3>
+      </div>
+    </a>
+  </div>
 
-</script>
-
+  <!-- Scripts -->
+  <script type="module" src="js/doc.js"></script>
+  <script type="module" src="js/doc-seguriadad.js"></script>
 
 
 </body>

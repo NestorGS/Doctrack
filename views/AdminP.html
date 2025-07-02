@@ -1,222 +1,177 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-     <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pacientes</title>
-<style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: 'Sora', sans-serif;
-    }
-    body {
-        background-color: #f2e6cf;
-        min-height: 100vh;
-        position: relative;
-        overflow-x: hidden;
-    }
-    .fondo {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-    }
-    .dot {
-        position: absolute;
-        width: 12px;
-        height: 12px;
-        background-color: rgba(0,0,0,0.15);
-        border-radius: 50%;
-    }
-    header {
-        background-color: #114c5f;
-        color: white;
-        padding: 20px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        border-bottom-left-radius: 40px;
-        border-bottom-right-radius: 40px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    header img {
-        height: 60px;
-    }
-    header h1 {
-        font-size: 2rem;
-        margin-left: 20px;
-    }
-    .bs {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-    .bs a {
-        background-color: #9cd2d3;
-        color: #114c5f;
-        text-decoration: none;
-        padding: 15px 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        font-size: 1rem;
-        min-width: 120px;
-        text-align: center;
-    }
-     .bs a:hover {
-        background-color: white;
-        color: #114c5f;
-    }
-    button{
-        background-color: #9cd2d3;
-        color: #114c5f;
-        text-decoration: none;
-        padding: 15px 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        font-size: .8rem;
-        min-width: 120px;
-        text-align: center;
-        border: none;
-    }
-     button:hover{
-      background-color: white;
-      color: red;
-    }
-    .s2 {
-        text-align: center;
-        margin: 40px 20px;
-        color: #114c5f;
-        font-size: 1.5rem;
-    }
-    .tabla-container, .grafica-container {
-        width: 90%;
-        max-width: 1000px;
-        margin: 20px auto;
-        background: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    th, td {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: center;
-    }
-    th {
-        background-color: #9cd2d3;
-        color: #114c5f;
-    }
-    @media (max-width: 768px) {
-        header {
-            flex-direction: column;
-            text-align: center;
-        }
-        header h1 {
-            margin: 10px 0;
-        }
-        .bs {
-            justify-content: center;
-        }
-    }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pacientes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet">
+  <style>
+    /* Estilo básico que ya tienes */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sora', sans-serif; }
+    body { background-color: #f2e6cf; min-height: 100vh; position: relative; overflow-x: hidden; }
+    .fondo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+    .dot { position: absolute; width: 12px; height: 12px; background-color: rgba(0,0,0,0.15); border-radius: 50%; }
+    header { background-color: #114c5f; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    header img { height: 60px; }
+    header h1 { font-size: 2rem; margin-left: 20px; }
+    .bs { display: flex; gap: 10px; flex-wrap: wrap; }
+    .bs a, .bs button { background-color: #9cd2d3; color: #114c5f; padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; font-size: 1rem; min-width: 120px; text-align: center; border: none; }
+    .bs a:hover, .bs button:hover { background-color: white; color: #114c5f; }
+    .bs button:hover { color: red; }
+    .s2 { text-align: center; margin: 40px 20px; color: #114c5f; font-size: 1.5rem; }
+    .tabla-container, .grafica-container { width: 90%; max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background-color: #9cd2d3; color: #114c5f; }
+  </style>
 </head>
 <body>
 
-<div class="fondo" id="fondo-bolitas"></div>
+  <!-- Fondo animado -->
+  <div class="fondo" id="fondo-bolitas"></div>
 
-<header>
+  <header>
     <div style="display: flex; align-items: center;">
-        <img src="img/Solo-Logo.png" alt="Logo">
-        <h1>Pacientes</h1>
+      <img src="img/Solo-Logo.png" alt="Logo">
+      <h1>Pacientes</h1>
     </div>
     <div class="bs">
-        <a href="AdminP.html">Paciente</a>
-        <a href="AdminD.html">Doctor</a>
-             <button id="logoutBtn"><h3>Cerrar sesión</h3></button>
+      <a href="AdminP.html">Paciente</a>
+      <a href="AdminD.html">Doctor</a>
+      <button id="logoutBtn" type="button">Cerrar sesión</button>
     </div>
-</header>
+  </header>
 
-<div class="s2">
+  <div class="s2">
     <h2>Información General de Pacientes</h2>
-</div>
+  </div>
 
-<!-- Tabla de pacientes -->
-<div class="tabla-container">
+  <!-- Tabla de pacientes -->
+  <div class="tabla-container">
     <h3>Listado de Pacientes</h3>
     <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Edad</th>
-                <th>Género</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>001</td>
-                <td>Ejemplo</td>
-                <td>00</td>
-                <td>-</td>
-                <td>-</td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre Completo</th>
+          <th>Correo</th>
+          <th>CURP</th>
+          <th>Nacimiento</th>
+          <th>Edad</th>
+          <th>Rol</th>
+        </tr>
+      </thead>
+      <tbody id="pacientesBody"></tbody>
     </table>
-</div>
-<div class="grafica-container">
-    <h3>Gráfica de Datos</h3>
-    <canvas id="graficaEdad"></canvas>
-</div>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
+  <!-- Gráfica de edades -->
+  <div class="grafica-container">
+    <h3>Distribución de Edades</h3>
+    <canvas id="graficaEdad"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Dibuja las bolitas de fondo
     const fondo = document.getElementById('fondo-bolitas');
-    const cantidad = 15;
-    for (let i = 0; i < cantidad; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'dot';
-        dot.style.left = `${Math.random() * 100}%`;
-        dot.style.top = `${Math.random() * 100}%`;
-        fondo.appendChild(dot);
+    for (let i = 0; i < 15; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      dot.style.left = `${Math.random()*100}%`;
+      dot.style.top  = `${Math.random()*100}%`;
+      fondo.appendChild(dot);
+    }
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
+      authDomain: "doctrack-46fc2.firebaseapp.com",
+      projectId: "doctrack-46fc2",
+      storageBucket: "doctrack-46fc2.firebasestorage.app",
+      messagingSenderId: "865552814891",
+      appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
+      measurementId: "G-XQPNKXK08Y"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 1) Protección de acceso
+    if (!sessionStorage.getItem("adminUID")) {
+      window.location.href = "Admin.html";
     }
 
-    const ctx = document.getElementById('graficaEdad').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
+    // 2) Cerrar sesión
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      sessionStorage.removeItem("adminUID");
+      window.location.href = "Admin.html";
+    });
+
+    // 3) Cargar pacientes
+    async function loadPacientes() {
+      const snap = await getDocs(collection(db, "usuarios"));
+      const datos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Tabla
+      const tbody = document.getElementById("pacientesBody");
+      tbody.innerHTML = "";
+      datos.forEach(p => {
+        // Calcular edad
+        const nacDate = new Date(p.nacimiento);
+        const diffMs = Date.now() - nacDate.getTime();
+        const edad = Math.floor(new Date(diffMs).getUTCFullYear() - 1970);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${p.id}</td>
+          <td>${[p.nombre, p.paterno, p.materno].filter(Boolean).join(" ")}</td>
+          <td>${p.correo || "-"}</td>
+          <td>${p.curp || "-"}</td>
+          <td>${p.nacimiento || "-"}</td>
+          <td>${isNaN(edad) ? "-" : edad}</td>
+          <td>${p.rol || "-"}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Gráfica de edades
+      const conteo = {};
+      datos.forEach(p => {
+        const nacDate = new Date(p.nacimiento);
+        const diffMs = Date.now() - nacDate.getTime();
+        const years = Math.floor(new Date(diffMs).getUTCFullYear() - 1970);
+        const key = isNaN(years) ? "Desconocida" : years;
+        conteo[key] = (conteo[key] || 0) + 1;
+      });
+
+      const labels = Object.keys(conteo).sort((a, b) => a - b);
+      const values = labels.map(l => conteo[l]);
+
+      const ctx = document.getElementById("graficaEdad").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
         data: {
-            labels: ['Ejemplo'],
-            datasets: [{
-                label: 'Edad',
-                data: [0],
-                backgroundColor: '#9cd2d3',
-                borderColor: '#114c5f',
-                borderWidth: 1
-            }]
+          labels,
+          datasets: [{
+            label: "Pacientes por edad",
+            data: values,
+            backgroundColor: "#9cd2d3",
+            borderColor: "#114c5f",
+            borderWidth: 1
+          }]
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+          scales: { y: { beginAtZero: true } }
         }
-    });
-</script>
+      });
+    }
 
+    loadPacientes();
+  </script>
 </body>
 </html>
