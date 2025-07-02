@@ -11,16 +11,14 @@
     body { background-color: #f2e6cf; min-height: 100vh; position: relative; overflow-x: hidden; }
     .fondo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
     .dot { position: absolute; width: 12px; height: 12px; background-color: rgba(0,0,0,0.15); border-radius: 50%; }
-    
     header {
       background-color: #114c5f; color: white; padding: 20px 40px;
-      display: flex; justify-content: space-between; align-items: center; 
-      flex-wrap: wrap; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; 
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     header img { height: 60px; }
     header h1 { font-size: 2rem; margin-left: 20px; }
-
     .bs { display: flex; gap: 10px; flex-wrap: wrap; }
     .bs a, .bs button {
       background-color: #9cd2d3; color: #114c5f; text-decoration: none;
@@ -29,21 +27,24 @@
     }
     .bs a:hover, .bs button:hover { background-color: white; color: #114c5f; }
     .bs button:hover { color: red; }
-
     .s2 { text-align: center; margin: 40px 20px; color: #114c5f; font-size: 1.5rem; }
 
-    /* Tabla */
+    .tabs { text-align: center; margin: 20px 0; }
+    .tabs button {
+      margin: 0 10px; padding: 10px 20px; border: none; border-radius: 8px;
+      background: #114c5f; color: white; cursor: pointer;
+    }
+    .tabs button.active { background: #9cd2d3; color: #114c5f; }
+
     .tabla-container, .grafica-container {
-      width: 90%; max-width: 900px; margin: 20px auto; background: white; padding: 20px;
-      border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-      overflow-x: auto;
+      width: 90%; max-width: 1000px; margin: 20px auto; background: white; padding: 20px;
+      border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow-x: auto;
     }
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 10px; text-align: center; font-size: 1rem; }
     th { background-color: #9cd2d3; color: #114c5f; }
 
-    /* Gráfica */
-    canvas { width: 100%; height: 400px; margin-top: 30px; }
+    canvas { width: 100% !important; height: 400px !important; margin-top: 30px; }
   </style>
 </head>
 <body>
@@ -63,23 +64,24 @@
     </div>
   </header>
 
-  <div class="s2">
-    <h2>Información General de Pacientes</h2>
+  <div class="s2"><h2>Información General de Pacientes</h2></div>
+
+  <!-- Switch vistas -->
+  <div class="tabs">
+    <button id="tab-table" class="active" onclick="showView('table')">Ver Tabla</button>
+    <button id="tab-age" onclick="showView('age')">Edades</button>
+    <button id="tab-anc" onclick="showView('anc')">Antecedentes</button>
   </div>
 
   <!-- Tabla de pacientes -->
-  <div class="tabla-container">
+  <div id="view-table" class="tabla-container">
     <h3>Listado de Pacientes</h3>
     <table>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Nombre Completo</th>
-          <th>Correo</th>
-          <th>CURP</th>
-          <th>Nacimiento</th>
-          <th>Edad</th>
-          <th>Rol</th>
+          <th>ID</th><th>Nombre Completo</th><th>Correo</th>
+          <th>CURP</th><th>Nacimiento</th><th>Edad</th>
+          <th>Rol</th><th>Antecedentes</th><th>Estado Civil</th>
         </tr>
       </thead>
       <tbody id="pacientesBody"></tbody>
@@ -87,26 +89,40 @@
   </div>
 
   <!-- Gráfica de edades -->
-  <div class="grafica-container">
+  <div id="view-age" class="grafica-container" style="display:none">
     <h3>Distribución de Edades</h3>
     <canvas id="graficaEdad"></canvas>
   </div>
 
+  <!-- Gráfica de antecedentes -->
+  <div id="view-anc" class="grafica-container" style="display:none">
+    <h3>Pacientes por Tipo de Antecedente</h3>
+    <canvas id="graficaAnc"></canvas>
+  </div>
+
   <script>
-    // Dibuja las bolitas de fondo
+    // Animación de fondo
     const fondo = document.getElementById('fondo-bolitas');
     for (let i = 0; i < 15; i++) {
       const dot = document.createElement('div');
       dot.className = 'dot';
-      dot.style.left = `${Math.random()*100}%`;
-      dot.style.top  = `${Math.random()*100}%`;
+      dot.style.left = Math.random()*100 + '%';
+      dot.style.top  = Math.random()*100 + '%';
       fondo.appendChild(dot);
+    }
+
+    // Alternar vistas
+    function showView(view) {
+      ['table','age','anc'].forEach(v=>{
+        document.getElementById('view-'+v).style.display = (v===view?'block':'none');
+        document.getElementById('tab-'+v).classList.toggle('active', v===view);
+      });
     }
   </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
@@ -117,76 +133,93 @@
       appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
       measurementId: "G-XQPNKXK08Y"
     };
-
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const db  = getFirestore(app);
 
-    // 1) Protección de acceso
-    if (!sessionStorage.getItem("adminUID")) {
-      window.location.href = "Admin.html";
-    }
-
-    // 2) Cerrar sesión
-    document.getElementById("logoutBtn").addEventListener("click", () => {
+    // Protección y logout
+    if (!sessionStorage.getItem("adminUID")) window.location.href = "Admin.html";
+    document.getElementById("logoutBtn").onclick = () => {
       sessionStorage.removeItem("adminUID");
       window.location.href = "Admin.html";
-    });
+    };
 
-    // 3) Cargar pacientes
+    // Carga y renderizado
     async function loadPacientes() {
-      const snap = await getDocs(collection(db, "usuarios"));
-      const datos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const snapUsers = await getDocs(collection(db, "usuarios"));
+      const patients = await Promise.all(snapUsers.docs.map(async d=>{
+        const p = { id:d.id, ...d.data() };
+        // Calcula edad
+        let edad = "-";
+        if (p.nacimiento) {
+          const diff = Date.now() - new Date(p.nacimiento).getTime();
+          edad = Math.floor(new Date(diff).getUTCFullYear()-1970);
+        }
+        // Trae antecedentes
+        const docAnc = await getDoc(doc(db, "antecedentes_paciente", d.id));
+        const ancData = docAnc.exists() ? docAnc.data() : {};
+        const listaAnc = Object.entries(ancData)
+                              .filter(([k,v])=> v===true)
+                              .map(([k])=> k);
+        return {
+          ...p,
+          edad,
+          antecedentes: listaAnc,
+          estadoCivil: (p.estadoCivil || "-")
+        };
+      }));
 
       // Tabla
       const tbody = document.getElementById("pacientesBody");
       tbody.innerHTML = "";
-      datos.forEach(p => {
-        const nacDate = new Date(p.nacimiento);
-        const diffMs = Date.now() - nacDate.getTime();
-        const edad = Math.floor(new Date(diffMs).getUTCFullYear() - 1970);
-
+      patients.forEach(p=>{
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${p.id}</td>
-          <td>${[p.nombre, p.paterno, p.materno].filter(Boolean).join(" ")}</td>
-          <td>${p.correo || "-"}</td>
-          <td>${p.curp || "-"}</td>
-          <td>${p.nacimiento || "-"}</td>
-          <td>${isNaN(edad) ? "-" : edad}</td>
-          <td>${p.rol || "-"}</td>
+          <td>${[p.nombre,p.paterno,p.materno].filter(Boolean).join(" ")}</td>
+          <td>${p.correo||"-"}</td>
+          <td>${p.curp||"-"}</td>
+          <td>${p.nacimiento||"-"}</td>
+          <td>${p.edad}</td>
+          <td>${p.rol||"-"}</td>
+          <td>${p.antecedentes.join(", ")||"-"}</td>
+          <td>${p.estadoCivil}</td>
         `;
         tbody.appendChild(tr);
       });
 
-      // Gráfica de edades
-      const conteo = {};
-      datos.forEach(p => {
-        const nacDate = new Date(p.nacimiento);
-        const diffMs = Date.now() - nacDate.getTime();
-        const years = Math.floor(new Date(diffMs).getUTCFullYear() - 1970);
-        const key = isNaN(years) ? "Desconocida" : years;
-        conteo[key] = (conteo[key] || 0) + 1;
-      });
-
-      const labels = Object.keys(conteo).sort((a, b) => a - b);
-      const values = labels.map(l => conteo[l]);
-
-      const ctx = document.getElementById("graficaEdad").getContext("2d");
-      new Chart(ctx, {
+      // Gráfica edades
+      const countEdades = patients.reduce((acc,p)=>{
+        acc[p.edad] = (acc[p.edad]||0)+1; return acc;
+      }, {});
+      const labelsE = Object.keys(countEdades).sort((a,b)=>a-b);
+      const dataE   = labelsE.map(l=>countEdades[l]);
+      new Chart(document.getElementById("graficaEdad"), {
         type: "bar",
         data: {
-          labels,
-          datasets: [{
-            label: "Pacientes por edad",
-            data: values,
-            backgroundColor: "#9cd2d3",
-            borderColor: "#114c5f",
-            borderWidth: 1
-          }]
+          labels: labelsE,
+          datasets: [{ label:"Pacientes por edad", data:dataE,
+            backgroundColor:"#9cd2d3", borderColor:"#114c5f", borderWidth:1 }]
         },
-        options: {
-          scales: { y: { beginAtZero: true } }
-        }
+        options:{ scales:{ y:{ beginAtZero:true } } }
+      });
+
+      // Gráfica antecedentes
+      const countAnc = {};
+      patients.forEach(p=>{
+        p.antecedentes.forEach(a=>{
+          countAnc[a] = (countAnc[a]||0)+1;
+        });
+      });
+      const labelsA = Object.keys(countAnc);
+      const dataA   = labelsA.map(l=>countAnc[l]);
+      new Chart(document.getElementById("graficaAnc"), {
+        type: "bar",
+        data: {
+          labels: labelsA,
+          datasets: [{ label:"Pacientes con antecedente", data:dataA,
+            backgroundColor:"#9cd2d3", borderColor:"#114c5f", borderWidth:1 }]
+        },
+        options:{ scales:{ y:{ beginAtZero:true } } }
       });
     }
 

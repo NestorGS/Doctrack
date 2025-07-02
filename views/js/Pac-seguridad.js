@@ -1,4 +1,3 @@
-// registro-firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
   getAuth,
@@ -72,8 +71,9 @@ document.getElementById("registrarBtn")?.addEventListener("click", async () => {
     const lastIndex = cfgSnap.exists() ? cfgSnap.data().lastIndex : -1;
     const nextIndex = (lastIndex + 1) % doctors.length;
     const chosenDoctor = doctors[nextIndex];
+    const doctorId = chosenDoctor.id;
 
-    // 🩺 Guardar al nuevo paciente con el doctor asignado
+    // 🩺 Guardar al nuevo paciente en colección 'usuarios'
     await setDoc(doc(db, "usuarios", uid), {
       nombre,
       paterno,
@@ -82,19 +82,25 @@ document.getElementById("registrarBtn")?.addEventListener("click", async () => {
       curp,
       nacimiento,
       rol: "paciente",
-      doctorId: chosenDoctor.id,
+      doctorId,
       creadoEn: new Date()
     });
 
-    // 🔗 Relación en subcolección del doctor
-    await setDoc(doc(db, `doctores/${chosenDoctor.id}/pacientes`, uid), {
+    // 🔗 Subcolección del doctor
+    await setDoc(doc(db, `doctores/${doctorId}/pacientes`, uid), {
       linkedAt: new Date()
+    });
+
+    // 🧭 Campo tipo mapa para compatibilidad con tu lógica anterior
+    const doctorRef = doc(db, "doctores", doctorId);
+    await updateDoc(doctorRef, {
+      [`pacientes.${uid}`]: true
     });
 
     // 🔁 Actualizar índice de round-robin
     await setDoc(cfgRef, { lastIndex: nextIndex }, { merge: true });
 
-    // 📧 Enviar verificación de correo
+    // 📧 Verificación de correo
     try {
       await sendEmailVerification(cred.user);
       localStorage.setItem("correoPendiente", correo);
@@ -103,7 +109,7 @@ document.getElementById("registrarBtn")?.addEventListener("click", async () => {
       console.warn("No se pudo enviar verificación automáticamente:", err);
     }
 
-    // ✅ Popup para reenviar correo
+    // ✅ Mostrar popup
     const popup = document.createElement("div");
     popup.style = `
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;

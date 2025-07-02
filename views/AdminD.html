@@ -1,78 +1,164 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Doctores</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sora', sans-serif; }
-    body { background-color: #f2e6cf; min-height: 100vh; position: relative; overflow-x: hidden; }
-    .fondo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
-    .dot { position: absolute; width: 12px; height: 12px; background-color: rgba(0,0,0,0.15); border-radius: 50%; }
-    header { background-color: #114c5f; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    header img { height: 60px; }
-    header h1 { font-size: 2rem; margin-left: 20px; }
-    .bs { display: flex; gap: 10px; flex-wrap: wrap; }
-    .bs a, .bs button { background-color: #9cd2d3; color: #114c5f; padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.3s ease; font-size: 1rem; min-width: 120px; text-align: center; border: none; }
-    .bs a:hover, .bs button:hover { background-color: white; color: #114c5f; }
-    .bs button:hover { color: red; }
-    .s2 { text-align: center; margin: 40px 20px; color: #114c5f; font-size: 1.5rem; }
-    .tabla-container, .grafica-container { width: 90%; max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-    th { background-color: #9cd2d3; color: #114c5f; }
+    * { box-sizing:border-box; margin:0; padding:0; font-family:'Sora',sans-serif; }
+    body { background:#f2e6cf; min-height:100vh; overflow-x:hidden; }
+    .fondo { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
+    .dot { position:absolute; width:12px; height:12px; background:rgba(0,0,0,0.15); border-radius:50%; }
+
+    header {
+      background:#114c5f; color:#fff; padding:20px 40px;
+      display:flex; justify-content:space-between; align-items:center;
+      border-bottom-left-radius:40px; border-bottom-right-radius:40px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    }
+    header img { height:60px; }
+    header h1 { font-size:2rem; margin-left:20px; }
+    .bs { display:flex; gap:10px; }
+    .bs a, .bs button {
+      background:#9cd2d3; color:#114c5f; padding:15px 25px;
+      border-radius:15px; border:none; cursor:pointer;
+      transition:background .3s;
+    }
+    .bs a:hover, .bs button:hover { background:#fff; color:#114c5f; }
+
+    .s2 { text-align:center; margin:40px 0; color:#114c5f; font-size:1.5rem; }
+
+    .tabs { text-align:center; margin-bottom:20px; }
+    .tabs button {
+      margin:0 5px; padding:10px 20px; border:none; border-radius:8px;
+      background:#114c5f; color:#fff; cursor:pointer; transition:background .3s;
+    }
+    .tabs button.active { background:#9cd2d3; color:#114c5f; }
+
+    .section { display:none; }
+    .section.active { display:block; }
+
+    .tabla-container, .grafica-container {
+      width:90%; max-width:900px; margin:20px auto;
+      background:#fff; padding:20px; border-radius:15px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1); overflow-x:auto;
+    }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th,td { border:1px solid #ccc; padding:10px; text-align:center; }
+    th { background:#9cd2d3; color:#114c5f; }
+    canvas { width:100%; height:400px; }
   </style>
 </head>
 <body>
-
-  <!-- Fondo animado -->
   <div class="fondo" id="fondo-bolitas"></div>
 
   <header>
-    <div style="display: flex; align-items: center;">
+    <div style="display:flex;align-items:center">
       <img src="img/Solo-Logo.png" alt="Logo">
       <h1>Doctores</h1>
     </div>
     <div class="bs">
       <a href="AdminP.html">Paciente</a>
       <a href="AdminD.html">Doctor</a>
-      <button id="logoutBtn" type="button">Cerrar sesión</button>
+      <button id="logoutBtn">Cerrar sesión</button>
     </div>
   </header>
 
-  <div class="s2">
-    <h2>Información de Doctores</h2>
+  <div class="s2"><h2>Información de Doctores</h2></div>
+
+  <div class="tabs">
+    <button data-sec="pacientes" class="active">Pacientes</button>
+    <button data-sec="citas">Citas</button>
+    <button data-sec="tratamientos">Tratamientos</button>
   </div>
 
-  <!-- Tabla de doctores -->
-  <div class="tabla-container">
-    <h3>Listado de Doctores</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Especialidad</th>
-          <th>Nombre Completo</th>
-          <th># Pacientes Asignados</th>
-        </tr>
-      </thead>
-      <tbody id="doctoresBody"></tbody>
-    </table>
+  <!-- Sección Pacientes -->
+  <div id="pacientes" class="section active">
+    <div class="tabla-container">
+      <h3>Pacientes por Doctor</h3>
+      <table>
+        <thead><tr><th>Doctor</th><th># Pacientes</th></tr></thead>
+        <tbody id="tablaPacientes"></tbody>
+      </table>
+    </div>
+    <div class="grafica-container">
+      <h3>Gráfica Pacientes por Doctor</h3>
+      <canvas id="chartPacientes"></canvas>
+    </div>
   </div>
 
-  <!-- Gráfica de pacientes por doctor -->
-  <div class="grafica-container">
-    <h3>Gráfica de Pacientes por Doctor</h3>
-    <canvas id="graficaDoctores"></canvas>
+  <!-- Sección Citas -->
+  <div id="citas" class="section">
+    <div class="tabla-container">
+      <h3>Citas por Doctor</h3>
+      <table>
+        <thead><tr><th>Doctor</th><th># Citas</th></tr></thead>
+        <tbody id="tablaCitas"></tbody>
+      </table>
+    </div>
+    <div class="grafica-container">
+      <h3>Gráfica Citas por Doctor</h3>
+      <canvas id="chartCitas"></canvas>
+    </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Sección Tratamientos -->
+  <div id="tratamientos" class="section">
+    <div class="tabla-container">
+      <h3>Tratamientos Asignados</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Paciente</th><th>Medicamento</th><th>Forma Farm.</th>
+            <th>Dosis</th><th>Vía</th><th>Frecuencia</th>
+            <th>Concentración</th><th>Días</th>
+          </tr>
+        </thead>
+        <tbody id="tablaTratamientos"></tbody>
+      </table>
+    </div>
+    <div class="grafica-container">
+      <h3>Comparación de Tratamientos por Paciente</h3>
+      <canvas id="chartTratamientosBar"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // Fondo animado
+    const fondo = document.getElementById('fondo-bolitas');
+    for(let i=0;i<30;i++){
+      const d = document.createElement('div');
+      d.className = 'dot';
+      d.style.left = `${Math.random()*100}%`;
+      d.style.top  = `${Math.random()*100}%`;
+      fondo.appendChild(d);
+    }
+
+    // Pestañas
+    document.querySelectorAll('.tabs button').forEach(btn=>{
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.sec).classList.add('active');
+      });
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').onclick = () => {
+      sessionStorage.removeItem('adminUID');
+      window.location.href = 'Admin.html';
+    };
+  </script>
 
   <script type="module">
-    import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getAnalytics }            from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs }
+      from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+    // Configuración de Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
       authDomain: "doctrack-46fc2.firebaseapp.com",
@@ -82,64 +168,141 @@
       appId: "1:865552814891:web:cf8e79d5ffd847067bab6e",
       measurementId: "G-XQPNKXK08Y"
     };
-
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
+    const db  = getFirestore(app);
 
-    // 1) Protección de acceso
-    if (!sessionStorage.getItem("adminUID")) {
-      window.location.href = "Admin.html";
+    // Protege la página
+    if (!sessionStorage.getItem('adminUID')) {
+      window.location.href = 'Admin.html';
     }
 
-    // 2) Cerrar sesión
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      sessionStorage.removeItem("adminUID");
-      window.location.href = "Admin.html";
-    });
+    async function loadData() {
+      // Traigo todas las colecciones necesarias
+      const [docsSnap, citasSnap, trSnap, usersSnap] = await Promise.all([
+        getDocs(collection(db,'doctores')),
+        getDocs(collection(db,'citas')),
+        getDocs(collection(db,'tratamientos')),
+        getDocs(collection(db,'usuarios'))
+      ]);
 
-    // 3) Cargar doctores
-    async function loadDoctores() {
-      const snap = await getDocs(collection(db, "doctores"));
-      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-      // Tabla
-      const tbody = document.getElementById("doctoresBody");
-      tbody.innerHTML = "";
-      docs.forEach(d => {
-        const numPac = d.pacientes ? Object.keys(d.pacientes).length : 0;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${d.especialidad || "-"}</td>
-          <td>${[d.nombre, d.ap_paterno, d.ap_materno].filter(Boolean).join(" ")}</td>
-          <td>${numPac}</td>`;
-        tbody.appendChild(tr);
+      // Mapas de datos
+      const doctors      = docsSnap.docs.map(d=>({ id:d.id, ...d.data() }));
+      const citas        = citasSnap.docs.map(d=>d.data());
+      const tratamientos = trSnap.docs.map(d=>d.data());
+      const usuarios     = usersSnap.docs.map(d=>({ id:d.id, ...d.data() }));
+      const userMap = {};
+      usuarios.forEach(u=>{
+        userMap[u.id] = [u.nombre,u.paterno,u.materno].filter(Boolean).join(' ');
       });
 
-      // Gráfica de pacientes por doctor
-      const labels = docs.map(d => d.nombre || d.id);
-      const values = docs.map(d => d.pacientes ? Object.keys(d.pacientes).length : 0);
+      // 1) Pacientes por doctor
+      const pacientesData = doctors.map(d=>({
+        nombre: `${d.nombre} ${d.ap_paterno||''}`.trim(),
+        cnt: Object.keys(d.pacientes||{}).length
+      }));
+      fillTable('tablaPacientes', pacientesData);
+      drawBar('chartPacientes', pacientesData, 'nombre','cnt','Pacientes');
 
-      const ctx = document.getElementById("graficaDoctores").getContext("2d");
-      new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [{
-            label: "# Pacientes",
-            data: values,
-            backgroundColor: "#9cd2d3",
-            borderColor: "#114c5f",
-            borderWidth: 1
+      // 2) Citas por doctor
+      const citasData = doctors.map(d=>({
+        nombre: `${d.nombre} ${d.ap_paterno||''}`.trim(),
+        cnt: citas.filter(c=>c.doctorID===d.id).length
+      }));
+      fillTable('tablaCitas', citasData);
+      drawBar('chartCitas', citasData, 'nombre','cnt','Citas');
+
+      // 3) Tratamientos: tabla y gráfica con nombres
+      const tablaT = document.getElementById('tablaTratamientos');
+      tablaT.innerHTML = tratamientos.map(t=>{
+        const pacienteNombre = userMap[t.paciente]||'-';
+        return `
+          <tr>
+            <td>${pacienteNombre}</td>
+            <td>${t.medicamento||'-'}</td>
+            <td>${t.forma||'-'}</td>
+            <td>${t.dosis||'-'}</td>
+            <td>${t.via||'-'}</td>
+            <td>${t.frecuencia||'-'}</td>
+            <td>${t.concentracion||'-'}</td>
+            <td>${t.dias||'-'}</td>
+          </tr>
+        `;
+      }).join('');
+
+      // Gráfica de barras tratamientos por paciente
+      const dist = {};
+      tratamientos.forEach(t=>{
+        const name = userMap[t.paciente]||'Desconocido';
+        dist[name] = (dist[name]||0) + 1;
+      });
+      const labels = Object.keys(dist);
+      const values = labels.map(l=>dist[l]);
+      drawBarGeneric('chartTratamientosBar', labels, values, 'Tratamientos');
+    }
+
+    function fillTable(id, arr){
+      document.getElementById(id).innerHTML = arr.map(i=>
+        `<tr><td>${i.nombre}</td><td>${i.cnt}</td></tr>`
+      ).join('');
+    }
+
+    function drawBar(cid, data, labelKey, valKey, label){
+      const ctx = document.getElementById(cid).getContext('2d');
+      new Chart(ctx,{
+        type:'bar',
+        data:{
+          labels: data.map(i=>i[labelKey]),
+          datasets:[{
+            label,
+            data:  data.map(i=>i[valKey]),
+            backgroundColor:'rgba(156,210,211,0.7)',
+            borderColor:'#114c5f',
+            borderWidth:1
           }]
         },
-        options: {
-          scales: { y: { beginAtZero: true } }
+        options:{
+          responsive:true,
+          plugins:{
+            title:{ display:true, text:label },
+            tooltip:{ callbacks:{ label:ctx=>`${ctx.parsed.y} ${label.toLowerCase()}` }}
+          },
+          scales:{
+            x:{ title:{ display:true, text:'Doctor' }, ticks:{ autoSkip:false } },
+            y:{ title:{ display:true, text:label }, beginAtZero:true }
+          }
         }
       });
     }
 
-    loadDoctores();
+    function drawBarGeneric(cid, labels, values, label){
+      const ctx = document.getElementById(cid).getContext('2d');
+      new Chart(ctx,{
+        type:'bar',
+        data:{
+          labels,
+          datasets:[{
+            label,
+            data: values,
+            backgroundColor:'rgba(156,210,211,0.7)',
+            borderColor:'#114c5f',
+            borderWidth:1
+          }]
+        },
+        options:{
+          responsive:true,
+          plugins:{
+            title:{ display:true, text:`${label} por Paciente` },
+            tooltip:{ callbacks:{ label:ctx=>`${ctx.parsed.y} ${label.toLowerCase()}` }}
+          },
+          scales:{
+            x:{ title:{ display:true, text:'Paciente' }, ticks:{ autoSkip:false } },
+            y:{ title:{ display:true, text:label }, beginAtZero:true }
+          }
+        }
+      });
+    }
+
+    loadData();
   </script>
 </body>
 </html>
