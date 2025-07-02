@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const usuarioInput = document.getElementById("usuario");
   const passwordInput = document.getElementById("password");
 
+  if (!form || !usuarioInput || !passwordInput) {
+    console.warn("⛔ No se encontró el formulario o algún input requerido.");
+    return; // Salir sin ejecutar el resto
+  }
+
   form.addEventListener("submit", (e) => {
     let errores = [];
 
