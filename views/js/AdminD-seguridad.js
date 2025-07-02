@@ -16,7 +16,7 @@
     const db  = getFirestore(app);
 
     // Protege la página
-    if (!sessionStorage.getItem('adminUID')) {
+    if (!sessionStorage.getItem('adminUID')) { 
       window.location.href = 'Admin.html';
     }
 

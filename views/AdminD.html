@@ -6,6 +6,9 @@
   <title>Doctores</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Ionicons desde CDN PERMITIDO por tu CSP -->
+  <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
   <style>
     * { box-sizing:border-box; margin:0; padding:0; font-family:'Sora',sans-serif; }
     body { background:#f2e6cf; min-height:100vh; overflow-x:hidden; }
@@ -14,7 +17,7 @@
 
     header {
       background:#114c5f; color:#fff; padding:20px 40px;
-      display:flex; justify-content:space-between; align-items:center;
+      display:flex; justify-content:space-between; align-items:center; 
       border-bottom-left-radius:40px; border-bottom-right-radius:40px;
       box-shadow:0 4px 10px rgba(0,0,0,0.1);
     }
@@ -125,33 +128,7 @@
     </div>
   </div>
 
-  <script>
-    // Fondo animado
-    const fondo = document.getElementById('fondo-bolitas');
-    for(let i=0;i<30;i++){
-      const d = document.createElement('div');
-      d.className = 'dot';
-      d.style.left = `${Math.random()*100}%`;
-      d.style.top  = `${Math.random()*100}%`;
-      fondo.appendChild(d);
-    }
-
-    // Pestañas
-    document.querySelectorAll('.tabs button').forEach(btn=>{
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
-        document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.sec).classList.add('active');
-      });
-    });
-
-    // Logout
-    document.getElementById('logoutBtn').onclick = () => {
-      sessionStorage.removeItem('adminUID');
-      window.location.href = 'Admin.html';
-    };
-  </script>
+  <script src="js/Admin.js"></script>
 
   <script type="module" src="js/AdminD-seguridad.js"></script>
    
