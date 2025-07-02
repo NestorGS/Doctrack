@@ -1,3 +1,5 @@
+
+    
     // Fondo animado
     const fondo = document.getElementById('fondo-bolitas');
     for(let i=0;i<30;i++){
