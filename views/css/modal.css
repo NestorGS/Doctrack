@@ -1,0 +1,123 @@
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999; /* Asegura que el modal esté encima de todo */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
+  transition: opacity 0.3s ease; /* Transición suave al aparecer y desaparecer */
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Contenido del Modal */
+.modal-content {
+  background-color: #fff;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 800px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombras para un toque moderno */
+  animation: slideIn 0.5s ease-out; /* Animación al abrir el modal */
+}
+
+/* Animación para el modal al abrirse */
+@keyframes slideIn {
+  from {
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Botón de cerrar (X) */
+.close-btn {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+/* Estilo del texto dentro del modal */
+.terms-container p,
+.terms-container ul,
+.terms-container h3 {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Estilo para los encabezados dentro del modal */
+.terms-container h3 {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0073e6;
+}
+
+/* Botón Aceptar */
+#accept-btn {
+  display: inline-block;
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+/* Efecto hover para el botón Aceptar */
+#accept-btn:hover {
+  background-color: #45a049;
+}
+
+/* Estilo para los enlaces dentro del modal */
+.terms-container a {
+  color: #0073e6;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.terms-container a:hover {
+  text-decoration: underline;
+}
+
+/* Efecto para que el modal se oculte con desvanecimiento */
+.modal.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Modal de términos al ser minimizado (desaparece pero se mueve al fondo) */
+.modal-minimized {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-top: 2px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+
+/* Diseño de la página cuando el modal está visible */
+body.modal-active {
+  overflow: hidden; /* Evita que la página se mueva cuando el modal esté abierto */
+}

@@ -9,9 +9,68 @@
   <!-- Ionicons desde CDN PERMITIDO por tu CSP -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+  <!-- Agregar CSS para el modal -->
+  <link rel="stylesheet" href="css/modal.css">
 </head>
 
 <body>
+  <!-- Modal de Términos y Condiciones -->
+  <div id="terms-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-btn">&times;</span>
+      <h2>Términos y Condiciones</h2>
+      <div class="terms-container">
+        <p>Bienvenido a DocTrack. Estos términos y condiciones ("Términos") regulan el acceso y uso del servicio de DocTrack, incluyendo todos los servicios y funcionalidades asociados, disponibles a través de nuestra plataforma web o aplicación móvil. Al acceder o usar DocTrack, aceptas estos términos. Si no estás de acuerdo con estos términos, no debes utilizar nuestros servicios.</p>
+
+        <h3>1. Uso del Servicio</h3>
+        <p>DocTrack proporciona una plataforma para la gestión de la información médica y de citas, incluyendo el registro de pacientes, tratamiento, historial médico y gestión de citas. El uso del servicio está restringido a usuarios registrados, que pueden incluir médicos, pacientes, y administradores.</p>
+
+        <h3>2. Registro de Usuario</h3>
+        <p>Para acceder a algunos de los servicios de DocTrack, se requiere crear una cuenta. Al registrarte, garantizas que la información proporcionada es precisa y actual. Eres responsable de mantener la confidencialidad de tus credenciales de acceso.</p>
+
+        <h3>3. Acceso y Seguridad</h3>
+        <p>Como usuario, te comprometes a:</p>
+        <ul>
+          <li>No compartir tu contraseña con terceros.</li>
+          <li>Notificar de inmediato a DocTrack sobre cualquier uso no autorizado de tu cuenta.</li>
+          <li>Usar el servicio de manera responsable y de acuerdo con la ley.</li>
+        </ul>
+
+        <h3>4. Privacidad de Datos</h3>
+        <p>DocTrack se compromete a proteger tu información personal. Los datos recopilados serán utilizados únicamente para los fines establecidos en la política de privacidad de DocTrack. Al utilizar el servicio, aceptas el procesamiento de tus datos personales conforme a dicha política.</p>
+
+        <h3>5. Uso Aceptable</h3>
+        <p>No se permite el uso de DocTrack para:</p>
+        <ul>
+          <li>Cualquier actividad ilegal o no autorizada.</li>
+          <li>La recopilación o distribución no autorizada de información personal.</li>
+          <li>Alterar, modificar o hackear la plataforma de DocTrack de cualquier forma.</li>
+        </ul>
+
+        <h3>6. Propiedad Intelectual</h3>
+        <p>Todo el contenido y materiales disponibles en DocTrack, incluidos, entre otros, textos, imágenes, gráficos y logotipos, son propiedad de DocTrack o están licenciados por terceros. Los usuarios no pueden reproducir, distribuir ni crear obras derivadas del contenido sin autorización expresa.</p>
+
+        <h3>7. Responsabilidad</h3>
+        <p>DocTrack no se hace responsable por la exactitud o fiabilidad de la información médica o de citas contenida en la plataforma, ya que depende de los usuarios para garantizar que la información esté actualizada y sea precisa.</p>
+
+        <h3>8. Modificación de Términos</h3>
+        <p>DocTrack se reserva el derecho de modificar estos términos en cualquier momento. Los cambios serán efectivos tan pronto como se publiquen en el sitio web o la aplicación. El uso continuado del servicio tras la publicación de cambios implica tu aceptación de dichos cambios.</p>
+
+        <h3>9. Terminación de la Cuenta</h3>
+        <p>DocTrack puede suspender o cancelar tu cuenta si se detecta el uso indebido del servicio o la violación de estos términos. En caso de cancelación, perderás el acceso a tus datos, pero podrás solicitar la descarga de tus archivos médicos dentro de un plazo razonable.</p>
+
+        <h3>10. Ley Aplicable</h3>
+        <p>Estos Términos se rigen por las leyes del [país] y cualquier disputa relacionada con estos Términos será resuelta ante los tribunales competentes de [ciudad o jurisdicción].</p>
+
+        <h3>11. Contacto</h3>
+        <p>Si tienes alguna pregunta sobre estos Términos, puedes contactarnos a través del siguiente correo electrónico: [doctrack@gmail.com.com].</p>
+      </div>
+
+      <button id="accept-btn">Aceptar</button>
+    </div>
+  </div>
+
   <div class="container">
     <div class="container-form">
       <form action="" class="sign-in">
@@ -65,5 +124,8 @@
   <!-- Scripts -->
   <script src="js/script.js"></script>
   <script type="module" src="js/index-seguridad.js"></script>
+
+  <!-- Script para abrir el modal -->
+ <script src="js/modal.js"></script>
 </body>
 </html>
