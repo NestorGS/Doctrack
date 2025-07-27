@@ -73,7 +73,7 @@ logoutBtn.addEventListener("click", async () => {
       return;
     }
 
-    assignedDoctor = data.assignedDoctor;
+    doctorId = data.doctorId;
     pacienteNombre = `${data.nombre} ${data.paterno} ${data.materno}`;
   });
 
