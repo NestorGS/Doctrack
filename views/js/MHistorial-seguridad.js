@@ -85,15 +85,15 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// 🔥 Al cambiar el paciente seleccionado
 selectPacientes.addEventListener("change", async () => {
   pacienteActualId = selectPacientes.value;
   if (!pacienteActualId) return;
 
   try {
-    // Buscar en identificacion_paciente
+    console.log("Paciente seleccionado:", pacienteActualId); // 👈 verifica en consola
     const idRef = doc(db, "identificacion_paciente", pacienteActualId);
     const idSnap = await getDoc(idRef);
+    console.log("Documento existe:", idSnap.exists()); // 👈 verifica en consola
 
     if (!idSnap.exists()) {
       alert("Este paciente no tiene datos de identificación.");
@@ -101,7 +101,6 @@ selectPacientes.addEventListener("change", async () => {
     }
 
     const data = idSnap.data();
-    // Llenar formulario
     nombreInput.value = data.nombre || "";
     edadInput.value = data.edad || "";
     sexoInput.value = data.sexo || "";
@@ -115,6 +114,7 @@ selectPacientes.addEventListener("change", async () => {
     alert("No se pudo obtener información del paciente.");
   }
 });
+
 
 // 🔥 Guardar cambios
 guardarBtn.addEventListener("click", async () => {
