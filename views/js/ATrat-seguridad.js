@@ -32,59 +32,62 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/fireba
   const selectPacientes = document.getElementById("selectPacientes");
   let doctorID = null;
 
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Debes iniciar sesión primero.");
-      window.location.href = "index.html";
-      return;
-    }
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    alert("Debes iniciar sesión primero.");
+    window.location.href = "index.html";
+    return;
+  }
 
-    const docSnap = await getDoc(doc(db, "doctores", user.uid));
-    if (!docSnap.exists()) {
-      alert("No tienes permisos para registrar tratamientos.");
-      window.location.href = "index.html";
-      return;
-    }
+  // Verifica si el usuario logueado es un doctor
+  const docSnap = await getDoc(doc(db, "doctores", user.uid));
+  if (!docSnap.exists()) {
+    alert("No tienes permisos para registrar tratamientos.");
+    window.location.href = "index.html";
+    return;
+  }
 
-    doctorID = user.uid;
+  const doctorID = user.uid;
 
-    try {
-      const q = query(
-        collection(db, "usuarios"),
-        where("rol", "==", "paciente"),
-        where("doctorID", "==", doctorID)
-      );
+  try {
+    // Consulta pacientes asignados al doctor
+    const q = query(
+      collection(db, "usuarios"),
+      where("rol", "==", "paciente"),
+      where("doctorId", "==", doctorID) // usa el campo correcto de tu BD
+    );
 
-      const snap = await getDocs(q);
+    const snap = await getDocs(q);
 
-      // Limpiar el contenido previo y agregar un placeholder válido
-      selectPacientes.innerHTML = "";
-      const placeholder = document.createElement("option");
-      placeholder.value = "";
-      placeholder.textContent = "Selecciona un paciente";
-      placeholder.disabled = true;
-      placeholder.selected = true;
-      selectPacientes.appendChild(placeholder);
+    // Limpiar contenido previo y agregar un placeholder válido
+    selectPacientes.innerHTML = "";
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Selecciona un paciente";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    selectPacientes.appendChild(placeholder);
 
-      if (snap.empty) {
+    if (snap.empty) {
+      const opt = document.createElement("option");
+      opt.disabled = true;
+      opt.textContent = "Sin pacientes asignados";
+      selectPacientes.appendChild(opt);
+    } else {
+      snap.forEach((pac) => {
+        const p = pac.data();
         const opt = document.createElement("option");
-        opt.disabled = true;
-        opt.textContent = "Sin pacientes asignados";
+        opt.value = pac.id; // UID del paciente
+        opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
         selectPacientes.appendChild(opt);
-      } else {
-        snap.forEach((pac) => {
-          const p = pac.data();
-          const opt = document.createElement("option");
-          opt.value = pac.id; // Guardar UID del paciente
-          opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
-          selectPacientes.appendChild(opt);
-        });
-      }
-    } catch (err) {
-      console.error("Error al cargar pacientes:", err);
-      alert("Error al cargar pacientes");
+      });
     }
-  });
+  } catch (err) {
+    console.error("Error al cargar pacientes:", err);
+    alert("Error al cargar pacientes");
+  }
+});
+
 
   // Guardar tratamiento
   document.getElementById("btnGuardar").addEventListener("click", async (e) => {
