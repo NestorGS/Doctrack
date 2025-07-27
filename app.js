@@ -1,6 +1,7 @@
 // app.js
 require('dotenv').config(); // Cargar variables de entorno
-require("./keep-alive");
+require("./keep-alive"); 
+// Mantener el servidor activo en Railway
 
 const express = require("express");
 const bodyParser = require("body-parser");
