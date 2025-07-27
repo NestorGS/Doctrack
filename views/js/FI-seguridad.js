@@ -37,14 +37,19 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+  // 🔥 Obtener el UID del doctor logueado
+  const doctorId = user.uid;
+
   try {
     const pacientesQ = query(
       collection(db, "usuarios"),
       where("rol", "==", "paciente"),
-      where("doctorId", "==", doctorId) // 🔥 usar el campo correcto
+      where("doctorId", "==", doctorId) // campo correcto
     );
+
     const pacientesSnap = await getDocs(pacientesQ);
 
+    // Limpiar opciones previas
     selectPacientes.innerHTML =
       `<option value="" selected>Todos los pacientes</option>`;
 
@@ -58,7 +63,7 @@ onAuthStateChanged(auth, async (user) => {
         const data = p.data();
         const opt = document.createElement("option");
         opt.value = p.id;  // UID paciente
-        opt.textContent = `${data.nombre} ${data.paterno} ${data.materno}`;
+        opt.textContent = `${data.nombre} ${data.paterno || ""} ${data.materno || ""}`;
         selectPacientes.appendChild(opt);
       });
     }
@@ -67,6 +72,7 @@ onAuthStateChanged(auth, async (user) => {
     alert("No se pudo cargar la lista de pacientes.");
   }
 });
+
 
 /* ---------- validaciones y guardado ---------- */
 btnGuardar.addEventListener("click", async () => {

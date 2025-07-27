@@ -37,16 +37,19 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+  // ✅ Obtener UID del doctor logueado
+  const doctorId = user.uid;
+
   try {
     const pacientesQ = query(
       collection(db, "usuarios"),
       where("rol", "==", "paciente"),
-      where("doctorId", "==", doctorId) // 🔥 usar el campo correcto
+      where("doctorId", "==", doctorId) // ✅ usar el campo correcto
     );
     const pacientesSnap = await getDocs(pacientesQ);
 
-    selectPacientes.innerHTML =
-      `<option value="" selected>Todos los pacientes</option>`;
+    // Limpiar el select antes de agregar nuevas opciones
+    selectPacientes.innerHTML = `<option value="" selected>Todos los pacientes</option>`;
 
     if (pacientesSnap.empty) {
       const opt = document.createElement("option");
@@ -57,8 +60,8 @@ onAuthStateChanged(auth, async (user) => {
       pacientesSnap.forEach((p) => {
         const data = p.data();
         const opt = document.createElement("option");
-        opt.value = p.id;  // UID paciente
-        opt.textContent = `${data.nombre} ${data.paterno} ${data.materno}`;
+        opt.value = p.id; // UID paciente
+        opt.textContent = `${data.nombre} ${data.paterno || ""} ${data.materno || ""}`;
         selectPacientes.appendChild(opt);
       });
     }
@@ -67,6 +70,7 @@ onAuthStateChanged(auth, async (user) => {
     alert("No se pudo cargar la lista de pacientes.");
   }
 });
+
 
 // ───── Guardar antecedentes ─────
 btnGuardar.addEventListener("click", async () => {
