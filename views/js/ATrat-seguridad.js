@@ -52,7 +52,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/fireba
       const q = query(
         collection(db, "usuarios"),
         where("rol", "==", "paciente"),
-        where("assignedDoctor", "==", doctorID)
+        where("doctorID", "==", doctorID)
       );
 
       const snap = await getDocs(q);
