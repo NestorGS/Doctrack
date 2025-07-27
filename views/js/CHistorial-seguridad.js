@@ -39,7 +39,7 @@
       const q = query(
         collection(db, "usuarios"),
         where("rol", "==", "paciente"),
-        where("assignedDoctor", "==", doctorId)
+        where("doctorId", "==", doctorId)
       );
 
       try {
