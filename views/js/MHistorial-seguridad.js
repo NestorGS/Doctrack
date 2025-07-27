@@ -1,21 +1,17 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import {
   getFirestore,
   collection,
   query,
   where,
-  getDocs,
-  getDoc,
-  updateDoc,
-  doc
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-// 🔥 Configuración Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAofOyGzsSWHQG3FfsFrGbVWjW0xMywb9c",
   authDomain: "doctrack-46fc2.firebaseapp.com",
@@ -26,161 +22,134 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-// 🔥 Referencias a elementos HTML
+// Referencias a los elementos del DOM
 const selectPacientes = document.getElementById("selectPacientes");
 const guardarBtn = document.getElementById("guardarBtn");
 
-// 🔥 Campos del formulario (ajusta los IDs a los tuyos)
-const nombreInput = document.getElementById("nombre");
-const edadInput = document.getElementById("edad");
-const sexoInput = document.getElementById("sexo");
-const estadoCivilInput = document.getElementById("estadoCivil");
-const ocupacionInput = document.getElementById("ocupacion");
-const religionInput = document.getElementById("religion");
-const telefonoInput = document.getElementById("telefono");
+// Campos de identificación
+const estadocivil = document.getElementById("estadocivil");
+const sexo = document.getElementById("sexo");
+const edad = document.getElementById("edad");
+const religion = document.getElementById("religion");
+const ocupacion = document.getElementById("ocupacion");
 
-let pacienteActualId = null;
+// Campos de antecedentes
+const hipertension = document.getElementById("hipertension");
+const diabetes = document.getElementById("diabetes");
+const cardiopatias = document.getElementById("cardiopatias");
+const asma = document.getElementById("asma");
+const otro = document.getElementById("otro");
+const alcoholismo = document.getElementById("alcoholismo");
+const tabaquismo = document.getElementById("tabaquismo");
+const aseo_bucal = document.getElementById("aseo_bucal");
+const aseo_fisico = document.getElementById("aseo_fisico");
 
-// 🔥 Al cargar usuario doctor
+// Campos de exploración
+const peso = document.getElementById("peso");
+const presion_arterial = document.getElementById("presion_arterial");
+const frecuencia_cardiaca = document.getElementById("frecuencia_cardiaca");
+const frecuencia_respiratoria = document.getElementById("frecuencia_respiratoria");
+const observaciones_generales = document.getElementById("observaciones_generales");
+const estatura = document.getElementById("estatura");
+
+let doctorIdActual = null;
+
+// Cuando inicia sesión un doctor
 onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    alert("Debes iniciar sesión primero.");
-    window.location.href = "index.html";
-    return;
-  }
+  if (user) {
+    // El UID del doctor logueado
+    doctorIdActual = user.uid;
 
-  const doctorId = user.uid;
+    // Buscar pacientes asignados a este doctor
+    const q = query(collection(db, "usuarios"), where("assignedDoctor", "==", doctorIdActual));
+    const querySnapshot = await getDocs(q);
 
-  try {
-    // Obtener todos los pacientes asignados a este doctor
-    const q = query(
-      collection(db, "usuarios"),
-      where("rol", "==", "paciente"),
-      where("doctorId", "==", doctorId)
-    );
-    const snap = await getDocs(q);
-
-    selectPacientes.innerHTML = `<option value="" selected disabled>Selecciona un paciente</option>`;
-
-    if (snap.empty) {
-      const opt = document.createElement("option");
-      opt.disabled = true;
-      opt.textContent = "Sin pacientes asignados";
-      selectPacientes.appendChild(opt);
-    } else {
-      snap.forEach((docSnap) => {
-        const d = docSnap.data();
-        const opt = document.createElement("option");
-        opt.value = docSnap.id;
-        opt.textContent = `${d.nombre} ${d.paterno || ""} ${d.materno || ""}`;
-        selectPacientes.appendChild(opt);
-      });
-    }
-  } catch (e) {
-    console.error("Error cargando pacientes:", e);
-    alert("No se pudo cargar la lista de pacientes.");
-  }
-});
-
-selectPacientes.addEventListener("change", async () => {
-  const selectedId = selectPacientes.value; // ID del documento en usuarios
-  if (!selectedId) return;
-
-  try {
-    // Obtenemos el documento de usuarios
-    const userDoc = await getDoc(doc(db, "usuarios", selectedId));
-    if (!userDoc.exists()) {
-      alert("No se encontró el usuario seleccionado.");
-      return;
-    }
-
-    const userData = userDoc.data();
-    const nombreUsuario = userData.nombre?.toLowerCase().trim();
-
-    if (!nombreUsuario) {
-      alert("El usuario no tiene nombre para buscar.");
-      return;
-    }
-
-    // 🔥 Buscamos en la colección identificacion_paciente por el nombre
-    const q = query(
-      collection(db, "identificacion_paciente"),
-      where("nombre", "==", userData.nombre) // aquí compara exactamente el nombre
-    );
-
-    const snap = await getDocs(q);
-
-    if (snap.empty) {
-      alert("No se encontraron datos de identificación para ese nombre.");
-      return;
-    }
-
-    // Si hay más de uno, tomamos el primero
-    const idSnap = snap.docs[0];
-    const data = idSnap.data();
-
-    // Guardamos el ID para futuras actualizaciones
-    pacienteActualId = idSnap.id;
-
-    // Llenamos los campos
-    nombreInput.value = data.nombre || "";
-    edadInput.value = data.edad || "";
-    sexoInput.value = data.sexo || "";
-    estadoCivilInput.value = data.estadocivil || "";
-    ocupacionInput.value = data.ocupacion || "";
-    religionInput.value = data.religion || "";
-    telefonoInput.value = data.telefono || "";
-
-  } catch (e) {
-    console.error("Error obteniendo datos:", e);
-    alert("No se pudo obtener información del paciente.");
-  }
-});
-
-
-// 🔥 Guardar cambios
-guardarBtn.addEventListener("click", async () => {
-  if (!pacienteActualId) {
-    alert("Selecciona un paciente primero.");
-    return;
-  }
-
-  try {
-    const idRef = doc(db, "identificacion_paciente", pacienteActualId);
-    await updateDoc(idRef, {
-      nombre: nombreInput.value,
-      edad: edadInput.value,
-      sexo: sexoInput.value,
-      estadocivil: estadoCivilInput.value,
-      ocupacion: ocupacionInput.value,
-      religion: religionInput.value,
-      telefono: telefonoInput.value
+    querySnapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const option = document.createElement("option");
+      option.value = data.nombre; // usamos nombre para buscar luego
+      option.textContent = data.nombre;
+      selectPacientes.appendChild(option);
     });
 
-    alert("Datos actualizados correctamente.");
-  } catch (e) {
-    console.error("Error actualizando datos:", e);
-    alert("No se pudieron guardar los datos.");
+  } else {
+    console.log("No hay usuario logueado");
   }
 });
 
-// 🔥 Logout
-const logoutBtn = document.getElementById("logoutBtn");
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    const confirmar = confirm("¿Estás seguro de que deseas cerrar sesión?");
-    if (!confirmar) return;
+// Evento al seleccionar un paciente
+selectPacientes.addEventListener("change", async (e) => {
+  const nombreSeleccionado = e.target.value;
+  if (!nombreSeleccionado) return;
 
-    try {
-      await signOut(auth);
-      alert("Sesión cerrada correctamente.");
-      window.location.href = "index.html";
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-      alert("Hubo un error al cerrar sesión.");
+  // Buscar en identificacion_paciente
+  const q1 = query(collection(db, "identificacion_paciente"), where("nombre", "==", nombreSeleccionado));
+  const snap1 = await getDocs(q1);
+  snap1.forEach((docSnap) => {
+    const d = docSnap.data();
+    estadocivil.value = d.estadocivil || "";
+    sexo.value = d.sexo || "";
+    edad.value = d.edad || "";
+    religion.value = d.religion || "";
+    ocupacion.value = d.ocupacion || "";
+  });
+
+  // Buscar en antecedentes_paciente
+  const q2 = query(collection(db, "antecedentes_paciente"));
+  const snap2 = await getDocs(q2);
+  snap2.forEach((docSnap) => {
+    const d = docSnap.data();
+    // necesitamos comparar por pacienteId, pero tú dijiste por nombre, si nombre también existe ahí, usa nombre, si no hay, se puede relacionar por id
+    // En tus datos veo que antecedentes_paciente tiene pacienteId, así que necesitamos obtener primero el id correcto:
+    // Pero usaremos nombre, revisa si la colección tiene campo nombre
+    if (d.pacienteId && nombreSeleccionado) {
+      // Como no hay nombre en antecedentes_paciente, debemos relacionar por pacienteId:
+      // Obtenemos el id primero
     }
   });
-}
+
+  // Mejor solución: como en antecedentes_paciente solo tienes pacienteId, necesitamos buscar antes:
+  // Busca el documento en usuarios que tiene ese nombre para sacar su id
+  const qUser = query(collection(db, "usuarios"), where("nombre", "==", nombreSeleccionado));
+  const snapUser = await getDocs(qUser);
+  let pacienteId = null;
+  snapUser.forEach(docSnap => {
+    pacienteId = docSnap.id;
+  });
+
+  if (pacienteId) {
+    // Ahora busca antecedentes con ese pacienteId
+    const qAnte = query(collection(db, "antecedentes_paciente"), where("pacienteId", "==", pacienteId));
+    const snapAnte = await getDocs(qAnte);
+    snapAnte.forEach(docSnap => {
+      const d = docSnap.data();
+      hipertension.value = d.hipertension ? "Sí" : "No";
+      diabetes.value = d.diabetes ? "Sí" : "No";
+      cardiopatias.value = d.cardiopatias ? "Sí" : "No";
+      asma.value = d.asma ? "Sí" : "No";
+      otro.value = d.otro ? "Sí" : "No";
+      alcoholismo.value = d.alcoholismo ? "Sí" : "No";
+      tabaquismo.value = d.tabaquismo ? "Sí" : "No";
+      aseo_bucal.value = d.aseo_bucal ? "Sí" : "No";
+      aseo_fisico.value = d.aseo_fisico ? "Sí" : "No";
+    });
+
+    // Ahora busca exploracion_fisica con ese pacienteId
+    const qExp = query(collection(db, "exploracion_fisica"), where("pacienteId", "==", pacienteId));
+    const snapExp = await getDocs(qExp);
+    snapExp.forEach(docSnap => {
+      const d = docSnap.data();
+      peso.value = d.peso || "";
+      presion_arterial.value = d.presion_arterial || "";
+      frecuencia_cardiaca.value = d.frecuencia_cardiaca || "";
+      frecuencia_respiratoria.value = d.frecuencia_respiratoria || "";
+      observaciones_generales.value = d.observaciones_generales || "";
+      estatura.value = d.estatura || "";
+    });
+  }
+
+  guardarBtn.disabled = false;
+});
