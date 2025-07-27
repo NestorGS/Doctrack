@@ -173,46 +173,56 @@ function pintarTabla(pacienteId) {
 }
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) return window.location.href = "index.html";
+  if (!user) return (window.location.href = "index.html");
 
   const doctorId = user.uid;
 
-  const pacientesQ = query(
-    collection(db, "usuarios"),
-    where("rol", "==", "paciente"),
-    where("doctorId", "==", doctorId) // 🔥 usar el campo correcto
-  );
-  const pacientesSnap = await getDocs(pacientesQ);
+  try {
+    // 🔥 Query correcto usando doctorId
+    const pacientesQ = query(
+      collection(db, "usuarios"),
+      where("rol", "==", "paciente"),
+      where("doctorId", "==", doctorId)
+    );
 
-  selectPacientes.innerHTML =
-    `<option value="" selected>Todos los pacientes</option>`;
+    const pacientesSnap = await getDocs(pacientesQ);
 
-  if (pacientesSnap.empty) {
-    const opt = document.createElement("option");
-    opt.disabled = true;
-    opt.textContent = "Sin pacientes asignados";
-    selectPacientes.appendChild(opt);
-  } else {
-    pacientesSnap.forEach((p) => {
-      const data = p.data();
+    // Limpiamos y agregamos la opción inicial
+    selectPacientes.innerHTML = `<option value="" selected>Todos los pacientes</option>`;
+
+    if (pacientesSnap.empty) {
       const opt = document.createElement("option");
-      opt.value = p.id;  // UID paciente
-      opt.textContent = `${data.nombre} ${data.paterno} ${data.materno}`;
+      opt.disabled = true;
+      opt.textContent = "Sin pacientes asignados";
       selectPacientes.appendChild(opt);
+    } else {
+      pacientesSnap.forEach((p) => {
+        const data = p.data();
+        const opt = document.createElement("option");
+        opt.value = p.id; // UID paciente
+        opt.textContent = `${data.nombre} ${data.paterno} ${data.materno}`;
+        selectPacientes.appendChild(opt);
+      });
+    }
+
+    // Cargamos tratamientos
+    const snapTrat = await getDocs(collection(db, "tratamientos"));
+    tratamientos = snapTrat.docs.map((doc) => ({ id: doc.id, data: doc.data() }));
+
+    // Si hay pacientes, seleccionamos el primero y pintamos la tabla
+    if (selectPacientes.options.length > 1) {
+      selectPacientes.selectedIndex = 1;
+      pintarTabla(selectPacientes.value);
+    }
+
+    // Escuchamos el cambio de paciente
+    selectPacientes.addEventListener("change", () => {
+      pintarTabla(selectPacientes.value);
     });
+  } catch (error) {
+    console.error("Error al cargar pacientes o tratamientos:", error);
+    alert("Hubo un problema al cargar los pacientes asignados.");
   }
-
-  const snapTrat = await getDocs(collection(db, "tratamientos"));
-  tratamientos = snapTrat.docs.map(doc => ({ id: doc.id, data: doc.data() }));
-
-  if (selectPacientes.options.length > 1) {
-    selectPacientes.selectedIndex = 1;
-    pintarTabla(selectPacientes.value);
-  }
-
-  selectPacientes.addEventListener("change", () => {
-    pintarTabla(selectPacientes.value);
-  });
 });
 
 if (logoutBtn) {
