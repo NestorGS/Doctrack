@@ -86,21 +86,46 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 selectPacientes.addEventListener("change", async () => {
-  pacienteActualId = selectPacientes.value;
-  if (!pacienteActualId) return;
+  const selectedId = selectPacientes.value; // ID del documento en usuarios
+  if (!selectedId) return;
 
   try {
-    console.log("Paciente seleccionado:", pacienteActualId); // 👈 verifica en consola
-    const idRef = doc(db, "identificacion_paciente", pacienteActualId);
-    const idSnap = await getDoc(idRef);
-    console.log("Documento existe:", idSnap.exists()); // 👈 verifica en consola
-
-    if (!idSnap.exists()) {
-      alert("Este paciente no tiene datos de identificación.");
+    // Obtenemos el documento de usuarios
+    const userDoc = await getDoc(doc(db, "usuarios", selectedId));
+    if (!userDoc.exists()) {
+      alert("No se encontró el usuario seleccionado.");
       return;
     }
 
+    const userData = userDoc.data();
+    const nombreUsuario = userData.nombre?.toLowerCase().trim();
+
+    if (!nombreUsuario) {
+      alert("El usuario no tiene nombre para buscar.");
+      return;
+    }
+
+    // 🔥 Buscamos en la colección identificacion_paciente por el nombre
+    const q = query(
+      collection(db, "identificacion_paciente"),
+      where("nombre", "==", userData.nombre) // aquí compara exactamente el nombre
+    );
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      alert("No se encontraron datos de identificación para ese nombre.");
+      return;
+    }
+
+    // Si hay más de uno, tomamos el primero
+    const idSnap = snap.docs[0];
     const data = idSnap.data();
+
+    // Guardamos el ID para futuras actualizaciones
+    pacienteActualId = idSnap.id;
+
+    // Llenamos los campos
     nombreInput.value = data.nombre || "";
     edadInput.value = data.edad || "";
     sexoInput.value = data.sexo || "";
