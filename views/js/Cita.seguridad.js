@@ -68,7 +68,7 @@ logoutBtn.addEventListener("click", async () => {
       return (window.location.href = "index.html");
     }
 
-    if (!data.assignedDoctor) {
+    if (!data.doctorId) {
       alert("No tienes un doctor asignado. Contacta al administrador.");
       return;
     }
