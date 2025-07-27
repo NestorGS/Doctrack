@@ -37,55 +37,60 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/fireba
 
   /* ───────── Autenticación y carga de pacientes ───────── */
   onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Debes iniciar sesión primero.");
-      window.location.href = "index.html";
-      return;
-    }
+  if (!user) {
+    alert("Debes iniciar sesión primero.");
+    window.location.href = "index.html";
+    return;
+  }
 
-    // Verifica que sea un doctor registrado
-    const docSnap = await getDoc(doc(db, "doctores", user.uid));
-    if (!docSnap.exists()) {
-      alert("No tienes permisos para registrar citas.");
-      window.location.href = "index.html";
-      return;
-    }
+  // Verifica que sea un doctor registrado
+  const docSnap = await getDoc(doc(db, "doctores", user.uid));
+  if (!docSnap.exists()) {
+    alert("No tienes permisos para registrar citas.");
+    window.location.href = "index.html";
+    return;
+  }
 
-    doctorID = user.uid;
+  const doctorID = user.uid;
 
-    /* ▼ Cargar pacientes asignados ▼ */
-    try {
-      const q = query(
-        collection(db, "usuarios"),
-        where("rol", "==", "paciente"),
-        where("assignedDoctor", "==", doctorID)
-      );
+  /* ▼ Cargar pacientes asignados ▼ */
+  try {
+    const q = query(
+      collection(db, "usuarios"),
+      where("rol", "==", "paciente"),
+      where("doctorId", "==", doctorID) // 🔥 usar el campo correcto
+    );
 
-      const snap = await getDocs(q);
+    const snap = await getDocs(q);
 
-      // Limpiar y placeholder
-      selectPacientes.innerHTML =
-        `<option value="" disabled selected>Pacientes</option>`;
+    // Limpiar y placeholder
+    selectPacientes.innerHTML = "";
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Selecciona un paciente";
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    selectPacientes.appendChild(placeholder);
 
-      if (snap.empty) {
+    if (snap.empty) {
+      const opt = document.createElement("option");
+      opt.disabled = true;
+      opt.textContent = "Sin pacientes asignados";
+      selectPacientes.appendChild(opt);
+    } else {
+      snap.forEach((pac) => {
+        const p = pac.data();
         const opt = document.createElement("option");
-        opt.disabled = true;
-        opt.textContent = "Sin pacientes asignados";
+        opt.value = pac.id; // Guardamos el UID del paciente
+        opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
         selectPacientes.appendChild(opt);
-      } else {
-        snap.forEach((pac) => {
-          const p = pac.data();
-          const opt = document.createElement("option");
-          opt.value = pac.id;  // podemos guardar el UID del paciente
-          opt.textContent = `${p.nombre} ${p.paterno} ${p.materno}`;
-          selectPacientes.appendChild(opt);
-        });
-      }
-    } catch (err) {
-      console.error("Error al cargar pacientes:", err);
-      alert("Error al cargar pacientes");
+      });
     }
-  });
+  } catch (err) {
+    console.error("Error al cargar pacientes:", err);
+    alert("Error al cargar pacientes");
+  }
+});
 
   /* ───────── Envío del formulario ───────── */
   formCita.addEventListener("submit", async (e) => {
