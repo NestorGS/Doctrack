@@ -228,57 +228,58 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/fireba
   tablaCitas.appendChild(row);
 });
   }
-  /* ───────── MAIN ───────── */
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Debes iniciar sesión primero.");
-      window.location.href = "index.html";
-      return;
-    }
+/* ───────── MAIN ───────── */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    alert("Debes iniciar sesión primero.");
+    window.location.href = "index.html";
+    return;
+  }
 
-    const doctorId = user.uid;
+  const doctorId = user.uid; // ID del doctor logueado
 
-    try {
-      /* 1. Poblar <select> con pacientes asignados */
-      const pacientesQ = query(
-        collection(db, "usuarios"),
-        where("rol", "==", "paciente"),
-        where("assignedDoctor", "==", doctorId)
-      );
-      const pacientesSnap = await getDocs(pacientesQ);
+  try {
+    /* 1. Poblar <select> con pacientes asignados */
+    const pacientesQ = query(
+      collection(db, "usuarios"),
+      where("rol", "==", "paciente"),
+      where("doctorId", "==", doctorId) // 🔥 usar el campo correcto
+    );
+    const pacientesSnap = await getDocs(pacientesQ);
 
-      selectPacientes.innerHTML =
-        `<option value="" selected>Todos los pacientes</option>`;
+    selectPacientes.innerHTML =
+      `<option value="" selected>Todos los pacientes</option>`;
 
-      if (pacientesSnap.empty) {
-        const opt = document.createElement("option");
-        opt.disabled = true;
-        opt.textContent = "Sin pacientes asignados";
+    if (pacientesSnap.empty) {
+      const opt = document.createElement("option");
+      opt.disabled = true;
+      opt.textContent = "Sin pacientes asignados";
+      selectPacientes.appendChild(opt);
+    } else {
+      pacientesSnap.forEach((p) => {
+        const data = p.data();
+        const opt  = document.createElement("option");
+        opt.value  = p.id;  // UID paciente
+        opt.textContent = `${data.nombre} ${data.paterno} ${data.materno}`;
         selectPacientes.appendChild(opt);
-      } else {
-        pacientesSnap.forEach((p) => {
-          const data = p.data();
-          const opt  = document.createElement("option");
-          opt.value  = p.id;  // UID paciente
-          opt.textContent = `${data.nombre} ${data.paterno} ${data.materno}`;
-          selectPacientes.appendChild(opt);
-        });
-      }
-
-      /* 2. Cargar todas las citas inicialmente */
-      await cargarCitas(doctorId);
-
-      /* 3. Escuchar cambios en el <select> para filtrar */
-      selectPacientes.addEventListener("change", async () => {
-        const pacienteIdElegido = selectPacientes.value || null;
-        await cargarCitas(doctorId, pacienteIdElegido);
       });
-
-    } catch (error) {
-      console.error("Error al cargar datos:", error);
-      alert("Error al cargar citas o pacientes.");
     }
-  });
+
+    /* 2. Cargar todas las citas inicialmente */
+    await cargarCitas(doctorId);
+
+    /* 3. Escuchar cambios en el <select> para filtrar */
+    selectPacientes.addEventListener("change", async () => {
+      const pacienteIdElegido = selectPacientes.value || null;
+      await cargarCitas(doctorId, pacienteIdElegido);
+    });
+
+  } catch (error) {
+    console.error("Error al cargar datos:", error);
+    alert("Error al cargar citas o pacientes.");
+  }
+});
+
 
   /* ───────── CERRAR SESIÓN (si tu HTML tiene #logoutBtn) ───────── */
 const logoutBtn = document.getElementById("logoutBtn");
