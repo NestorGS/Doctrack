@@ -177,23 +177,30 @@ onAuthStateChanged(auth, async (user) => {
 
   const doctorId = user.uid;
 
-  const snapPac = await getDocs(query(
+  const pacientesQ = query(
     collection(db, "usuarios"),
     where("rol", "==", "paciente"),
-    where("assignedDoctor", "==", doctorId)
-  ));
+    where("doctorId", "==", doctorId) // 🔥 usar el campo correcto
+  );
+  const pacientesSnap = await getDocs(pacientesQ);
 
-  selectPacientes.innerHTML = `<option value="" selected disabled>Selecciona paciente</option>`;
-  pacientes = {};
+  selectPacientes.innerHTML =
+    `<option value="" selected>Todos los pacientes</option>`;
 
-  snapPac.forEach(p => {
-    const d = p.data();
-    pacientes[p.id] = `${d.nombre} ${d.paterno} ${d.materno}`;
+  if (pacientesSnap.empty) {
     const opt = document.createElement("option");
-    opt.value = p.id;
-    opt.textContent = pacientes[p.id];
+    opt.disabled = true;
+    opt.textContent = "Sin pacientes asignados";
     selectPacientes.appendChild(opt);
-  });
+  } else {
+    pacientesSnap.forEach((p) => {
+      const data = p.data();
+      const opt = document.createElement("option");
+      opt.value = p.id;  // UID paciente
+      opt.textContent = `${data.nombre} ${data.paterno} ${data.materno}`;
+      selectPacientes.appendChild(opt);
+    });
+  }
 
   const snapTrat = await getDocs(collection(db, "tratamientos"));
   tratamientos = snapTrat.docs.map(doc => ({ id: doc.id, data: doc.data() }));

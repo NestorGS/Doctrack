@@ -42,49 +42,51 @@
   let doctorId = null;
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Debes iniciar sesión primero.");
-      return (location.href = "index.html");
-    }
+  if (!user) {
+    alert("Debes iniciar sesión primero.");
+    return (location.href = "index.html");
+  }
 
-    doctorId = user.uid;
+  const doctorId = user.uid;
 
-    try {
-      const q = query(
-        collection(db, "usuarios"),
-        where("rol", "==", "paciente"),
-        where("assignedDoctor", "==", doctorId)
-      );
-      const snap = await getDocs(q);
+  try {
+    // 🔥 Usa el campo correcto: doctorId
+    const q = query(
+      collection(db, "usuarios"),
+      where("rol", "==", "paciente"),
+      where("doctorId", "==", doctorId)
+    );
+    const snap = await getDocs(q);
 
-      selectPacientes.innerHTML = "";
+    selectPacientes.innerHTML = "";
 
-      if (snap.empty) {
+    if (snap.empty) {
+      const opt = document.createElement("option");
+      opt.disabled = true;
+      opt.selected = true;
+      opt.textContent = "Sin pacientes asignados";
+      selectPacientes.appendChild(opt);
+    } else {
+      const defaultOpt = document.createElement("option");
+      defaultOpt.disabled = true;
+      defaultOpt.selected = true;
+      defaultOpt.textContent = "Selecciona un paciente";
+      selectPacientes.appendChild(defaultOpt);
+
+      snap.forEach((p) => {
+        const d = p.data();
         const opt = document.createElement("option");
-        opt.disabled = true;
-        opt.selected = true;
-        opt.textContent = "Sin pacientes asignados";
+        opt.value = p.id;
+        opt.textContent = `${d.nombre} ${d.paterno || ""} ${d.materno || ""}`;
         selectPacientes.appendChild(opt);
-      } else {
-        const defaultOpt = document.createElement("option");
-        defaultOpt.disabled = true;
-        defaultOpt.selected = true;
-        defaultOpt.textContent = "Selecciona un paciente";
-        selectPacientes.appendChild(defaultOpt);
-
-        snap.forEach(p => {
-          const d = p.data();
-          const opt = document.createElement("option");
-          opt.value = p.id;
-          opt.textContent = `${d.nombre} ${d.paterno || ""} ${d.materno || ""}`;
-          selectPacientes.appendChild(opt);
-        });
-      }
-    } catch (err) {
-      console.error("Error cargando pacientes:", err);
-      alert("No se pudo cargar la lista de pacientes.");
+      });
     }
-  });
+  } catch (err) {
+    console.error("Error cargando pacientes:", err);
+    alert("No se pudo cargar la lista de pacientes.");
+  }
+});
+
 
   btnGuardar.addEventListener("click", async () => {
     const pacienteId = selectPacientes.value;
